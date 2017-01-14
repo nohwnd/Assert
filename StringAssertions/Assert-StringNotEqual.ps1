@@ -1,8 +1,8 @@
-﻿# Asserts that two strings are 
+# Asserts that two strings are 
 
 . $PSScriptRoot\..\common.ps1
 
-function Test-StringEqual 
+function Test-StringNotEqual 
 {
     param (
         [String]$Expected, 
@@ -19,20 +19,20 @@ function Test-StringEqual
 
     if (-not $CaseSensitive) 
     {
-        $Expected -eq $Actual
+        $Expected -ne $Actual
     } 
     else 
     {
-        $Expected -ceq $Actual
+        $Expected -cne $Actual
     }
 }
 
-function Get-StringEqualDefaultFailureMessage ([String]$Expected, [String]$Actual) 
+function Get-StringNotEqualDefaultFailureMessage ([String]$Expected, [String]$Actual) 
 {
-    "Expected the string to be '$Expected' but got '$Actual'."
+    "Expected the strings to be different but they were the same '$Expected'."
 }
 
-function Assert-StringEqual 
+function Assert-StringNotEqual 
 {
     param (
         [Parameter(ValueFromPipeline=$true)]
@@ -44,11 +44,11 @@ function Assert-StringEqual
         [switch]$IgnoreWhitespace
     )
 
-    if (-not (Test-StringEqual -Expected $Expected -Actual $Actual -CaseSensitive:$CaseSensitive -IgnoreWhitespace:$IgnoreWhiteSpace)) 
+    if (-not (Test-StringNotEqual -Expected $Expected -Actual $Actual -CaseSensitive:$CaseSensitive -IgnoreWhitespace:$IgnoreWhiteSpace)) 
     {
         if (-not $Message)
         {
-            $formattedMessage = Get-StringEqualDefaultFailureMessage -Expected $Expected -Actual $Actual
+            $formattedMessage = Get-StringNotEqualDefaultFailureMessage -Expected $Expected -Actual $Actual
         }
         else 
         {

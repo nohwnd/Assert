@@ -32,6 +32,14 @@ There is a special type of assertions that allow to compare objects as a whole, 
 
  where each assertion should have an option to specify a custom exception message
 
+ ??? Enable pipelining of the assertions by outputting the input value (or some product like exception) from every assertion?
+
+ ```powershell
+"hello my name is..." | 
+    Assert-StringStartWith "hello" |
+    Assert-StringEndWith "..."
+ ```
+
 ### General
 
 Assert-Equal
@@ -54,8 +62,8 @@ Assert-False
 ### Strings
 
 (all should get -CaseSensitive switch, and Ignore Whitespace switch)
-Assert-StringEqual
-Assert-StringNotEqual
+Assert-StringEqual ✓
+Assert-StringNotEqual ✓
 
 Assert-NullOrEmpty
 Assert-NotNullOrEmpty
@@ -111,6 +119,8 @@ Assert-Length (already in string) (or assert Count?)
 
 Assert-Equal (same items with the same order, exists in general)
 Assert-Equivalent (same by value items, different order, exists in general, how about repetitions?)
+
+? Assert-CollectionInstersect
 
 ? start with
 ? end with

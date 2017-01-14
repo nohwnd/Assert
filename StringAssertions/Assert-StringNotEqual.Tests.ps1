@@ -1,24 +1,24 @@
 ﻿$here = $MyInvocation.MyCommand.Path | Split-Path
-. $here\Assert-StringEqual.ps1
+. $here\Assert-StringNotEqual.ps1
 . $here\..\common.ps1
 
-Describe "Test-StringEqual" {
+Describe "Test-StringNotEqual" {
     Context "Case insensitive matching" {
         It "strings with the same values are equal" {
-            Test-StringEqual -Expected "abc" -Actual "abc" | Verify-True
+            Test-StringNotEqual -Expected "abc" -Actual "abc" | Verify-False
         }
 
-        It "strings with different case and same values are equal. comparing '<l>':'<r>'" -TestCases @(
+        It "strings with different case but same values are not . comparing '<l>':'<r>'" -TestCases @(
             @{l = "ABc"; r = "abc" },
             @{l = "aBc"; r = "abc" },
             @{l = "ABC"; r = "abc" }
         ) {
             param ($l, $r)
-            Test-StringEqual -Expected $l -Actual $r | Verify-True
+            Test-StringNotEqual -Expected $l -Actual $r | Verify-False
         }
 
         It "strings with different values are not equal" { 
-            Test-StringEqual -Expected "abc" -Actual "def" | Verify-False
+            Test-StringNotEqual -Expected "abc" -Actual "def" | Verify-True
         }
 
         It "strings with different case and different values are not equal. comparing '<l>':'<r>'" -TestCases @(
@@ -27,7 +27,7 @@ Describe "Test-StringEqual" {
             @{l = "ABC"; r = "def" }
         ) { 
             param ($l, $r)
-            Test-StringEqual -Expected $l -Actual $r | Verify-False
+            Test-StringNotEqual -Expected $l -Actual $r | Verify-True
         }
 
          It "strings from which one is sorrounded by whitespace are not equal. comparing '<l>':'<r>'" -TestCases @(
@@ -36,7 +36,7 @@ Describe "Test-StringEqual" {
             @{l = "ab c"; r = "abc" }
         ) { 
             param ($l, $r)
-            Test-StringEqual -Expected $l -Actual $r | Verify-False
+            Test-StringNotEqual -Expected $l -Actual $r | Verify-True
         }
     }
 
@@ -47,7 +47,7 @@ Describe "Test-StringEqual" {
             @{l = "ABC"; r = "abc" }
         ) {
             param ($l, $r)
-            Test-StringEqual -Expected $l -Actual $r -CaseSensitive | Verify-False
+            Test-StringNotEqual -Expected $l -Actual $r -CaseSensitive | Verify-True
         }
     }
 
@@ -59,60 +59,60 @@ Describe "Test-StringEqual" {
             @{l = "ab c"; r = "a b c" }
         ) { 
             param ($l, $r)
-            Test-StringEqual -Expected $l -Actual $r -IgnoreWhiteSpace | Verify-True
+            Test-StringNotEqual -Expected $l -Actual $r -IgnoreWhiteSpace | Verify-False
         }
     }
 }
 
-Describe "Get-StringEqualDefaultFailureMessage" {
+Describe "Get-StringNotEqualDefaultFailureMessage" {
     It "returns correct default message" {
-        $expected = "Expected the string to be 'abc' but got 'bde'."
-        $actual = Get-StringEqualDefaultFailureMessage -Expected "abc" -Actual "bde"
+        $expected = "Expected the strings to be different but they were the same 'abc'."
+        $actual = Get-StringNotEqualDefaultFailureMessage -Expected "abc" -Actual "abc"
         $actual | Verify-Equal $expected
     }
 }
 
-Describe "Assert-StringEqual" {
-    It "Does nothing when string are the same" { 
-        Assert-StringEqual -Expected "abc" -Actual "abc"
+Describe "Assert-StringNotEqual" {
+    It "Does nothing when string are different" { 
+        Assert-StringNotEqual -Expected "abc" -Actual "bde"
     }
 
-    It "Throws when strings are different" {
-        { Assert-StringEqual -Expected "abc" -Actual "bde" } | Verify-AssertionFailed 
+    It "Throws when strings are the same" {
+        { Assert-StringNotEqual -Expected "abc" -Actual "abc" } | Verify-AssertionFailed 
     }
 
     It "Throws with default message when test fails" {
-        $expected = Get-StringEqualDefaultFailureMessage -Expected "abc" -Actual "bde"
-        $exception = { Assert-StringEqual -Expected "abc" -Actual "bde" } | Verify-AssertionFailed 
+        $expected = Get-StringNotEqualDefaultFailureMessage -Expected "abc" -Actual "abc"
+        $exception = { Assert-StringNotEqual -Expected "abc" -Actual "abc" } | Verify-AssertionFailed
         "$exception" | Verify-Equal $expected
     }
 
     It "Throws with custom message when test fails" {
         $customMessage = "Test failed becasue it expected '<e>' but got '<a>'. What a shame!"
-        $expected = Get-CustomFailureMessage -Message $customMessage -Expected "abc" -Actual "bde"
-        $exception = { Assert-StringEqual -Expected "abc" -Actual "bde" -Message $customMessage } | Verify-AssertionFailed
+        $expected = Get-CustomFailureMessage -Message $customMessage -Expected "abc" -Actual "abc"
+        $exception = { Assert-StringNotEqual -Expected "abc" -Actual "abc" -Message $customMessage } | Verify-AssertionFailed
         "$exception" | Verify-Equal $expected
     }
 
     It "Allows actual to be passed from pipeline" {
-        "abc" | Assert-StringEqual -Expected "abc"
+        "abc" | Assert-StringNotEqual -Expected "bde"
     }
 
     It "Allows expected to be passed by position" {
-        Assert-StringEqual "abc" -Actual "abc"
+        Assert-StringNotEqual "abc" -Actual "bde"
     }
 
     It "Allows actual to be passed by pipeline and expected by position" {
-        "abc" | Assert-StringEqual "abc"
+        "abc" | Assert-StringNotEqual "bde"
     }
 
     Context "String specific features" {
         It "Can compare strings in CaseSensitive mode" {
-            { Assert-StringEqual -Expected "ABC" -Actual "abc" -CaseSensitive } | Verify-AssertionFailed
+            Assert-StringNotEqual -Expected "ABC" -Actual "abc" -CaseSensitive
         }
 
         It "Can compare strings without whitespace" {
-            Assert-StringEqual -Expected " a b c " -Actual "abc" -IgnoreWhitespace
+            { Assert-StringNotEqual -Expected " a b c " -Actual "abc" -IgnoreWhitespace } | Verify-AssertionFailed
         }
     }
 }
