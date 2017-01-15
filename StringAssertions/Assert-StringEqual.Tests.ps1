@@ -106,6 +106,10 @@ Describe "Assert-StringEqual" {
         "abc" | Assert-StringEqual "abc"
     }
 
+    It "Fails when collection of strings is passed in by pipeline, even if the last string is the same as the expected string" {`
+         { "bde", "abc" | Assert-StringEqual -Expected "abc" } | Verify-AssertionFailed
+    }
+
     Context "String specific features" {
         It "Can compare strings in CaseSensitive mode" {
             { Assert-StringEqual -Expected "ABC" -Actual "abc" -CaseSensitive } | Verify-AssertionFailed

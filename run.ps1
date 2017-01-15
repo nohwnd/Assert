@@ -1,7 +1,7 @@
 cd $PSScriptRoot
 
 get-module pester | Remove-Module 
-Import-Module C:\Users\nohwnd\documents\GitHub\Pester_main\Pester.psd1 -Force
+Import-Module C:\Users\nohwnd\projects\Pester\Pester.psd1 -Force
 
 . .\initialize.ps1
 

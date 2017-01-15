@@ -32,6 +32,21 @@ function Get-StringEqualDefaultFailureMessage ([String]$Expected, [String]$Actua
     "Expected the string to be '$Expected' but got '$Actual'."
 }
 
+function Collect-Input ($ParameterInput, $PipelineInput) 
+{
+    #source: http://www.powertheshell.com/input_psv3/
+    $collectedInput = $PipelineInput
+
+    $isInPipeline = $collectedInput.Count -gt 0
+    if ($isInPipeline) {
+        $collectedInput
+    }
+    else 
+    {
+        $ParameterInput
+    }
+}
+
 function Assert-StringEqual 
 {
     param (
@@ -43,16 +58,18 @@ function Assert-StringEqual
         [switch]$CaseSensitive,
         [switch]$IgnoreWhitespace
     )
-
-    if (-not (Test-StringEqual -Expected $Expected -Actual $Actual -CaseSensitive:$CaseSensitive -IgnoreWhitespace:$IgnoreWhiteSpace)) 
+    
+    $_actual = Collect-Input -ParameterInput $Actual -PipelineInput $local:Input
+        
+    if (-not (Test-StringEqual -Expected $Expected -Actual $_actual -CaseSensitive:$CaseSensitive -IgnoreWhitespace:$IgnoreWhiteSpace)) 
     {
         if (-not $Message)
         {
-            $formattedMessage = Get-StringEqualDefaultFailureMessage -Expected $Expected -Actual $Actual
+            $formattedMessage = Get-StringEqualDefaultFailureMessage -Expected $Expected -Actual $_actual
         }
         else 
         {
-            $formattedMessage = Get-CustomFailureMessage -Expected $Expected -Actual $Actual -Message $Message
+            $formattedMessage = Get-CustomFailureMessage -Expected $Expected -Actual $_actual -Message $Message
         }
 
         throw [Assertions.AssertionException]$formattedMessage
