@@ -106,7 +106,7 @@ Describe "Assert-StringEqual" {
         "abc" | Assert-StringEqual "abc"
     }
 
-    It "Fails when collection of strings is passed in by pipeline, even if the last string is the same as the expected string" {`
+    It "Fails when collection of strings is passed in by pipeline, even if the last string is the same as the expected string" {
          { "bde", "abc" | Assert-StringEqual -Expected "abc" } | Verify-AssertionFailed
     }
 
