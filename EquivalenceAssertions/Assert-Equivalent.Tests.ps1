@@ -66,5 +66,27 @@ Describe 'Test-Equivalent' {
 
         Test-Equivalent -Expected $expected -Actual $actual | Verify-NotNullOrEmpty
     }
+
+    Add-Type -TypeDefinition @"
+    using System;
+
+    namespace TestObjects {
+        public class Person {
+            public string Name {get;set;}
+            public string Age {get;set;}
+        }
+    }
+"@
+    It "Comparing psObject with class returns True when the object has the same values" -TestCases @(
+        @{
+            Expected = New-Object -TypeName TestObjects.Person -Property @{ Name = 'Jakub'; Age  = 28}
+            Actual =   New-PSObject @{ Name = 'Jakub'; Age = 28 } 
+        }
+    ) { 
+        param ($Expected, $Actual)
+        Verify-NotSame -Expected $expected -Actual $actual
+
+        Test-Equivalent -Expected $expected -Actual $actual | Verify-NullOrEmpty
+    }
 }
 
