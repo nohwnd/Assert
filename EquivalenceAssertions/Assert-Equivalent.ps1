@@ -18,10 +18,12 @@ function countProperties ([ System.Management.Automation.PSMemberInfoCollection[
     $value | Measure-Object | select -ExpandProperty count
 }
 
-function Test-DeepEqual ($Actual, $Expected) { 
+function Test-Equivalent ($Actual, $Expected) { 
     $result = @()
     if ((arePsObjects $actual $expected)) 
     {   
+        if (areSame $actual $expected) {return}
+
         $a = $actual.PsObject.Properties
         $e = $expected.PsObject.Properties
 
@@ -51,6 +53,12 @@ function Test-DeepEqual ($Actual, $Expected) {
             $result += "Expected has property '$($no.name)' that the other object does not have"
         }    
     }
+    else 
+    {
+        if ($actual -ne $expected) { 
+            $result += "Expected '$expected' but got '$actual'"
+        }
+    }
 
     if ($result.Count -gt 0) {
         "The expected and actual objects are not equal. Got actual: `n`n$(($actual|fl|out-string).Trim())`n`n"+
@@ -58,16 +66,16 @@ function Test-DeepEqual ($Actual, $Expected) {
     }
 }
 
-function Assert-DeepEqual($Actual, $Expected) {
-    $areDifferent = Test-DeepEqual $Actual $Expected
+function Assert-Equivalent($Actual, $Expected) {
+    $areDifferent = Test-Equivalent $Actual $Expected
     if ($areDifferent)
     {
         throw [Assertions.AssertionException]"$areDifferent"
     }
 }
 
-$actual = New-PSObject @{ Name = 'Jakub'; Age = 28; PlaysGames = $false }
-$expected = New-PSObject @{ Name = 'Jakub'; Age = "27"; DrinksCoffeeTooMuch = $true }
+#$actual = New-PSObject @{ Name = 'Jakub'; Age = 28; PlaysGames = $false }
+#$expected = New-PSObject @{ Name = 'Jakub'; Age = "27"; DrinksCoffeeTooMuch = $true }
 
 
-Assert-DeepEqual $actual $expected
+#Assert-DeepEqual $actual $expected
