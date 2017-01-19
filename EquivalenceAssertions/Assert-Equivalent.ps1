@@ -37,9 +37,10 @@ function Test-Equivalent ($Actual, $Expected) {
                 continue
             }
         
-            if ($ep.Value -ne $property.Value)
+            $r = Test-Equivalent $ep.Value $property.Value
+            if ($r)
             {
-                $result += "Property '$PropertyName' differs in $($ep.Value) and $($property.Value)"
+                $result += "Property '$PropertyName' differs in $($ep.Value) and $($property.Value) $r"
             }
         }
 
@@ -53,7 +54,7 @@ function Test-Equivalent ($Actual, $Expected) {
             $result += "Expected has property '$($no.name)' that the other object does not have"
         }    
     }
-    else 
+    else # <-- add case where this is collection and then expand the collection and compare each item with each other item.
     {
         if ($actual -ne $expected) { 
             $result += "Expected '$expected' but got '$actual'"

@@ -77,10 +77,35 @@ Describe 'Test-Equivalent' {
         }
     }
 "@
-    It "Comparing psObject with class returns True when the object has the same values" -TestCases @(
+    It "Comparing psObject with class returns $null when the object has the same values" -TestCases @(
         @{
             Expected = New-Object -TypeName TestObjects.Person -Property @{ Name = 'Jakub'; Age  = 28}
             Actual =   New-PSObject @{ Name = 'Jakub'; Age = 28 } 
+        }
+    ) { 
+        param ($Expected, $Actual)
+        Verify-NotSame -Expected $expected -Actual $actual
+
+        Test-Equivalent -Expected $expected -Actual $actual | Verify-NullOrEmpty
+    }
+
+
+    It "Comparing psObjects with collections returns report when the items in the collection differ" -TestCases @(
+        @{
+            Expected = New-PSObject @{ Numbers = 1,2,3 } 
+            Actual =   New-PSObject @{ Numbers = 3,4,5 } 
+        }
+    ) { 
+        param ($Expected, $Actual)
+        Verify-NotSame -Expected $expected -Actual $actual
+
+        Test-Equivalent -Expected $expected -Actual $actual | Verify-NullOrEmpty
+    }
+
+    It "Comparing psObjects with collections returns report when the items in the collection differ" -TestCases @(
+        @{
+            Expected = New-PSObject @{ Objects = (New-PSObject @{ Name = "Jan" }), (New-PSObject @{ Name = "Petr" }) }
+            Actual =   New-PSObject @{ Objects = (New-PSObject @{ Name = "Jan" }), (New-PSObject @{ Name = "Tomas" }) }
         }
     ) { 
         param ($Expected, $Actual)
