@@ -120,13 +120,15 @@ Describe 'Test-Equivalent' {
 }
 
 Describe "Test-Value" {
-    It "Given value or string '<value>' it returns `$true" -TestCases @(
+    It "Given '<value>', which is a value, string, enum or array with a single item of those types it returns `$true" -TestCases @(
         @{ Value = 1 },
         @{ Value = 2 },
         @{ Value = 1.2 },
         @{ Value = 1.3 },
         @{ Value = "abc"},
-        @{ Value = [System.DayOfWeek]::Monday}
+        @{ Value = [System.DayOfWeek]::Monday},
+        @{ Value = @("abc")},
+        @{ Value = @(1)}
     ){  
         param($Value)
         Test-Value -Value $Value | Verify-True
@@ -138,6 +140,7 @@ Describe "Test-Value" {
 
     It "Given reference type (not string) '<value>' it returns `$false" -TestCases @(
         @{ Value = @() },
+        @{ Value = @(1,2) },
         @{ Value = @{} },
         @{ Value = {} },
         @{ Value = [type] },
@@ -396,5 +399,34 @@ Describe "Get-ValueNotEquivalentMessage" {
         $a = $null
         Get-ValueNotEquivalentMessage -Actual $a -Expected $e | 
             Verify-Equal "Expected 'abc' to be equivalent to the actual value, but got '`$null'."
+    }
+}
+
+Describe "Compare-Value" { 
+    It "Given two values that are equivalent '<expected>' '<actual>' it returns `$true" -TestCases @(
+        @{ Actual = $null; Expected = $null },
+        @{ Actual = ""; Expected = "" },
+        @{ Actual = $true; Expected = $true },
+        @{ Actual = $true; Expected = 'True' },
+        @{ Actual = 'True'; Expected = $true },
+        @{ Actual = $false; Expected = 'False' },
+        @{ Actual = 'False'; Expected = $false},
+        @{ Actual = 1; Expected = 1 },
+        @{ Actual = "1"; Expected = 1 },
+        @{ Actual = "abc"; Expected = "abc" },
+        @{ Actual = @("abc"); Expected = "abc" },
+        @{ Actual = "abc"; Expected = @("abc") },
+        @{ Actual = (1,2,3); Expected = "1, 2, 3" },
+        @{ Actual = {abc}; Expected = "abc" },
+        @{ Actual = "abc"; Expected = {abc} }
+    ) {
+        param ($Actual, $Expected)
+        Compare-Value -Actual $Actual -Expected $Expected | Verify-True
+    }
+}
+
+Describe "Test-Equivalent2" { 
+    It "Returns correct message when two values are not equal" {
+        Test-Equivalent2 -Expected 1 -Actual 2 | Verify-Equal "Expected '1' to be equivalent to the actual value, but got '2'."
     }
 }

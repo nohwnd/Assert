@@ -1,4 +1,5 @@
 ﻿function Test-Value ($Value) {
+    $Value = $($Value)
     $Value -is [ValueType] -or $Value -is [string]
 }
 
@@ -105,6 +106,31 @@ function Get-IdentityProperty ([Type]$Type) {
     $propertyMap[$Type.FullName]
 }
 
+function Compare-Value ($Expected, $Actual) {
+    if ($null -eq $Expected)
+    {
+       return $null -eq $Actual
+    }
+
+    # in the next two conditions we fix that 'false' string converts to $true boolean
+    if ($Actual -is [Bool] -and $Expected -is [string] -and "$Expected" -eq 'False') {
+        return $false -eq $Actual
+    }
+
+    if ($Expected -is [Bool] -and $Actual -is [string] -and "$Actual" -eq 'False') {
+        return $false -eq $Expected
+    }
+
+    if (Test-Value -Value $Expected)
+    {
+        return $Expected -eq $Actual
+    }
+
+    if (Test-Collection -Value $Expected) {
+    
+    }
+}
+
 function arePsObjects ($value1, $value2) {
     $value1 -is [PsObject] -and $value1 -is [PsObject]
 }
@@ -115,6 +141,13 @@ function equal ($left, $right) {
 
 function countProperties ([ System.Management.Automation.PSMemberInfoCollection[System.Management.Automation.PSPropertyInfo]] $value) { 
     $value | Measure-Object | select -ExpandProperty count
+}
+
+function Test-Equivalent2($Actual, $Expected) { 
+    if (-not (Compare-Value -Expected $Expected -Actual $Actual)) 
+    {
+        return Get-ValueNotEquivalentMessage -Actual $Actual -Expected $Expected
+    }
 }
 
 function Test-Equivalent ($Actual, $Expected) { 
