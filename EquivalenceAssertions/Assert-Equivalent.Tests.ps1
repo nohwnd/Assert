@@ -257,6 +257,26 @@ Describe "Test-ScriptBlock" {
     }
 }
 
+Describe "Test-PSObjectExacly" { 
+    It "Given a PSObject '{<value>}' it returns `$true" -TestCases @(
+        @{ Value = New-PSObject @{ Name = 'Jakub' } },
+        @{ Value = [PSCustomObject]@{ Name = 'Jakub'} }
+    ) {
+        param ($Value)
+        Test-PSObjectExactly -Value $Value | Verify-True 
+    }
+
+    It "Given a value '<value>' that is not a PSObject it returns `$false" -TestCases @(
+        @{ Value = $null },
+        @{ Value = 1 },
+        @{ Value = 'abc' },
+        @{ Value = [Type] }
+    ) {
+        param ($Value)
+        Test-PSObjectExactly -Value $Value | Verify-False 
+    }
+}
+
 Describe "Format-Collection" { 
     It "Formats collection of values '<value>' to '<expected>' using the default separator" -TestCases @(
         @{ Value = (1,2,3); Expected = "1, 2, 3" }
@@ -305,10 +325,76 @@ Describe "Format-Object" {
     }
 }
 
-Describe "Compare-Value" {
-    It "Compares object to value with the correct message" { 
+Describe "Format-Boolean" {
+    It "Formats boolean '<value>' to '<expected>'" -TestCases @(
+        @{ Value = $true; Expected = '$true' },
+        @{ Value = $false; Expected = '$false' }
+    ) {
+        param($Value, $Expected)
+        Format-Boolean -Value $Value | Verify-Equal $Expected
+    }
+}
+
+Describe "Format-Null" { 
+    It "Formats null to '`$null'" {
+        Format-Null -Value $Value | Verify-Equal '$null'
+    }
+}
+
+Describe "Format-Custom" {
+    It "Formats value '<value>' correctly to '<expected>'" -TestCases @(
+        @{ Value = $null; Expected = '$null'}
+        @{ Value = $true; Expected = '$true'}
+        @{ Value = $false; Expected = '$false'}
+        @{ Value = 'a' ; Expected = 'a'},
+        @{ Value = 1; Expected = '1' },
+        @{ Value = (1,2,3); Expected = '1, 2, 3' },
+        @{ Value = New-PSObject @{ Name = "Jakub" }; Expected = 'PSObject{Name=Jakub}' },
+        @{ Value = (Get-Process Idle); Expected = 'Process{Id=0; Name=Idle}'},
+        @{ Value = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28}); Expected = "Person{Age=28; Name=Jakub}"}
+    ) { 
+        param($Value, $Expected)
+        Format-Custom -Value $Value | Verify-Equal $Expected
+    }
+}
+
+Describe "Get-IdentityProperty" {
+    It "Returns '<expected>' for '<type>'" -TestCases @(
+        @{ Type = "Diagnostics.Process"; Expected = ("Id", "Name") }
+    ) {
+        param ($Type, $Expected)
+        $Actual = Get-IdentityProperty -Type $Type
+        "$Actual" | Verify-Equal "$Expected"
+    }
+
+}
+
+Describe "Get-ValueNotEquivalentMessage" {
+    It "Returns correct message when comparing value to an object" { 
         $e = 'abc'
         $a = New-PSObject @{ Name = 'Jakub'; Age = 28 }
-        Compare-Value -Actual $a  -Expected $e | Verify-Equal "Expected 'abc' but got 'PSObject{Age=28; Name=Jakub}'"
+        Get-ValueNotEquivalentMessage -Actual $a -Expected $e | 
+            Verify-Equal "Expected 'abc' to be equivalent to the actual value, but got 'PSObject{Age=28; Name=Jakub}'."
+    }
+
+    It "Returns correct message when comparing object to a value" { 
+        $e = New-PSObject @{ Name = 'Jakub'; Age = 28 }
+        $a = 'abc'
+        Get-ValueNotEquivalentMessage -Actual $a -Expected $e | 
+            Verify-Equal "Expected 'PSObject{Age=28; Name=Jakub}' to be equivalent to the actual value, but got 'abc'."
+    }
+
+    It "Returns correct message when comparing value to an array" { 
+        $e = 'abc'
+        $a = 1,2,3
+        Get-ValueNotEquivalentMessage -Actual $a -Expected $e | 
+            Verify-Equal "Expected 'abc' to be equivalent to the actual value, but got '1, 2, 3'."
+    }
+
+    It "Returns correct message when comparing value to null" { 
+        $e = 'abc'
+        $a = $null
+        Get-ValueNotEquivalentMessage -Actual $a -Expected $e | 
+            Verify-Equal "Expected 'abc' to be equivalent to the actual value, but got '`$null'."
     }
 }

@@ -7,7 +7,10 @@
     )
 
     if ($Expected -ne $Actual) {
-        throw [Exception]"Expected '$Expected' but got '$Actual'.`nExpected length: $($Expected.Length)`nActual length: $($Actual.Length)"
+        throw [Exception]("Expected and actual values differ!`n"+
+            "Expected: '$Expected'`n"+
+            "Actual  : '$Actual'`n" +
+            "Expected length: $($Expected.Length)`nActual length: $($Actual.Length)")
     }
     
     $Actual
