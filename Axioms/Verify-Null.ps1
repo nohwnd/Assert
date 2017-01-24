@@ -1,4 +1,4 @@
-function Verify-NullOrEmpty {
+function Verify-Null {
     param (
         [Parameter(ValueFromPipeline=$true)]
         $Actual

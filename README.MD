@@ -34,11 +34,48 @@ There is a special type of assertions that allow to compare objects as a whole, 
 
  ??? Enable pipelining of the assertions by outputting the input value (or some product like exception) from every assertion?
 
+? define OFS (field separator) in the scope of the assertion to ', ' to be able to write @(1,2,3) | Assert-StringEqual "1, 2, 3"
+
  ```powershell
 "hello my name is..." | 
     Assert-StringStartWith "hello" |
     Assert-StringEndWith "..."
  ```
+
+
+### Object equivalence
+
+? is this true: For values equivalence and equality is the same? 
+
+
+I need to be able to compare two values.
+compare array with a single value to a value
+compare value to a single item array
+compare two arrays when each of them have more then one value
+compare object to value by comparing object to value.
+compare object to object by comparing each value and that there are all of them.
+compare special object type to special object type
+
+? special treatment for hashtables?
+? special treatment for dictionaries?
+? special treatment for scriptblocks?
+
+? formatting objects the values, is it a good idea to include the type name? and in which format? for hashtable `@{}` is fine, but for psobject it is better to use `PSObject{}` than some custom cryptic thing like `#{}`
+! more important it is to write useful info to the screen.
+
+
+
+
+
+
+- The expected side determines the type to be compared.
+- single items in array are considered single values.
+- value types are compared by value
+- reference types equal if all of their properties are equal.
+
+making a table of types and their significant properties I should not rely on the type being loaded, instead use string of the full type name and then check if the type can be constructed using try catch (is there a more efficient way?)
+`[type]"nonexisting" `
+if I can construct the type then I will do -is check on it to be able to reuse rules for inherited types (order rules from most specific). The incoming instance must be an instance of a type that is loaded so the -is check is enough.
 
 ### General
 

@@ -5,7 +5,7 @@ function Verify-False {
     )
 
     if ($Actual) {
-        throw [Exception]"Expected `$true but got '$Actual'."
+        throw [Exception]"Expected `$false but got '$Actual'."
     }
 
     $Actual

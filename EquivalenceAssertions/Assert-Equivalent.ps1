@@ -1,9 +1,37 @@
-﻿function isValue ($value) {
-    $value -is [ValueType] -or $value -is [string]
+﻿function Test-Value ($Value) {
+    $Value -is [ValueType] -or $Value -is [string]
 }
 
-function areSame ($left, $right) {
-    [object]::ReferenceEquals($left, $right)
+function Test-Same ($Expected, $Actual) {
+    [object]::ReferenceEquals($Expected, $Actual)
+}
+
+function Test-Collection ($Value) { 
+    $Value -is [Array] -or $Value -is [Collections.IEnumerable]
+}
+
+function Test-ScriptBlock ($Value) {
+    $Value -is [ScriptBlock]
+}
+
+
+function Format-Collection ($Value) { 
+    $OFS = ', '
+    "$Value"
+}
+
+function Format-PSObject ($Value) {
+    [string]$Value -replace "^@","PSObject"
+}
+
+function Format-Object ($Value, $Property) {
+    
+    if ($null -eq $Property)
+    {
+        $Property = $Value.PSObject.Properties | select -ExpandProperty Name
+    }
+    $orderedProperty = $Property | Sort-Object
+    ([string]([PSObject]$Value | Select-Object -Property $orderedProperty)) -replace "^@", ($Value.GetType().Name)
 }
 
 function arePsObjects ($value1, $value2) {
@@ -22,7 +50,7 @@ function Test-Equivalent ($Actual, $Expected) {
     $result = @()
     if ((arePsObjects $actual $expected)) 
     {   
-        if (areSame $actual $expected) {return}
+        if (Test-Same $actual $expected) {return}
 
         $a = $actual.PsObject.Properties
         $e = $expected.PsObject.Properties
@@ -56,7 +84,7 @@ function Test-Equivalent ($Actual, $Expected) {
     }
     else # <-- add case where this is collection and then expand the collection and compare each item with each other item.
     {
-        if ($actual -ne $expected) { 
+        if ($expected -ne $actual) { 
             $result += "Expected '$expected' but got '$actual'"
         }
     }
@@ -80,3 +108,10 @@ function Assert-Equivalent($Actual, $Expected) {
 
 
 #Assert-DeepEqual $actual $expected
+
+
+function Test-ValueEqual ($Expected) {
+    if (Test-Value -eq $Expected) { 
+
+    }
+}
