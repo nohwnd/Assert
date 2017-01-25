@@ -15,6 +15,10 @@ function Test-ScriptBlock ($Value) {
     $Value -is [ScriptBlock]
 }
 
+function Test-DecimalNumber ($Value) { 
+    $Value -is [float] -or $Value -is [single] -or $Value -is [double] -or $Value -is [decimal]
+}
+
 function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property) { 
     $Expected = Format-Custom -Value $Expected 
     $Actual = Format-Custom -Value $Actual
@@ -52,6 +56,10 @@ function Format-ScriptBlock ($Value) {
     '{' + $Value + '}'
 }
 
+function Format-Number ($Value) { 
+    [string]$Value
+}
+
 function Format-Custom ($Value) { 
     if ($null -eq $Value) 
     { 
@@ -61,6 +69,11 @@ function Format-Custom ($Value) {
     if ($Value -is [bool])
     {
         return Format-Boolean -Value $Value
+    }
+
+    if (Test-DecimalNumber -Value $Value) 
+    {
+        return Format-Number -Value $Value
     }
 
     if (Test-ScriptBlock -Value $Value)
@@ -117,17 +130,20 @@ function Test-CollectionSize ($Expected, $Actual) {
     return $Expected.Length -eq $Actual.Length
 }
 
-function Get-CollectionSizeNotTheSameMessage ($Actual, $Expected) {
+function Get-CollectionSizeNotTheSameMessage ($Actual, $Expected, $Property) {
     $expectedLength = $Expected.Length
     $actualLength = $Actual.Length
     $Expected = Format-Collection -Value $Expected
     $Actual = Format-Collection -Value $Actual
-    "Expected collection '$Expected' with length '$expectedLength' to be the same size as the actual collection, but got '$Actual' with length '$actualLength'."
+    if ($property) {
+        $propertyMessage = " in property $Property with values"
+    }
+    "Expected collection$propertyMessage '$Expected' with length '$expectedLength' to be the same size as the actual collection, but got '$Actual' with length '$actualLength'."
 }
 
-function Compare-Collection ($Expected, $Actual) {
+function Compare-Collection ($Expected, $Actual, $Property) {
     if (-not (Test-CollectionSize -Expected $Expected -Actual $Actual)) {
-        return Get-CollectionSizeNotTheSameMessage -Expected $Expected -Actual $Actual
+        return Get-CollectionSizeNotTheSameMessage -Expected $Expected -Actual $Actual -Property $Property
     }
 
     $eEnd = $Expected.Length
@@ -139,7 +155,7 @@ function Compare-Collection ($Expected, $Actual) {
         $found = $false
         for ($a=0; $a -lt $aEnd; $a++) { 
             $currentActual = $Actual[$a]
-            if ((-not (Compare-EquivalentObject -Expected $currentExpected -Actual $currentActual)) -and $taken -notcontains $a) 
+            if ((-not (Compare-EquivalentObject -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a) 
             {
                 $taken += $a
                 $found = $true
@@ -155,12 +171,12 @@ function Compare-Collection ($Expected, $Actual) {
     $notFoundFormatted = Format-Custom -Value ( $notFound | % { Format-Custom -Value $_ } )
     
     if ($notFound) {
-        return "Expected collection '$Expected' to be equivalent to '$Actual' but some values were missing: '$notFoundFormatted'."
+        $propertyMessage = if ($Property) {" in property $Property which is"}
+        return "Expected collection$propertyMessage '$Expected' to be equivalent to '$Actual' but some values were missing: '$notFoundFormatted'."
     }
 }
 
 function Compare-Object ($Actual, $Expected, $Path) {
-    Write-Host "compare object running! $Actual $expected"
     $actualProperties = $Actual.PsObject.Properties
     $expectedProperties = $Expected.PsObject.Properties
 
@@ -252,98 +268,49 @@ function Compare-EquivalentObject ($Actual, $Expected, $Path) {
 
     #compare collection
     if (Test-Collection -Value $Expected) { 
-        return Compare-Collection -Expected $Expected -Actual $Actual
+        return Compare-Collection -Expected $Expected -Actual $Actual -Property $Path
     }
 
     # dictionaries? (they are IEnumerable so they must go befor collections)
     # hashtables?
 
-    # if (Test-PSObjectExactly -Value $Value)
-    # {
-       
-    #     return Format-PSObject -Value $Value
-    # }
-
-    # Format-Object -Value $Value -Property (Get-IdentityProperty ($Value.GetType()))
-    #object comparisons from here on
-
-    #here we got object on the expected side but what about the actual side? 
-    
-    # if (Test-Value -Value $Actual) {
-    #     #Actual is value print message that says that we got value vs object and that they are different
-    # }
-
-    #same for collection
-
-    #same for dictionary
+    #having objects on expected side and values on actual side? 
 
     #here we have two distinct objects that we need to compare (ehm finally)
     Compare-Object -Expected $Expected -Actual $Actual -Property $Path
 }
 
-function arePsObjects ($value1, $value2) {
-    $value1 -is [PsObject] -and $value1 -is [PsObject]
-}
-
-function equal ($left, $right) {
-    $left -eq $right
-}
-
-function countProperties ([ System.Management.Automation.PSMemberInfoCollection[System.Management.Automation.PSPropertyInfo]] $value) { 
-    if (Test-Collection -value $Expected) { 
-        $value | Measure-Object | select -ExpandProperty count
-    }
-}
-
-function Test-Equivalent ($Actual, $Expected) { 
-    if (Test-Same $actual $expected) {return}
-
-    $a = $actual.PsObject.Properties
-    $e = $expected.PsObject.Properties
-
-    foreach ($property in $a)
-    {
-        $propertyName = $property.Name
-        $ep = $e | Where { $_.Name -eq $propertyName}
-        if (-not $ep)
-        {
-            $result += "Actual has property '$PropertyName' that the other object does not have"
-            continue
-        }
-    
-        $r = Test-Equivalent $ep.Value $property.Value
-        if ($r)
-        {
-            $result += "Property '$PropertyName' differs in $($ep.Value) and $($property.Value) $r"
-        }
-    }
-
-    #check if there are any extra expected object props
-    $aNames = $a | select -expand name
-
-    $eNotInActual =  $e | where {$aNames -notcontains $_.name }
-        
-    foreach ($no in $eNotInActual)
-    {
-        $result += "Expected has property '$($no.name)' that the other object does not have"
-    }    
-
-    # if ($result.Count -gt 0) {
-    #     "The expected and actual objects are not equal. Got actual: `n`n$(($actual|fl|out-string).Trim())`n`n"+
-    #     "and expected:`n`n$(($expected|fl|out-string).Trim())`n`nwith the following differences:`n`n$($result -join "`n")"
-    # }
-}
-
 function Assert-Equivalent($Actual, $Expected) {
-    $areDifferent = Test-Equivalent $Actual $Expected
+    $areDifferent = Compare-EquivalentObject -Actual $Actual -Expected $Expected
     if ($areDifferent)
     {
         throw [Assertions.AssertionException]"$areDifferent"
     }
 }
 
-#$actual = New-PSObject @{ Name = 'Jakub'; Age = 28; PlaysGames = $false }
-#$expected = New-PSObject @{ Name = 'Jakub'; Age = "27"; DrinksCoffeeTooMuch = $true }
+"`n`n"
+"Objects are not equivalent:"
+$expected = New-PSObject @{
+    Name = 'nohwnd'
+    HasNoFreeTime = $true
+    DrinksTooMuchCoffee = $true
+    VersionsOfPowershellInstalled = (
+        (New-PSObject @{ Version = 3; OS = 'Vista' }),
+        (New-PSObject @{ Version = 4; OS = 'Win7' }),
+        (New-PSObject @{ Version = 5; OS = 'Win10' })
+    )
+    VersionsOfPesterInstalled = 3.4, 4.0
+}
+$actual = New-PSObject @{
+    Name = "someGuy"
+    VersionsOfPowershellInstalled = (
+        (New-PSObject @{ Version = 5; OS = 'Win10' })
+    )
+    VersionsOfPesterInstalled = ,(3.4)
+}
 
-
-#Assert-DeepEqual $actual $expected
+"expected: " + ("$expected" -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
+"actual: " + ($actual -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
+"Summary:"
+Compare-EquivalentObject -Expected $expected -Actual $actual 2> $null
+"`n`n"
