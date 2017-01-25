@@ -34,18 +34,38 @@ There is a special type of assertions that allow to compare objects as a whole, 
 
  ??? Enable pipelining of the assertions by outputting the input value (or some product like exception) from every assertion?
 
-? define OFS (field separator) in the scope of the assertion to ', ' to be able to write @(1,2,3) | Assert-StringEqual "1, 2, 3"
-
  ```powershell
-"hello my name is..." | 
+ #this is stupid example, I am returnin the values, but I need better use cases where it is actuall useful
+ #maybe with Assert-ObjectEqual and property selection, and definitely with Assert-Throw
+"hello my name is..." |
     Assert-StringStartWith "hello" |
     Assert-StringEndWith "..."
  ```
 
+? define OFS (field separator) in the scope of the assertion to ', ' to be able to write @(1,2,3) | Assert-StringEqual "1, 2, 3"
+
+? add property param to Assert-Equal to be able to do:
+
+```powershell
+$actual = [PsCustomObject]@{ Name="Jakub"; Age=28 }
+
+$actual |
+    Assert-ObjectEqual -Property Name -Expected 'Jakub' |
+    Assert-ObjectEqual -Property Age -Expected 28
+
+#even though with equivalence assertion you will be able to simply do
+$expected = [PsCustomObject]@{ Name="Jakub"; Age=28 }
+$actual = [PsCustomObject]@{ Name="Jakub"; Age=28; DrinksTooMuchCoffee = $true }
+
+$actual | Assert-Equivalent -Property Name, Age -Expected $Expected
+```
+
+? consider restricting expected value to be mandatory for assert-equal, to assert null use assert-null, helped me detect errors easily when I provide no $Expected value, or $Expected is coming from TestCases and I forget to provide the param, but it limits how you can mix values in testcases (imho small price to pay)
+
 
 ### Object equivalence
 
-? is this true: For values equivalence and equality is the same? 
+? is this true: For values equivalence and equality is the same -- not exactly, the equivalence is broader
 
 
 I need to be able to compare two values.
@@ -61,6 +81,7 @@ compare special object type to special object type
 ? special treatment for scriptblocks?
 
 ? formatting objects the values, is it a good idea to include the type name? and in which format? for hashtable `@{}` is fine, but for psobject it is better to use `PSObject{}` than some custom cryptic thing like `#{}`
+? is it valid and *useful* to compare scriptblocks as strings? (they can come from differnt files and so on)
 ! more important it is to write useful info to the screen.
 
 
@@ -76,6 +97,10 @@ compare special object type to special object type
 making a table of types and their significant properties I should not rely on the type being loaded, instead use string of the full type name and then check if the type can be constructed using try catch (is there a more efficient way?)
 `[type]"nonexisting" `
 if I can construct the type then I will do -is check on it to be able to reuse rules for inherited types (order rules from most specific). The incoming instance must be an instance of a type that is loaded so the -is check is enough.
+
+
+I need to check if a given comparator should be used (for example when value on the left side is bool and on the right side is string that is equivalent to a boolean) I will use `Use-*Comparator` function for that. Then optionally adapt the values in a `Update-*` function and carry out the test on the real (possibly adapted) values using a `Test-*` function. Then retreive a message using a `Get-*Message` function, and pack it in a result object that will have the incoming values, adapted values, and result message. This all will happen in a `Compare-*` function.
+
 
 ### General
 
@@ -172,11 +197,11 @@ equal, equivalence? count?
 
 ### Exceptions
 
-(should return the actual exception to the calling code, by default matches any exception of that family) 
-(how to handle non-terminating errors? switch to force them to fail? )
+should return the actual exception to the calling code, by default matches any exception of that family!
+? how to handle non-terminating errors? switch to force them to fail? also needs some improvement on Pester side
 
 Assert-Throw -ExceptionMessage -ExceptionType -FullyQualifiedErrorId -Exactly
-Assert-NotThrow
+Do not add assert-notthrow!
 
 ### Execution time assertions 
 ? Assert-NotExceed (name?)

@@ -1,123 +1,7 @@
 . $PSScriptRoot\Assert-Equivalent.ps1
 . $PSScriptRoot\..\testHelpers.ps1
 
-Describe 'Test-Equivalent' {   
-    It "Comparing single values: '<Actual>' and '<Expected>' returns $null" -TestCases @(
-        @{Actual = 1; Expected = 1}, # same numbers
-        @{Actual = 2.0; Expected = 2.0}, # same values
-        @{Actual = "abc"; Expected = "abc"} # same strings
-        @{Actual = -1.0; Expected = -1} # same values different types
-        @{Actual = {abc}; Expected = "abc"} # actual serializes to the same value as expected
-        @{Actual = @("abc"); Expected = "abc"} # single value in array is considered the same
-        @{Actual = "abc"; Expected = @("abc")} # single value in array is considered the same
-    ) { 
-        param ($Actual, $Expected) 
-        
-        Test-Equivalent -Expected $Expected -Actual $Actual | Verify-Null
-    }
-
-    It "Comparing different values: '<Left>' and '<Right>' values returns report" -TestCases @(
-        @{Left = 1; Right = 7},
-        @{Left = 2; Right = 10},
-        @{Left = "abc"; Right = "def"}
-        @{Left = -1.0; Right = -99}        
-    ) { 
-        param ($Left, $Right) 
-        
-        Test-Equivalent -Expected $Left -Actual $Right | Verify-NotNull
-    }
-
-    It "Comparing the same instance of a psObject returns True"{ 
-        $actual = $expected = New-PSObject @{ Name = 'Jakub' }
-        Verify-Same -Expected $expected -Actual $actual
-
-        Test-Equivalent -Expected $expected -Actual $actual | Verify-Null
-    }
-
-    It "Comparing different instances of a psObject returns $null when the objects have the same values" -TestCases @(
-        @{
-            Expected = New-PSObject @{ Name = 'Jakub' }
-            Actual =   New-PSObject @{ Name = 'Jakub' } 
-        },
-        @{
-            Expected = New-PSObject @{ Name = 'Jakub' } 
-            Actual =   New-PSObject @{ Name = 'Jakub' } 
-         },
-        @{
-            Expected = New-PSObject @{ Age = 28 } 
-            Actual =   New-PSObject @{ Age = '28' } 
-         },
-        @{
-            Expected = New-PSObject @{ Age = 28 } 
-            Actual =   New-PSObject @{ Age = {28} } 
-         }
-    ) { 
-        param ($Expected, $Actual)
-        Verify-NotSame -Expected $expected -Actual $actual
-
-        Test-Equivalent -Expected $expected -Actual $actual | Verify-Null
-    }
-
-    It "Comparing psObjects returns Report when the objects have different values" -TestCases @(
-        @{
-            Expected =  New-PSObject @{ Name = 'Jakub'; Age = 28 }
-            Actual = New-PSObject @{ Name = 'Jakub'; Age = 19 } 
-        },
-        @{
-            Expected =  New-PSObject @{ Name = 'Jakub'; Age = 28 } 
-            Actual = New-PSObject @{ Name = 'Jakub'} 
-         }
-    ) { 
-        param ($Expected, $Actual)
-        Verify-NotSame -Expected $expected -Actual $actual
-
-        Test-Equivalent -Expected $expected -Actual $actual | Verify-NotNull
-    }
-
-    Add-Type -TypeDefinition @"
-    using System;
-
-    namespace TestObjects {
-        public class Person {
-            public string Name {get;set;}
-            public string Age {get;set;}
-        }
-    }
-"@
-    It "Comparing psObject with class returns $null when the objects have the same values" -TestCases @(
-        @{
-            Expected = New-Object -TypeName TestObjects.Person -Property @{ Name = 'Jakub'; Age  = 28}
-            Actual =   New-PSObject @{ Name = 'Jakub'; Age = 28 } 
-        }
-    ) { 
-        param ($Expected, $Actual)
-
-        Test-Equivalent -Expected $expected -Actual $actual | Verify-Null
-    }
-
-
-    It "Comparing psObjects with collections returns report when the items in the collection differ" -TestCases @(
-        @{
-            Expected = New-PSObject @{ Numbers = 1,2,3 } 
-            Actual =   New-PSObject @{ Numbers = 3,4,5 } 
-        }
-    ) { 
-        param ($Expected, $Actual)
-
-        Test-Equivalent -Expected $expected -Actual $actual | Verify-NotNull
-    }
-
-    It "Comparing psObjects with collections returns report when the items in the collection differ" -TestCases @(
-        @{
-            Expected = New-PSObject @{ Objects = (New-PSObject @{ Name = "Jan" }), (New-PSObject @{ Name = "Petr" }) }
-            Actual =   New-PSObject @{ Objects = (New-PSObject @{ Name = "Jan" }), (New-PSObject @{ Name = "Tomas" }) }
-        }
-    ) { 
-        param ($Expected, $Actual)
-
-        Test-Equivalent -Expected $expected -Actual $actual | Verify-NotNull
-    }
-}
+Add-Type -TypeDefinition 'namespace Assertions.TestType { public class Person { public string Name {get;set;} public int Age {get;set;}}}'
 
 Describe "Test-Value" {
     It "Given '<value>', which is a value, string, enum or array with a single item of those types it returns `$true" -TestCases @(
@@ -129,7 +13,7 @@ Describe "Test-Value" {
         @{ Value = [System.DayOfWeek]::Monday},
         @{ Value = @("abc")},
         @{ Value = @(1)}
-    ){  
+    ) {  
         param($Value)
         Test-Value -Value $Value | Verify-True
     }
@@ -145,7 +29,7 @@ Describe "Test-Value" {
         @{ Value = {} },
         @{ Value = [type] },
         @{ Value = (New-Object -TypeName Diagnostics.Process) }
-    ){  
+    ) {  
         param($Value)
         Test-Value -Value $Value | Verify-False
     }
@@ -157,7 +41,7 @@ Describe "Test-Same" {
         @{ Value = @() },
         @{ Value = [Type] },
         @{ Value = (New-Object -TypeName Diagnostics.Process) }
-    ){
+    ) {
         param($Value)
         Test-Same -Expected $Value -Actual $Value | Verify-True
 
@@ -166,7 +50,7 @@ Describe "Test-Same" {
     It "Given different instances of a reference type it returns `$false" -TestCases @(
         @{ Actual = @(); Expected = @() },
         @{ Actual = (New-Object -TypeName Diagnostics.Process) ; Expected = (New-Object -TypeName Diagnostics.Process) }
-    ){
+    ) {
         param($Expected, $Actual)
         Test-Same -Expected $Expected -Actual $Actual | Verify-False
     }
@@ -306,7 +190,6 @@ Describe "Format-PSObject" {
 }
 
 Describe "Format-Object" {
-    $null = Add-Type -TypeDefinition 'namespace Assertions.TestType { public class Person { public string Name {get;set;} public int Age {get;set;}}}'
     It "Formats object '<value>' to '<expected>'" -TestCases @(
         @{ Value = (New-PSObject @{Name = 'Jakub'; Age = 28}); Expected = "PSCustomObject{Age=28; Name=Jakub}"},
         @{ Value = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28}); Expected = "Person{Age=28; Name=Jakub}"}
@@ -340,7 +223,7 @@ Describe "Format-Boolean" {
 
 Describe "Format-Null" { 
     It "Formats null to '`$null'" {
-        Format-Null -Value $Value | Verify-Equal '$null'
+        Format-Null | Verify-Equal '$null'
     }
 }
 
@@ -402,8 +285,94 @@ Describe "Get-ValueNotEquivalentMessage" {
     }
 }
 
-Describe "Compare-Value" { 
-    It "Given two values that are equivalent '<expected>' '<actual>' it returns `$true" -TestCases @(
+Describe "Test-CollectionSize" {
+    It "Given two collections '<expected>' '<actual>' of the same size it returns `$true" -TestCases @(
+        @{ Actual = (1,2,3); Expected = (1,2,3)},
+        @{ Actual = (1,2,3); Expected = (3,2,1)}
+    ) {
+        param ($Actual, $Expected)
+        Test-CollectionSize -Actual $Actual -Expected $Expected | Verify-True
+    }
+
+    It "Given two collections '<expected>' '<actual>' of different sizes it returns `$false" -TestCases @(
+        @{ Actual = (1,2,3); Expected = (1,2,3,4)},
+        @{ Actual = (1,2,3); Expected = (1,2)}
+        @{ Actual = (1,2,3); Expected = @()}
+    ) {
+        param ($Actual, $Expected)
+        Test-CollectionSize -Actual $Actual -Expected $Expected | Verify-False
+    }
+}
+
+Describe "Get-CollectionSizeNotTheSameMessage" {
+    It "Given two collections of differrent sizes it returns the correct message" {
+        Get-CollectionSizeNotTheSameMessage -Expected (1,2,3) -Actual (1,2) | Verify-Equal "Expected collection '1, 2, 3' with length '3' to be the same size as the actual collection, but got '1, 2' with length '2'."
+    }
+}
+
+Describe "Compare-Collection" {
+    It "Given two collections '<expected>' '<actual>' of different sizes it returns `$false" -TestCases @(
+        @{ Actual = (1,2,3); Expected = (1,2,3)},
+        @{ Actual = (1,2,3); Expected = (3,2,1)}
+    ) {
+        param ($Actual, $Expected)
+        Compare-Collection -Actual $Actual -Expected $Expected | Verify-True
+    }
+
+    It "Given two collections '<expected>' '<actual>' it compares each value with each value and returns `$true if all of them are equivalent" -TestCases @(
+        @{ Actual = (1,2,3); Expected = (1,2,3)},
+        @{ Actual = (1,2,3); Expected = (3,2,1)}
+    ) {
+        param ($Actual, $Expected)
+        Compare-Collection -Actual $Actual -Expected $Expected | Verify-True
+    }
+
+    It "Given two collections '<expected>' '<actual>' it compares each value with each value and returns `$false if any of them are not equivalent" -TestCases @(
+        @{ Actual = (1,2,3); Expected = (4,5,6)},
+        @{ Actual = (1,2,3); Expected = (1,2,2)},
+        @{ Actual = (1,2,3); Expected = (3,2,1)}
+    ) {
+        param ($Actual, $Expected)
+        Compare-Collection -Actual $Actual -Expected $Expected | Verify-False
+    }
+}
+
+Describe "New-ComparisonReport" { 
+    It "Given no values it returns empty report" { 
+        $report = New-ComparisonReport
+
+        #assertion roulette but I am fine with it
+        $report.Actual | Verify-Null
+        $report.ActualAdapted | Verify-Null
+        $report.ActualFormatted | Verify-Equal ""
+
+        $report.Expected | Verify-Null
+        $report.ExpectedAdapted | Verify-Null
+        $report.ExpectedFormatted | Verify-Equal ""
+
+        $report.Equivalent = $false
+        $report.Report | Verify-Equal -Expected ""
+    }
+
+    It "Given all value it returns populated report" { 
+        $report = New-ComparisonReport -Actual "false" -ActualAdapted $false -ActualFormatted '$false' -Expected "false" -ExpectedAdapted $false -ExpectedFormatted '$false' -Equivalent $true -Report "result"
+
+        #assertion roulette but I am fine with it
+        $report.Actual | Verify-Equal 'false'
+        $report.ActualAdapted | Verify-Equal $false
+        $report.ActualFormatted | Verify-Equal '$false'
+
+        $report.Expected | Verify-Equal 'false'
+        $report.ExpectedAdapted | Verify-Equal $false
+        $report.ExpectedFormatted | Verify-Equal '$false'
+
+        $report.Equivalent = $true
+        $report.Report | Verify-Equal "result"
+    }
+}
+
+Describe "Compare-EquivalentObject" { 
+    It "Given values '<expected>' and '<actual>' that are equivalent returns report with Equivalent set to `$true" -TestCases @(
         @{ Actual = $null; Expected = $null },
         @{ Actual = ""; Expected = "" },
         @{ Actual = $true; Expected = $true },
@@ -416,17 +385,190 @@ Describe "Compare-Value" {
         @{ Actual = "abc"; Expected = "abc" },
         @{ Actual = @("abc"); Expected = "abc" },
         @{ Actual = "abc"; Expected = @("abc") },
-        @{ Actual = (1,2,3); Expected = "1, 2, 3" },
         @{ Actual = {abc}; Expected = "abc" },
-        @{ Actual = "abc"; Expected = {abc} }
-    ) {
-        param ($Actual, $Expected)
-        Compare-Value -Actual $Actual -Expected $Expected | Verify-True
+        @{ Actual = "abc"; Expected = {abc} },
+        @{ Actual = {abc}; Expected = {abc} }
+    ) { 
+        param ($Actual, $Expected) 
+        $report = Compare-EquivalentObject -Expected $Expected -Actual $Actual 
+        $report.Equivalent | Verify-True 
+    }
+
+    It "Given values '<expected>' and '<actual>' that are not equivalent it returns report with Equivalent set to `$false and " -TestCases @(
+        @{ Actual = $null; Expected = 1 },
+        @{ Actual = $null; Expected = "" },
+        @{ Actual = $true; Expected = $false },
+        @{ Actual = $true; Expected = 'False' },
+        @{ Actual = 1; Expected = -1 },
+        @{ Actual = "1"; Expected = 1.01 },
+        @{ Actual = "abc"; Expected = "a b c" },
+        @{ Actual = @("abc", "bde"); Expected = "abc" },
+        @{ Actual = {def}; Expected = "abc" },
+        @{ Actual = "def"; Expected = {abc} },
+        @{ Actual = {abc}; Expected = {def} }       
+    ) { 
+        param ($Actual, $Expected) 
+        $report = Compare-EquivalentObject -Expected $Expected -Actual $Actual 
+        $report.Equivalent | Verify-False
+    }
+
+    It "Comparing the same instance of a psObject returns True"{ 
+        $actual = $expected = New-PSObject @{ Name = 'Jakub' }
+        Verify-Same -Expected $expected -Actual $actual
+
+        $report = Compare-EquivalentObject -Expected $expected -Actual $actual 
+        $report.Equivalent | Verify-True
+    }
+
+    It "Given PSObjects '<expected>' and '<actual> that are different instances but have the same values it returns report with Equivalent set to `$true" -TestCases @(
+        @{
+            Expected = New-PSObject @{ Name = 'Jakub' }
+            Actual =   New-PSObject @{ Name = 'Jakub' } 
+        },
+        @{
+            Expected = New-PSObject @{ Name = 'Jakub' } 
+            Actual =   New-PSObject @{ Name = 'Jakub' } 
+         },
+        @{
+            Expected = New-PSObject @{ Age = 28 } 
+            Actual =   New-PSObject @{ Age = '28' } 
+         }
+    ) { 
+        param ($Expected, $Actual)
+        Verify-NotSame -Expected $Expected -Actual $Actual
+
+        $report = Compare-EquivalentObject -Expected $Expected -Actual $Actual
+        $report.Equivalent | Verify-True
+    }
+
+    It "Given PSObjects '<expected>' and '<actual> that have different values in some of the properties it returns report with Equivalent set to `$false" -TestCases @(
+        @{
+            Expected =  New-PSObject @{ Name = 'Jakub'; Age = 28 }
+            Actual = New-PSObject @{ Name = 'Jakub'; Age = 19 } 
+        },
+        @{
+            Expected =  New-PSObject @{ Name = 'Jakub'; Age = 28 } 
+            Actual = New-PSObject @{ Name = 'Jakub'} 
+         }
+    ) { 
+        param ($Expected, $Actual)
+        Verify-NotSame -Expected $Expected -Actual $Actual
+
+        $report = Compare-EquivalentObject -Expected $Expected -Actual $Actual
+        $report.Equivalent | Verify-False
+    }
+
+    It "Given PSObject '<expected>' and object '<actual> that have the same values it returns report with Equivalent set to `$true" -TestCases @(
+        @{
+            Expected = New-Object -TypeName Assertions.TestType.Person -Property @{ Name = 'Jakub'; Age  = 28}
+            Actual =   New-PSObject @{ Name = 'Jakub'; Age = 28 } 
+        }
+    ) { 
+        param ($Expected, $Actual)
+
+        $report = Compare-EquivalentObject -Expected $Expected -Actual $Actual
+        $report.Equivalent | Verify-True
+    }
+
+
+    It "Given PSObjects '<expected>' and '<actual> that contain different arrays in the same property returns report with Equivalent set to `$false" -TestCases @(
+        @{
+            Expected = New-PSObject @{ Numbers = 1,2,3 } 
+            Actual =   New-PSObject @{ Numbers = 3,4,5 } 
+        }
+    ) { 
+        param ($Expected, $Actual)
+
+        $report = Compare-EquivalentObject -Expected $Expected -Actual $Actual
+        $report.Equivalent | Verify-False
+    }
+
+    It "Comparing psObjects with collections returns report when the items in the collection differ" -TestCases @(
+        @{
+            Expected = New-PSObject @{ Objects = (New-PSObject @{ Name = "Jan" }), (New-PSObject @{ Name = "Petr" }) }
+            Actual =   New-PSObject @{ Objects = (New-PSObject @{ Name = "Jan" }), (New-PSObject @{ Name = "Tomas" }) }
+        }
+    ) { 
+        param ($Expected, $Actual)
+
+        $report = Compare-EquivalentObject -Expected $Expected -Actual $Actual
+        $report.Equivalent | Verify-False
     }
 }
 
-Describe "Test-Equivalent2" { 
-    It "Returns correct message when two values are not equal" {
-        Test-Equivalent2 -Expected 1 -Actual 2 | Verify-Equal "Expected '1' to be equivalent to the actual value, but got '2'."
+Describe "Compare-Object" { 
+    It "Given PSObjects '<expected>' and '<actual> that are different instances but have the same values it returns report with Equivalent set to `$true" -TestCases @(
+        @{
+            Expected = New-PSObject @{ Name = 'Jakub' }
+            Actual =   New-PSObject @{ Name = 'Jakub' } 
+        },
+        @{
+            Expected = New-PSObject @{ Name = 'Jakub' } 
+            Actual =   New-PSObject @{ Name = 'Jakub' } 
+         },
+        @{
+            Expected = New-PSObject @{ Age = 28 } 
+            Actual =   New-PSObject @{ Age = '28' } 
+         }
+    ) { 
+        param ($Expected, $Actual)
+        Verify-NotSame -Expected $Expected -Actual $Actual
+
+        $report = Compare-Object -Expected $Expected -Actual $Actual
+        $report.Equivalent | Verify-True
+    }
+
+    It "Given PSObjects '<expected>' and '<actual> that have different values in some of the properties it returns report with Equivalent set to `$false" -TestCases @(
+        @{
+            Expected =  New-PSObject @{ Name = 'Jakub'; Age = 28 }
+            Actual = New-PSObject @{ Name = 'Jakub'; Age = 19 } 
+        },
+        @{
+            Expected =  New-PSObject @{ Name = 'Jakub'; Age = 28 } 
+            Actual = New-PSObject @{ Name = 'Jakub'} 
+         }
+    ) { 
+        param ($Expected, $Actual)
+        Verify-NotSame -Expected $Expected -Actual $Actual
+
+        $report =  -Expected $Expected -Actual $Actual
+        $report.Equivalent | Verify-False
+    }
+
+    It "Given PSObject '<expected>' and object '<actual> that have the same values it returns report with Equivalent set to `$true" -TestCases @(
+        @{
+            Expected = New-Object -TypeName Assertions.TestType.Person -Property @{ Name = 'Jakub'; Age  = 28}
+            Actual =   New-PSObject @{ Name = 'Jakub'; Age = 28 } 
+        }
+    ) { 
+        param ($Expected, $Actual)
+
+        $report =  -Expected $Expected -Actual $Actual
+        $report.Equivalent | Verify-True
+    }
+
+
+    It "Given PSObjects '<expected>' and '<actual> that contain different arrays in the same property returns report with Equivalent set to `$false" -TestCases @(
+        @{
+            Expected = New-PSObject @{ Numbers = 1,2,3 } 
+            Actual =   New-PSObject @{ Numbers = 3,4,5 } 
+        }
+    ) { 
+        param ($Expected, $Actual)
+
+        $report =  -Expected $Expected -Actual $Actual
+        $report.Equivalent | Verify-False
+    }
+
+    It "Comparing psObjects with collections returns report when the items in the collection differ" -TestCases @(
+        @{
+            Expected = New-PSObject @{ Objects = (New-PSObject @{ Name = "Jan" }), (New-PSObject @{ Name = "Petr" }) }
+            Actual =   New-PSObject @{ Objects = (New-PSObject @{ Name = "Jan" }), (New-PSObject @{ Name = "Tomas" }) }
+        }
+    ) { 
+        param ($Expected, $Actual)
+
+        $report =  -Expected $Expected -Actual $Actual
+        $report.Equivalent | Verify-False
     }
 }
