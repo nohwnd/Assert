@@ -15,11 +15,11 @@ function Test-ScriptBlock ($Value) {
     $Value -is [ScriptBlock]
 }
 
-function Get-ValueNotEquivalentMessage ($Expected, $Actual) { 
+function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property) { 
     $Expected = Format-Custom -Value $Expected 
     $Actual = Format-Custom -Value $Actual
-
-    "Expected '$Expected' to be equivalent to the actual value, but got '$Actual'."
+    $propertyInfo = if ($Property) { " property $Property with value" }
+    "Expected$propertyInfo '$Expected' to be equivalent to the actual value, but got '$Actual'."
 }
 
 function Format-Collection ($Value) { 
@@ -48,6 +48,10 @@ function Format-Boolean ($Value) {
     '$' + $Value.ToString().ToLower()
 }
 
+function Format-ScriptBlock ($Value) {
+    '{' + $Value + '}'
+}
+
 function Format-Custom ($Value) { 
     if ($null -eq $Value) 
     { 
@@ -57,6 +61,11 @@ function Format-Custom ($Value) {
     if ($Value -is [bool])
     {
         return Format-Boolean -Value $Value
+    }
+
+    if (Test-ScriptBlock -Value $Value)
+    {
+        return Format-ScriptBlock -Value $Value
     }
 
     if (Test-Value -Value $Value) 
@@ -120,87 +129,77 @@ function Compare-Collection ($Expected, $Actual) {
     $true
 }
 
-function New-ComparisonReport {
-    param(
-        $Actual = $null, $ActualAdapted = $null, [string]$ActualFormatted = "", 
-        $Expected = $null, $ExpectedAdapted = $null, [string]$ExpectedFormatted = "", 
-        [bool]$Equivalent = $false,
-        [string]$Report = ""
-    ) 
+function Compare-Object ($Actual, $Expected, $Path) {
+    Write-Host "compare object running! $Actual $expected"
+    $actualProperties = $Actual.PsObject.Properties
+    $expectedProperties = $Expected.PsObject.Properties
 
-    New-PSObject @{
-        Actual = $Actual
-        ActualAdapted = $ActualAdapted
-        ActualFormatted = $ActualFormatted
-
-        Expected = $Expected
-        ExpectedAdapted = $ActualAdapted
-        ExpectedFormatted = $ExpectedFormatted
-
-        Equivalent = $Equivalent
-        Report = $Report
-    }
-}
-
-function Compare-Object ($Actual, $Expected) {
-    $result = ""
-    $a = $Actual.PsObject.Properties
-    $e = $Expected.PsObject.Properties
-
-    foreach ($property in $a)
+    foreach ($property in $expectedProperties)
     {
         $propertyName = $property.Name
-        $ep = $e | Where { $_.Name -eq $propertyName}
-        if (-not $ep)
+        $actualProperty = $actualProperties | Where { $_.Name -eq $propertyName}
+        if (-not $actualProperty)
         {
-            $result += "Actual has property '$PropertyName' that the other object does not have"
+            "Expected has property '$PropertyName' that the other object does not have."
             continue
         }
     
-        #$r = Compare-EquivalentObject $ep.Value $property.Value
-        if ($ep.Value -ne $property.value)
-        {
-            $result += "Property '$PropertyName' differs in $($ep.Value) and $($property.Value)"
-        }
+        Compare-EquivalentObject -Expected $property.Value -Actual $actualProperty.Value -Path "$Path.$propertyName"
     }
 
-    #check if there are any extra expected object props
-    $aNames = $a | select -expand name
+    #check if there are any extra actual object props
+    $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name
 
-    $eNotInActual =  $e | where {$aNames -notcontains $_.name }
+    $propertiesNotInExpected =  $actualProperties | where {$expectedPropertyNames -notcontains $_.name }
         
-    foreach ($no in $eNotInActual)
+    foreach ($property in $propertiesNotInExpected)
     {
-        $result += "Expected has property '$($no.name)' that the other object does not have"
+        "Expected is missing property '$($property.Name)' that the other object has."
     }    
 }
 
-function Compare-EquivalentObject ($Actual, $Expected) { 
+function Compare-EquivalentObject ($Actual, $Expected, $Path) { 
     #start by null checks to avoid implementing null handling
     #logic in the functions that follow
     if ($null -eq $Expected)
     {
-        return New-ComparisonReport -Equivalent ($Expected -eq $Actual)
+        if ($Expected -ne $Actual)
+        {
+           Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+        }
+        return
     }
 
     #fix that string 'false' becomes $true boolean
     if ($Actual -is [Bool] -and $Expected -is [string] -and "$Expected" -eq 'False') 
     {
         $Expected = $false
-        return  New-ComparisonReport -Equivalent ($Expected -eq $Actual)
+        if ($Expected -ne $Actual)
+        {
+            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+        }
+        return
     }
 
     if ($Expected -is [Bool] -and $Actual -is [string] -and "$Actual" -eq 'False') 
     {
         $Actual = $false
-        return  New-ComparisonReport -Equivalent ($Expected -eq $Actual)
+        if ($Expected -ne $Actual)
+        {
+            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+        }
+        return
     }
 
     #fix that scriptblocks are compared by reference
     if (Test-ScriptBlock -Value $Expected) 
     {
         #forcing scriptblock to serialize to string and then comparing that
-        return New-ComparisonReport -Equivalent ("$Expected" -eq $Actual)
+        if ("$Expected" -ne $Actual)
+        {
+            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+        }
+        return
     }
 
     #test value types, strings, and single item arrays with values in them as values
@@ -208,13 +207,17 @@ function Compare-EquivalentObject ($Actual, $Expected) {
     if (Test-Value -Value $Expected) 
     {
         $Expected = $($Expected)
-        return New-ComparisonReport -Equivalent ($Expected -eq $Actual)
+        if ($Expected -ne $Actual)
+        {
+            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+        }
+        return
     }
 
     #are the same instance
-    if (Test-Same -Expected $Expected -Actual $Actual) 
+    if (Test-Same -Expected $Expected -Actual $Actual)
     { 
-        return New-ComparisonReport -Equivalent $true
+        return
     }
 
     #compare collection first
@@ -250,7 +253,7 @@ function Compare-EquivalentObject ($Actual, $Expected) {
     #same for dictionary
 
     #here we have two distinct objects that we need to compare (ehm finally)
-    Compare-Object -Expected $Expected -Actual $Actual
+    Compare-Object -Expected $Expected -Actual $Actual -Property $Path
 }
 
 function arePsObjects ($value1, $value2) {
