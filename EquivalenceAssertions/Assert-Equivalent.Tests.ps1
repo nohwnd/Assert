@@ -324,29 +324,28 @@ Describe "Get-CollectionSizeNotTheSameMessage" {
 }
 
 Describe "Compare-Collection" {
-    It "Given two collections '<expected>' '<actual>' of different sizes it returns `$false" -TestCases @(
+    It "Given two collections '<expected>' '<actual>' of different sizes it returns message '<message>'" -TestCases @(
+        @{ Actual = (1,2,3); Expected = (1,2,3,4); Message = "Expected collection '1, 2, 3, 4' with length '4' to be the same size as the actual collection, but got '1, 2, 3' with length '3'."},
+        @{ Actual = (1,2,3); Expected = (3,1); Message = "Expected collection '3, 1' with length '2' to be the same size as the actual collection, but got '1, 2, 3' with length '3'." }
+    ) {
+        param ($Actual, $Expected, $Message)
+        Compare-Collection -Actual $Actual -Expected $Expected | Verify-Equal $Message
+    }
+
+    It "Given two collections '<expected>' '<actual>' it compares each value with each value and returns `$null if all of them are equivalent" -TestCases @(
         @{ Actual = (1,2,3); Expected = (1,2,3)},
         @{ Actual = (1,2,3); Expected = (3,2,1)}
     ) {
         param ($Actual, $Expected)
-        Compare-Collection -Actual $Actual -Expected $Expected | Verify-True
+        Compare-Collection -Actual $Actual -Expected $Expected | Verify-Null
     }
 
-    It "Given two collections '<expected>' '<actual>' it compares each value with each value and returns `$true if all of them are equivalent" -TestCases @(
-        @{ Actual = (1,2,3); Expected = (1,2,3)},
-        @{ Actual = (1,2,3); Expected = (3,2,1)}
+    It "Given two collections '<expected>' '<actual>' it compares each value with each value and returns message '<message> if any of them are not equivalent" -TestCases @(
+        @{ Actual = (1,2,3); Expected = (4,5,6); Message = "Expected collection '4, 5, 6' to be equivalent to '1, 2, 3' but some values were missing: '4, 5, 6'."},
+        @{ Actual = (1,2,3); Expected = (1,2,2); Message = "Expected collection '1, 2, 2' to be equivalent to '1, 2, 3' but some values were missing: '2'."}
     ) {
-        param ($Actual, $Expected)
-        Compare-Collection -Actual $Actual -Expected $Expected | Verify-True
-    }
-
-    It "Given two collections '<expected>' '<actual>' it compares each value with each value and returns `$false if any of them are not equivalent" -TestCases @(
-        @{ Actual = (1,2,3); Expected = (4,5,6)},
-        @{ Actual = (1,2,3); Expected = (1,2,2)},
-        @{ Actual = (1,2,3); Expected = (3,2,1)}
-    ) {
-        param ($Actual, $Expected)
-        Compare-Collection -Actual $Actual -Expected $Expected | Verify-False
+        param ($Actual, $Expected, $Message)
+        Compare-Collection -Actual $Actual -Expected $Expected | Verify-Equal $Message
     }
 }
 
@@ -383,7 +382,8 @@ Describe "Compare-EquivalentObject" {
         @{ Actual = @("abc", "bde"); Expected = "abc"; Message = "Expected 'abc' to be equivalent to the actual value, but got 'abc, bde'." },
         @{ Actual = {def}; Expected = "abc"; Message = "Expected 'abc' to be equivalent to the actual value, but got '{def}'." },
         @{ Actual = "def"; Expected = {abc}; Message = "Expected '{abc}' to be equivalent to the actual value, but got 'def'." },
-        @{ Actual = {abc}; Expected = {def}; Message = "Expected '{def}' to be equivalent to the actual value, but got '{abc}'." }       
+        @{ Actual = {abc}; Expected = {def}; Message = "Expected '{def}' to be equivalent to the actual value, but got '{abc}'." }    
+        @{ Actual = (New-PSObject @{ Name = 'Jakub' }); Expected = "a"; Message = "Expected 'a' to be equivalent to the actual value, but got 'PSObject{Name=Jakub}'." }       
     ) { 
         param ($Actual, $Expected, $Message) 
         Compare-EquivalentObject -Expected $Expected -Actual $Actual | Verify-Equal $Message
@@ -416,7 +416,7 @@ Describe "Compare-EquivalentObject" {
         Compare-EquivalentObject -Expected $Expected -Actual $Actual | Verify-Null
     }
 
-    It "Given PSObjects '<expected>' and '<actual> that have different values in some of the properties it returns report with Equivalent set to `$false" -TestCases @(
+    It "Given PSObjects '<expected>' and '<actual> that have different values in some of the properties it returns message '<message>'" -TestCases @(
         @{
             Expected = New-PSObject @{ Name = 'Jakub'; Age = 28 }
             Actual = New-PSObject @{ Name = 'Jakub'; Age = 19 }
@@ -439,7 +439,7 @@ Describe "Compare-EquivalentObject" {
         Compare-EquivalentObject -Expected $Expected -Actual $Actual | Verify-Equal $Message
     }
 
-    It "Given PSObject '<expected>' and object '<actual> that have the same values it returns report with Equivalent set to `$true" -TestCases @(
+    It "Given PSObject '<expected>' and object '<actual> that have the same values it returns `$null" -TestCases @(
         @{
             Expected = New-Object -TypeName Assertions.TestType.Person -Property @{ Name = 'Jakub'; Age  = 28}
             Actual =   New-PSObject @{ Name = 'Jakub'; Age = 28 } 
@@ -450,7 +450,7 @@ Describe "Compare-EquivalentObject" {
     }
 
 
-    It "Given PSObjects '<expected>' and '<actual> that contain different arrays in the same property returns report with Equivalent set to `$false" -TestCases @(
+    It "Given PSObjects '<expected>' and '<actual> that contain different arrays in the same property returns the correct message" -TestCases @(
         @{
             Expected = New-PSObject @{ Numbers = 1,2,3 } 
             Actual =   New-PSObject @{ Numbers = 3,4,5 } 
@@ -458,17 +458,17 @@ Describe "Compare-EquivalentObject" {
     ) { 
         param ($Expected, $Actual)
 
-        $report = Compare-EquivalentObject -Expected $Expected -Actual $Actual | Verify-Equal "message"
+        $report = Compare-EquivalentObject -Expected $Expected -Actual $Actual | Verify-Equal "Expected collection '1, 2, 3' to be equivalent to '3, 4, 5' but some values were missing: '1, 2'."
     }
 
-    It "Comparing psObjects with collections returns report when the items in the collection differ" -TestCases @(
+    It "Comparing psObjects with collections returns the correct message when the items in the collection differ" -TestCases @(
         @{
             Expected = New-PSObject @{ Objects = (New-PSObject @{ Name = "Jan" }), (New-PSObject @{ Name = "Petr" }) }
             Actual =   New-PSObject @{ Objects = (New-PSObject @{ Name = "Jan" }), (New-PSObject @{ Name = "Tomas" }) }
         }
     ) { 
         param ($Expected, $Actual)
-        Compare-EquivalentObject -Expected $Expected -Actual $Actual | Verify-Equal "mess"
+        Compare-EquivalentObject -Expected $Expected -Actual $Actual | Verify-Equal "Expected collection 'PSObject{Name=Jan}, PSObject{Name=Petr}' to be equivalent to 'PSObject{Name=Jan}, PSObject{Name=Tomas}' but some values were missing: 'PSObject{Name=Petr}'."
     }
 }
 

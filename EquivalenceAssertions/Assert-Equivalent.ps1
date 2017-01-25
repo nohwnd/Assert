@@ -23,7 +23,7 @@ function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property) {
 }
 
 function Format-Collection ($Value) { 
-    $Value -join ', '
+    ($Value | % { Format-Custom -Value $_ }) -join ', '
 }
 
 function Format-PSObject ($Value) {
@@ -126,7 +126,37 @@ function Get-CollectionSizeNotTheSameMessage ($Actual, $Expected) {
 }
 
 function Compare-Collection ($Expected, $Actual) {
-    $true
+    if (-not (Test-CollectionSize -Expected $Expected -Actual $Actual)) {
+        return Get-CollectionSizeNotTheSameMessage -Expected $Expected -Actual $Actual
+    }
+
+    $eEnd = $Expected.Length
+    $aEnd = $Actual.Length
+    $taken = @()
+    $notFound = @()
+    for ($e=0; $e -lt $eEnd; $e++) { 
+        $currentExpected = $Expected[$e]
+        $found = $false
+        for ($a=0; $a -lt $aEnd; $a++) { 
+            $currentActual = $Actual[$a]
+            if ((-not (Compare-EquivalentObject -Expected $currentExpected -Actual $currentActual)) -and $taken -notcontains $a) 
+            {
+                $taken += $a
+                $found = $true
+            }
+        }
+        if (-not $found) 
+        {
+            $notFound += $currentExpected
+        }
+    }
+    $Expected = Format-Custom -Value $Expected
+    $Actual = Format-Custom -Value $Actual
+    $notFoundFormatted = Format-Custom -Value ( $notFound | % { Format-Custom -Value $_ } )
+    
+    if ($notFound) {
+        return "Expected collection '$Expected' to be equivalent to '$Actual' but some values were missing: '$notFoundFormatted'."
+    }
 }
 
 function Compare-Object ($Actual, $Expected, $Path) {
@@ -220,18 +250,13 @@ function Compare-EquivalentObject ($Actual, $Expected, $Path) {
         return
     }
 
-    #compare collection first
-    # if (Test-Collection -Value $Expected) { 
-    #    return Compare-Collection -Expected $Expected -Actual $Actual
-    # }
+    #compare collection
+    if (Test-Collection -Value $Expected) { 
+        return Compare-Collection -Expected $Expected -Actual $Actual
+    }
 
     # dictionaries? (they are IEnumerable so they must go befor collections)
     # hashtables?
-
-    # if (Test-Collection -Value $Value) 
-    # { 
-    #     return Format-Collection -Value $Value
-    # }
 
     # if (Test-PSObjectExactly -Value $Value)
     # {
