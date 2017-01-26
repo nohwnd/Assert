@@ -60,6 +60,18 @@ $actual = [PsCustomObject]@{ Name="Jakub"; Age=28; DrinksTooMuchCoffee = $true }
 $actual | Assert-Equivalent -Property Name, Age -Expected $Expected
 ```
 
+? maybe this can be made even more useful by providing a scriptblock for the `Assert-*`
+
+```powershell
+    $object | 
+        Assert-Equal { $actual.Name } -Expected "jakub" |
+        Assert-Equal { $actual.Age } -Expected "28" |
+        Assert-True  { $actual.DrinksTooMuchCoffee }
+```
+
+
+
+
 ? consider restricting expected value to be mandatory for assert-equal, to assert null use assert-null, helped me detect errors easily when I provide no $Expected value, or $Expected is coming from TestCases and I forget to provide the param, but it limits how you can mix values in testcases (imho small price to pay)
 
 
@@ -100,6 +112,17 @@ if I can construct the type then I will do -is check on it to be able to reuse r
 
 
 I need to check if a given comparator should be used (for example when value on the left side is bool and on the right side is string that is equivalent to a boolean) I will use `Use-*Comparator` function for that. Then optionally adapt the values in a `Update-*` function and carry out the test on the real (possibly adapted) values using a `Test-*` function. Then retreive a message using a `Get-*Message` function, and pack it in a result object that will have the incoming values, adapted values, and result message. This all will happen in a `Compare-*` function.
+
+
+- we got multiple categories of input, namely: 
+    - $null
+    - values
+    - hashtables
+    - dictionaries
+    - collections
+    - objects
+
+In the main comparison function we need to check which of the categories of objects is on the expected side to determine which comparator to use. Each of the comparators then need to check the actual side and act accordingly.
 
 
 ### General

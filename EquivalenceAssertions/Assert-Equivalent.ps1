@@ -1,6 +1,6 @@
 ﻿function Test-Value ($Value) {
     $Value = $($Value)
-    $Value -is [ValueType] -or $Value -is [string]
+    $Value -is [ValueType] -or $Value -is [string] -or $value -is [scriptblock]
 }
 
 function Test-Same ($Expected, $Actual) {
@@ -142,6 +142,19 @@ function Get-CollectionSizeNotTheSameMessage ($Actual, $Expected, $Property) {
 }
 
 function Compare-Collection ($Expected, $Actual, $Property) {
+    if (-not (Test-Collection -Value $Expected)) 
+    {
+        throw [ArgumentException]"Expected must be a collection."
+    }
+
+    if (-not (Test-Collection -Value $Actual)) 
+    { 
+        $expectedFormatted = Format-Collection -Value $Expected 
+        $expectedLength = $expected.Length
+        $actualFormatted = Format-Custom -Value $actual
+        return "Expected collection '$expectedFormatted' with length '$expectedLength', but got '$actualFormatted'."
+    }
+
     if (-not (Test-CollectionSize -Expected $Expected -Actual $Actual)) {
         return Get-CollectionSizeNotTheSameMessage -Expected $Expected -Actual $Actual -Property $Property
     }
@@ -176,53 +189,20 @@ function Compare-Collection ($Expected, $Actual, $Property) {
     }
 }
 
-function Compare-Object ($Actual, $Expected, $Path) {
-    $actualProperties = $Actual.PsObject.Properties
-    $expectedProperties = $Expected.PsObject.Properties
-
-    foreach ($property in $expectedProperties)
+function Compare-Value ($Actual, $Expected, $Property) { 
+    $Expected = $($Expected)
+    if (-not (Test-Value -Value $Expected)) 
     {
-        $propertyName = $property.Name
-        $actualProperty = $actualProperties | Where { $_.Name -eq $propertyName}
-        if (-not $actualProperty)
-        {
-            "Expected has property '$PropertyName' that the other object does not have."
-            continue
-        }
-    
-        Compare-EquivalentObject -Expected $property.Value -Actual $actualProperty.Value -Path "$Path.$propertyName"
+        throw [ArgumentException]"Expected must be a Value."
     }
 
-    #check if there are any extra actual object props
-    $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name
-
-    $propertiesNotInExpected =  $actualProperties | where {$expectedPropertyNames -notcontains $_.name }
-        
-    foreach ($property in $propertiesNotInExpected)
-    {
-        "Expected is missing property '$($property.Name)' that the other object has."
-    }    
-}
-
-function Compare-EquivalentObject ($Actual, $Expected, $Path) { 
-    #start by null checks to avoid implementing null handling
-    #logic in the functions that follow
-    if ($null -eq $Expected)
-    {
-        if ($Expected -ne $Actual)
-        {
-           Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
-        }
-        return
-    }
-
-    #fix that string 'false' becomes $true boolean
+     #fix that string 'false' becomes $true boolean
     if ($Actual -is [Bool] -and $Expected -is [string] -and "$Expected" -eq 'False') 
     {
         $Expected = $false
         if ($Expected -ne $Actual)
         {
-            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
         }
         return
     }
@@ -232,7 +212,7 @@ function Compare-EquivalentObject ($Actual, $Expected, $Path) {
         $Actual = $false
         if ($Expected -ne $Actual)
         {
-            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
         }
         return
     }
@@ -248,15 +228,76 @@ function Compare-EquivalentObject ($Actual, $Expected, $Path) {
         return
     }
 
+    if ($Expected -ne $Actual)
+    {
+        Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
+    }
+}
+
+function Test-Object ($Value) {
+    #here we need to approximate that that object is not value or any special category of object, so other checks might need to be added (such as for hashtables)
+
+    -not ($null -eq $Value -or (Test-Value -Value $Value) -or (Test-Collection -Value $Value))
+}
+
+function Compare-Object ($Actual, $Expected, $Property) {
+
+    if (-not (Test-Object -Value $Expected))
+    {
+        throw [ArgumentException]"Expected must be an object."
+    }
+
+    if (-not (Test-Object -Value $Actual)) {
+        $expectedFormatted = Format-Custom -Value $Expected
+        $actualFormatted = Format-Custom -Value $Actual
+        return "Expected object '$expectedFormatted', but got '$actualFormatted'."
+    }
+
+    $actualProperties = $Actual.PsObject.Properties
+    $expectedProperties = $Expected.PsObject.Properties
+
+    foreach ($p in $expectedProperties)
+    {
+        $propertyName = $p.Name
+        $actualProperty = $actualProperties | Where { $_.Name -eq $propertyName}
+        if (-not $actualProperty)
+        {
+            "Expected has property '$PropertyName' that the other object does not have."
+            continue
+        }
+    
+        Compare-EquivalentObject -Expected $p.Value -Actual $actualProperty.Value -Path "$Property.$propertyName"
+    }
+
+    #check if there are any extra actual object props
+    $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name
+
+    $propertiesNotInExpected =  $actualProperties | where {$expectedPropertyNames -notcontains $_.name }
+        
+    foreach ($p in $propertiesNotInExpected)
+    {
+        "Expected is missing property '$($p.Name)' that the other object has."
+    }    
+}
+
+function Compare-EquivalentObject ($Actual, $Expected, $Path) { 
+
+    #start by null checks to avoid implementing null handling
+    #logic in the functions that follow
+    if ($null -eq $Expected)
+    {
+        if ($Expected -ne $Actual)
+        {
+           Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+        }
+        return
+    }
+
     #test value types, strings, and single item arrays with values in them as values
     #expand the single item array to get to the value in it
     if (Test-Value -Value $Expected) 
     {
-        $Expected = $($Expected)
-        if ($Expected -ne $Actual)
-        {
-            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
-        }
+        Compare-Value -Actual $Actual -Expected $Expected -Property $Path
         return
     }
 
@@ -268,15 +309,13 @@ function Compare-EquivalentObject ($Actual, $Expected, $Path) {
 
     #compare collection
     if (Test-Collection -Value $Expected) { 
+
         return Compare-Collection -Expected $Expected -Actual $Actual -Property $Path
     }
 
     # dictionaries? (they are IEnumerable so they must go befor collections)
     # hashtables?
 
-    #having objects on expected side and values on actual side? 
-
-    #here we have two distinct objects that we need to compare (ehm finally)
     Compare-Object -Expected $Expected -Actual $Actual -Property $Path
 }
 
@@ -288,29 +327,29 @@ function Assert-Equivalent($Actual, $Expected) {
     }
 }
 
-"`n`n"
-"Objects are not equivalent:"
-$expected = New-PSObject @{
-    Name = 'nohwnd'
-    HasNoFreeTime = $true
-    DrinksTooMuchCoffee = $true
-    VersionsOfPowershellInstalled = (
-        (New-PSObject @{ Version = 3; OS = 'Vista' }),
-        (New-PSObject @{ Version = 4; OS = 'Win7' }),
-        (New-PSObject @{ Version = 5; OS = 'Win10' })
-    )
-    VersionsOfPesterInstalled = 3.4, 4.0
-}
-$actual = New-PSObject @{
-    Name = "someGuy"
-    VersionsOfPowershellInstalled = (
-        (New-PSObject @{ Version = 5; OS = 'Win10' })
-    )
-    VersionsOfPesterInstalled = ,(3.4)
-}
+# "`n`n"
+# "Objects are not equivalent:"
+# $expected = New-PSObject @{
+#     Name = 'nohwnd'
+#     HasNoFreeTime = $true
+#     DrinksTooMuchCoffee = $true
+#     VersionsOfPowershellInstalled = (
+#         (New-PSObject @{ Version = 3; OS = 'Vista' }),
+#         (New-PSObject @{ Version = 4; OS = 'Win7' }),
+#         (New-PSObject @{ Version = 5; OS = 'Win10' })
+#     )
+#     VersionsOfPesterInstalled = 3.4, 4.0
+# }
+# $actual = New-PSObject @{
+#     Name = "someGuy"
+#     VersionsOfPowershellInstalled = (
+#         (New-PSObject @{ Version = 5; OS = 'Win10' })
+#     )
+#     VersionsOfPesterInstalled = ,(3.4)
+# }
 
-"expected: " + ("$expected" -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
-"actual: " + ($actual -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
-"Summary:"
-Compare-EquivalentObject -Expected $expected -Actual $actual 2> $null
-"`n`n"
+# "expected: " + ("$expected" -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
+# "actual: " + ($actual -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
+# "Summary:"
+# Compare-EquivalentObject -Expected $expected -Actual $actual 2> $null
+# "`n`n"

@@ -9,5 +9,6 @@
 . $PSScriptRoot\Verify-Same.ps1
 . $PSScriptRoot\Verify-NotSame.ps1
 
-. $PSScriptRoot\Verify-AssertionFailed.ps1
+. $PSScriptRoot\Verify-Throw.ps1
 
+. $PSScriptRoot\Verify-AssertionFailed.ps1

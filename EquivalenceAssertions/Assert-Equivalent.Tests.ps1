@@ -4,7 +4,7 @@
 Add-Type -TypeDefinition 'namespace Assertions.TestType { public class Person { public string Name {get;set;} public int Age {get;set;}}}'
 
 Describe "Test-Value" {
-    It "Given '<value>', which is a value, string, enum or array with a single item of those types it returns `$true" -TestCases @(
+    It "Given '<value>', which is a value, string, enum, scriptblock or array with a single item of those types it returns `$true" -TestCases @(
         @{ Value = 1 },
         @{ Value = 2 },
         @{ Value = 1.2 },
@@ -12,7 +12,8 @@ Describe "Test-Value" {
         @{ Value = "abc"},
         @{ Value = [System.DayOfWeek]::Monday},
         @{ Value = @("abc")},
-        @{ Value = @(1)}
+        @{ Value = @(1)},
+        @{ Value = {abc}}
     ) {  
         param($Value)
         Test-Value -Value $Value | Verify-True
@@ -26,7 +27,6 @@ Describe "Test-Value" {
         @{ Value = @() },
         @{ Value = @(1,2) },
         @{ Value = @{} },
-        @{ Value = {} },
         @{ Value = [type] },
         @{ Value = (New-Object -TypeName Diagnostics.Process) }
     ) {  
@@ -354,10 +354,47 @@ Describe "Get-CollectionSizeNotTheSameMessage" {
     }
 }
 
+Describe "Compare-Value" { 
+    It "Given expected that is not a value it throws ArgumentException" {
+        $err = { Compare-Value -Actual "dummy" -Expected (Get-Process idle) } | Verify-Throw 
+        $err.Exception -is [ArgumentException] | Verify-True
+    }
+
+    It "Given values '<expected>' and '<actual>' that are not equivalent it returns message '<message>'." -TestCases @(
+        @{ Actual = $null; Expected = 1; Message = "Expected '1' to be equivalent to the actual value, but got '`$null'." },
+        @{ Actual = $null; Expected = ""; Message = "Expected '' to be equivalent to the actual value, but got '`$null'." },
+        @{ Actual = $true; Expected = $false; Message = "Expected '`$false' to be equivalent to the actual value, but got '`$true'." },
+        @{ Actual = $true; Expected = 'False'; Message = "Expected '`$false' to be equivalent to the actual value, but got '`$true'." },
+        @{ Actual = 1; Expected = -1; Message = "Expected '-1' to be equivalent to the actual value, but got '1'." },
+        @{ Actual = "1"; Expected = 1.01; Message = "Expected '1.01' to be equivalent to the actual value, but got '1'." },
+        @{ Actual = "abc"; Expected = "a b c"; Message = "Expected 'a b c' to be equivalent to the actual value, but got 'abc'." },
+        @{ Actual = @("abc", "bde"); Expected = "abc"; Message = "Expected 'abc' to be equivalent to the actual value, but got 'abc, bde'." },
+        @{ Actual = {def}; Expected = "abc"; Message = "Expected 'abc' to be equivalent to the actual value, but got '{def}'." },
+        @{ Actual = (New-PSObject @{ Name = 'Jakub' }); Expected = "abc"; Message = "Expected 'abc' to be equivalent to the actual value, but got 'PSObject{Name=Jakub}'." },
+        @{ Actual = (1,2,3); Expected = "abc"; Message = "Expected 'abc' to be equivalent to the actual value, but got '1, 2, 3'." }
+    ) {
+        param($Actual, $Expected, $Message)
+        Compare-Value -Actual $Actual -Expected $Expected | Verify-Equal $Message
+    }
+}
+
 Describe "Compare-Collection" {
+    It "Given expected that is not a collection it throws ArgumentException" {
+        $err = { Compare-Collection -Actual "dummy" -Expected 1 } | Verify-Throw 
+        $err.Exception -is [ArgumentException] | Verify-True
+    }
+
     It "Given two collections '<expected>' '<actual>' of different sizes it returns message '<message>'" -TestCases @(
         @{ Actual = (1,2,3); Expected = (1,2,3,4); Message = "Expected collection '1, 2, 3, 4' with length '4' to be the same size as the actual collection, but got '1, 2, 3' with length '3'."},
         @{ Actual = (1,2,3); Expected = (3,1); Message = "Expected collection '3, 1' with length '2' to be the same size as the actual collection, but got '1, 2, 3' with length '3'." }
+    ) {
+        param ($Actual, $Expected, $Message)
+        Compare-Collection -Actual $Actual -Expected $Expected | Verify-Equal $Message
+    }
+
+    It "Given collection '<expected>' on the expected side and non-collection '<actual>' on the actual side it prints the correct message '<message>'" -TestCases @(
+        @{ Actual = 3; Expected = (1,2,3,4); Message = "Expected collection '1, 2, 3, 4' with length '4', but got '3'."},
+        @{ Actual = (New-PSObject @{ Name = 'Jakub' }); Expected = (1,2,3,4); Message = "Expected collection '1, 2, 3, 4' with length '4', but got 'PSObject{Name=Jakub}'."}
     ) {
         param ($Actual, $Expected, $Message)
         Compare-Collection -Actual $Actual -Expected $Expected | Verify-Equal $Message
@@ -377,6 +414,26 @@ Describe "Compare-Collection" {
     ) {
         param ($Actual, $Expected, $Message)
         Compare-Collection -Actual $Actual -Expected $Expected | Verify-Equal $Message
+    }
+}
+
+Describe "Compare-Object" {
+    It "Given expected '<expected>' that is not an object it throws ArgumentException" -TestCases @(
+        @{ Expected = "a" },
+        @{ Expected = "1" },
+        @{ Expected = { abc } },
+        @{ Expected = (1,2,3) }
+    ) { 
+        param($Expected) {}
+        $err = { Compare-Object -Actual "dummy" -Expected $Expected } | Verify-Throw 
+        $err.Exception -is [ArgumentException] | Verify-True
+    }
+
+    It "Given values '<expected>' and '<actual>' that are not equivalent it returns message '<message>'." -TestCases @(
+        @{ Actual = 'a'; Expected = (New-PSObject @{ Name = 'Jakub' }); Message = "Expected object 'PSObject{Name=Jakub}', but got 'a'."}
+    ) { 
+        param ($Actual, $Expected, $Message) 
+        Compare-Object -Expected $Expected -Actual $Actual | Verify-Equal $Message
     }
 }
 
@@ -413,8 +470,12 @@ Describe "Compare-EquivalentObject" {
         @{ Actual = @("abc", "bde"); Expected = "abc"; Message = "Expected 'abc' to be equivalent to the actual value, but got 'abc, bde'." },
         @{ Actual = {def}; Expected = "abc"; Message = "Expected 'abc' to be equivalent to the actual value, but got '{def}'." },
         @{ Actual = "def"; Expected = {abc}; Message = "Expected '{abc}' to be equivalent to the actual value, but got 'def'." },
-        @{ Actual = {abc}; Expected = {def}; Message = "Expected '{def}' to be equivalent to the actual value, but got '{abc}'." }    
-        @{ Actual = (New-PSObject @{ Name = 'Jakub' }); Expected = "a"; Message = "Expected 'a' to be equivalent to the actual value, but got 'PSObject{Name=Jakub}'." }       
+        @{ Actual = {abc}; Expected = {def}; Message = "Expected '{def}' to be equivalent to the actual value, but got '{abc}'." },
+        @{ Actual = (1,2,3); Expected = (1,2,3,4); Message = "Expected collection '1, 2, 3, 4' with length '4' to be the same size as the actual collection, but got '1, 2, 3' with length '3'."},
+        @{ Actual = 3; Expected = (1,2,3,4); Message = "Expected collection '1, 2, 3, 4' with length '4', but got '3'."},
+        @{ Actual = (New-PSObject @{ Name = 'Jakub' }); Expected = (1,2,3,4); Message = "Expected collection '1, 2, 3, 4' with length '4', but got 'PSObject{Name=Jakub}'."},
+        @{ Actual = (New-PSObject @{ Name = 'Jakub' }); Expected = "a"; Message = "Expected 'a' to be equivalent to the actual value, but got 'PSObject{Name=Jakub}'." },
+         @{ Actual = 'a'; Expected = (New-PSObject @{ Name = 'Jakub' }); Message = "Expected object 'PSObject{Name=Jakub}', but got 'a'."}      
     ) { 
         param ($Actual, $Expected, $Message) 
         Compare-EquivalentObject -Expected $Expected -Actual $Actual | Verify-Equal $Message
