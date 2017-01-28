@@ -135,6 +135,8 @@ function Get-CollectionSizeNotTheSameMessage ($Actual, $Expected, $Property) {
     $actualLength = $Actual.Length
     $Expected = Format-Collection -Value $Expected
     $Actual = Format-Collection -Value $Actual
+    
+    $propertyMessage = $null
     if ($property) {
         $propertyMessage = " in property $Property with values"
     }
