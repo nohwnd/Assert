@@ -126,7 +126,6 @@ In the main comparison function we need to check which of the categories of obje
 
 
 ### General
-
 Assert-Equal
 Assert-NotEqual
 
@@ -139,8 +138,17 @@ Assert-NotOfType
 Assert-Null
 Assert-NotNull
 
-### Booleans
+# comparables
+Assert-GreaterThan (alias: Assert-NotLessThanOrEqual)
+Assert-GreaterThanOrEqual (alias: Assert-NotLessThan)
 
+Assert-LessThan (alias: Assert-NotGreaterThanOrEqual)
+Assert-LessThanOrEqual (alias: Assert-NotGreaterThan)
+
+Assert-InRange
+Assert-NotInRange
+
+### Booleans
 Assert-True
 Assert-False
 
@@ -150,68 +158,61 @@ Assert-False
 Assert-StringEqual ✓
 Assert-StringNotEqual ✓
 
-Assert-NullOrEmpty
-Assert-NotNullOrEmpty
+Assert-StringNullOrEmpty
+Assert-StringNotNullOrEmpty
 
-Assert-NullOrWhiteSpace
-Assert-NotNullOrWhiteSpace
+Assert-StringNullOrWhiteSpace
+Assert-StringNotNullOrWhiteSpace
 
-Assert-Like
-Assert-NotLike
+Assert-StringLike
+Assert-StringNotLike
 
-Assert-Match
-Assert-NotMatch
+Assert-StringMatch
+Assert-StringNotMatch
 
-Assert-StartWith
-Assert-NotStartWith
+Assert-StringStartWith
+Assert-StringNotStartWith
 
-Assert-EndWith
-Assert-NotEndWith
+Assert-StringEndWith
+Assert-StringNotEndWith
 
-? Assert-Length
+Assert-StringLength
 
-### Comparables
+### Numbers
+ 
+Assert-NumberEqual (Will get tolerance.)
+Assert-NumberNotEqual
 
-Assert-GreaterThan
-Assert-NotGreaterThan
+Assert-NumberGreaterThan (alias: Assert-NumberNotLessThanOrEqual)
+Assert-NumberGreaterThanOrEqual (alias: Assert-NumberNotLessThan)
 
-Assert-GreaterThanOrEqual
-Assert-NotGreaterThanOrEqual
+Assert-NumberLessThan (alias: Assert-NumberNotGreaterThanOrEqual)
+Assert-NumberLessThanOrEqual (alias: Assert-NumberNotGreaterThan)
 
-Assert-LessThan
-Assert-NotLessThan
 
-Assert-LessThanOrEqual
-Assert-NotLessThanOrEqual
-
-Assert-InRange
-Assert-NotInRange
+Assert-NumberInRange
+Assert-NumberNotInRange
 
 ? Assert-Positive
 ? Assert-Negative
-
-Assert-ApproximatelyEqual
-Assert-NotApproximatelyEqual (for float like types)
 
 ### ? Date Time & Time spans
 not priority
 
 
 ### Collections
+Assert-CollectionNotEmpty (already in general)
+Assert-CollectionLength (already in string) (or assert Count?)
 
-Assert-NotEmpty (already in general)
-Assert-Length (already in string) (or assert Count?)
+Assert-CollectionContains (expected is subset of actual)
 
-Assert-Equal (same items with the same order, exists in general)
-Assert-Equivalent (same by value items, different order, exists in general, how about repetitions?)
+Assert-CollectionEqual (same items with the same order, exists in general)
+Assert-CollectionEquivalent (same by value items, different order, exists in general, how about repetitions?)
 
 ? Assert-CollectionInstersect
 
 ? start with
 ? end with
-
-Assert-In (expected is subset of actual assert-contains, )
-
 
 
 ### Hashtables ?
