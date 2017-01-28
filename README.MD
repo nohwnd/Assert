@@ -11,7 +11,7 @@ The general way in which the assertions should be used is the pipeline form.
 Each assertion provided Message parameter to specify custom failure message, where
 `{0}` and {1}, `<expected>` `<actual>` or `<a>` `<e>` can be used to expand the passed values.
 
-Asertions are split into categories based on type. To provide a common language and ease of use, there is a layer of general assertions that
+Assertions are split into categories based on type. To provide a common language and ease of use, there is a layer of general assertions that
 may delegate work to specialized assertions.
 
 ```powershell
@@ -35,7 +35,7 @@ There is a special type of assertions that allow to compare objects as a whole, 
  ??? Enable pipelining of the assertions by outputting the input value (or some product like exception) from every assertion?
 
  ```powershell
- #this is stupid example, I am returnin the values, but I need better use cases where it is actuall useful
+ #this is stupid example, I am returning the values, but I need better use cases where it is actually useful
  #maybe with Assert-ObjectEqual and property selection, and definitely with Assert-Throw
 "hello my name is..." |
     Assert-StringStartWith "hello" |
@@ -93,7 +93,7 @@ compare special object type to special object type
 ? special treatment for scriptblocks?
 
 ? formatting objects the values, is it a good idea to include the type name? and in which format? for hashtable `@{}` is fine, but for psobject it is better to use `PSObject{}` than some custom cryptic thing like `#{}`
-? is it valid and *useful* to compare scriptblocks as strings? (they can come from differnt files and so on)
+? is it valid and *useful* to compare scriptblocks as strings? (they can come from different files and so on)
 ! more important it is to write useful info to the screen.
 
 
@@ -111,7 +111,7 @@ making a table of types and their significant properties I should not rely on th
 if I can construct the type then I will do -is check on it to be able to reuse rules for inherited types (order rules from most specific). The incoming instance must be an instance of a type that is loaded so the -is check is enough.
 
 
-I need to check if a given comparator should be used (for example when value on the left side is bool and on the right side is string that is equivalent to a boolean) I will use `Use-*Comparator` function for that. Then optionally adapt the values in a `Update-*` function and carry out the test on the real (possibly adapted) values using a `Test-*` function. Then retreive a message using a `Get-*Message` function, and pack it in a result object that will have the incoming values, adapted values, and result message. This all will happen in a `Compare-*` function.
+I need to check if a given comparator should be used (for example when value on the left side is bool and on the right side is string that is equivalent to a boolean) I will use `Use-*Comparator` function for that. Then optionally adapt the values in a `Update-*` function and carry out the test on the real (possibly adapted) values using a `Test-*` function. Then retrieve a message using a `Get-*Message` function, and pack it in a result object that will have the incoming values, adapted values, and result message. This all will happen in a `Compare-*` function.
 
 
 - we got multiple categories of input, namely: 
