@@ -19,14 +19,6 @@ function Test-DecimalNumber ($Value) {
     $Value -is [float] -or $Value -is [single] -or $Value -is [double] -or $Value -is [decimal]
 }
 
-function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property) { 
-    $Expected = Format-Custom -Value $Expected 
-    $Actual = Format-Custom -Value $Actual
-    $propertyInfo = if ($Property) { " property $Property with value" }
-    "Expected$propertyInfo '$Expected' to be equivalent to the actual value, but got '$Actual'."
-}
-
-
 function Test-PSObjectExactly ($Value) { 
     if ($null -eq $Value) 
     {
@@ -34,6 +26,18 @@ function Test-PSObjectExactly ($Value) {
     } 
 
     $Value.GetType() -eq [System.Management.Automation.PSCustomObject]
+}
+
+function Test-CollectionSize ($Expected, $Actual) {
+    return $Expected.Length -eq $Actual.Length
+}
+
+
+function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property) { 
+    $Expected = Format-Custom -Value $Expected 
+    $Actual = Format-Custom -Value $Actual
+    $propertyInfo = if ($Property) { " property $Property with value" }
+    "Expected$propertyInfo '$Expected' to be equivalent to the actual value, but got '$Actual'."
 }
 
 function Get-IdentityProperty ([Type]$Type) {
@@ -50,9 +54,6 @@ function Get-IdentityProperty ([Type]$Type) {
     $propertyMap[$Type.FullName]
 }
 
-function Test-CollectionSize ($Expected, $Actual) {
-    return $Expected.Length -eq $Actual.Length
-}
 
 function Get-CollectionSizeNotTheSameMessage ($Actual, $Expected, $Property) {
     $expectedLength = $Expected.Length
@@ -67,7 +68,7 @@ function Get-CollectionSizeNotTheSameMessage ($Actual, $Expected, $Property) {
     "Expected collection$propertyMessage '$Expected' with length '$expectedLength' to be the same size as the actual collection, but got '$Actual' with length '$actualLength'."
 }
 
-function Compare-Collection ($Expected, $Actual, $Property) {
+function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
     if (-not (Test-Collection -Value $Expected)) 
     {
         throw [ArgumentException]"Expected must be a collection."
@@ -94,7 +95,7 @@ function Compare-Collection ($Expected, $Actual, $Property) {
         $found = $false
         for ($a=0; $a -lt $aEnd; $a++) { 
             $currentActual = $Actual[$a]
-            if ((-not (Compare-EquivalentObject -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a) 
+            if ((-not (Compare-EquivalentAll -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a) 
             {
                 $taken += $a
                 $found = $true
@@ -115,7 +116,7 @@ function Compare-Collection ($Expected, $Actual, $Property) {
     }
 }
 
-function Compare-Value ($Actual, $Expected, $Property) { 
+function Compare-ValueEquivalent ($Actual, $Expected, $Property) { 
     $Expected = $($Expected)
     if (-not (Test-Value -Value $Expected)) 
     {
@@ -166,7 +167,7 @@ function Test-Object ($Value) {
     -not ($null -eq $Value -or (Test-Value -Value $Value) -or (Test-Collection -Value $Value))
 }
 
-function Compare-Object ($Actual, $Expected, $Property) {
+function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
 
     if (-not (Test-Object -Value $Expected))
     {
@@ -192,7 +193,7 @@ function Compare-Object ($Actual, $Expected, $Property) {
             continue
         }
     
-        Compare-EquivalentObject -Expected $p.Value -Actual $actualProperty.Value -Path "$Property.$propertyName"
+        Compare-EquivalentAll -Expected $p.Value -Actual $actualProperty.Value -Path "$Property.$propertyName"
     }
 
     #check if there are any extra actual object props
@@ -206,7 +207,7 @@ function Compare-Object ($Actual, $Expected, $Property) {
     }    
 }
 
-function Compare-EquivalentObject ($Actual, $Expected, $Path) { 
+function Compare-EquivalentAll ($Actual, $Expected, $Path) { 
 
     #start by null checks to avoid implementing null handling
     #logic in the functions that follow
@@ -223,7 +224,7 @@ function Compare-EquivalentObject ($Actual, $Expected, $Path) {
     #expand the single item array to get to the value in it
     if (Test-Value -Value $Expected) 
     {
-        Compare-Value -Actual $Actual -Expected $Expected -Property $Path
+        Compare-ValueEquivalent -Actual $Actual -Expected $Expected -Property $Path
         return
     }
 
@@ -236,17 +237,17 @@ function Compare-EquivalentObject ($Actual, $Expected, $Path) {
     #compare collection
     if (Test-Collection -Value $Expected) { 
 
-        return Compare-Collection -Expected $Expected -Actual $Actual -Property $Path
+        return Compare-CollectionEquivalent -Expected $Expected -Actual $Actual -Property $Path
     }
 
     # dictionaries? (they are IEnumerable so they must go befor collections)
     # hashtables?
 
-    Compare-Object -Expected $Expected -Actual $Actual -Property $Path
+    Compare-ObjectEquivalent -Expected $Expected -Actual $Actual -Property $Path
 }
 
-function Assert-Equivalent($Actual, $Expected) {
-    $areDifferent = Compare-EquivalentObject -Actual $Actual -Expected $Expected
+function Assert-ObjectEquivalent($Actual, $Expected) {
+    $areDifferent = Compare-EquivalentAll -Actual $Actual -Expected $Expected
     if ($areDifferent)
     {
         throw [Assertions.AssertionException]"$areDifferent"
@@ -277,5 +278,5 @@ function Assert-Equivalent($Actual, $Expected) {
 # "expected: " + ("$expected" -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
 # "actual: " + ($actual -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
 # "Summary:"
-# Compare-EquivalentObject -Expected $expected -Actual $actual 2> $null
+# Compare-EquivalentAll -Expected $expected -Actual $actual 2> $null
 # "`n`n"
