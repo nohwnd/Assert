@@ -1,6 +1,6 @@
 # Pester assertions
 
-Prototyping a suite of more advanced and more consistent assertions for Pester.
+> Prototyping a suite of more advanced and more consistent assertions for Pester.
 
 The general way in which the assertions should be used is the pipeline form.
 
