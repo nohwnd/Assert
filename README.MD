@@ -132,11 +132,11 @@ Assert-NotEqual ✓
 Assert-Same ✓
 Assert-NotSame ✓
 
-Assert-Type
-Assert-NotType
+Assert-Type ✓
+Assert-NotType ✓
 
-Assert-Null
-Assert-NotNull
+Assert-Null ✓
+Assert-NotNull ✓
 
 # comparables
 Assert-GreaterThan (alias: Assert-NotLessThanOrEqual)
