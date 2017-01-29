@@ -25,7 +25,10 @@ The type specific assertions are also exposed from the module to offer type spec
 Assert-StringEqual 'Abc' 'Ab c  ' -CaseSensitive -IgnoreWhitespace
 ```
 
-There is a special type of assertions that allow to compare objects as a whole, and print a readable report in the assertion message. Those assertions are a convenient way to write more robust tests suites, as they provide better alternative to using multiple assertions in one test.
+There is a special type of assertions that allow to compare values, objects and collections as a whole, and print a readable report in the assertion message. Those assertions are a convenient way to write more robust tests suites, as they provide better alternative to using multiple assertions in one test.
+
+![](doc/screenshots/equiv.png)
+
 
 ? Should the Expected or Actual go first to enable specifying without parameters and avoid future problems?
 ? how to handle pipeline input to allow working with collections, and single values intuitively?
