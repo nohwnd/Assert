@@ -95,7 +95,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
         $found = $false
         for ($a=0; $a -lt $aEnd; $a++) { 
             $currentActual = $Actual[$a]
-            if ((-not (Compare-EquivalentAll -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a) 
+            if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a) 
             {
                 $taken += $a
                 $found = $true
@@ -193,7 +193,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
             continue
         }
     
-        Compare-EquivalentAll -Expected $p.Value -Actual $actualProperty.Value -Path "$Property.$propertyName"
+        Compare-Equivalent -Expected $p.Value -Actual $actualProperty.Value -Path "$Property.$propertyName"
     }
 
     #check if there are any extra actual object props
@@ -207,7 +207,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
     }    
 }
 
-function Compare-EquivalentAll ($Actual, $Expected, $Path) { 
+function Compare-Equivalent ($Actual, $Expected, $Path) { 
 
     #start by null checks to avoid implementing null handling
     #logic in the functions that follow
@@ -247,7 +247,7 @@ function Compare-EquivalentAll ($Actual, $Expected, $Path) {
 }
 
 function Assert-ObjectEquivalent($Actual, $Expected) {
-    $areDifferent = Compare-EquivalentAll -Actual $Actual -Expected $Expected
+    $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected
     if ($areDifferent)
     {
         throw [Assertions.AssertionException]"$areDifferent"
@@ -278,5 +278,5 @@ function Assert-ObjectEquivalent($Actual, $Expected) {
 # "expected: " + ("$expected" -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
 # "actual: " + ($actual -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
 # "Summary:"
-# Compare-EquivalentAll -Expected $expected -Actual $actual 2> $null
+# Compare-Equivalent -Expected $expected -Actual $actual 2> $null
 # "`n`n"

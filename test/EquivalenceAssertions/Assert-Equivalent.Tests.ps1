@@ -334,7 +334,7 @@ InModuleScope -ModuleName Assert {
         }
     }
 
-    Describe "Compare-EquivalentAll" { 
+    Describe "Compare-Equivalent" { 
         It "Given values '<expected>' and '<actual>' that are equivalent returns report with Equivalent set to `$true" -TestCases @(
             @{ Actual = $null; Expected = $null },
             @{ Actual = ""; Expected = "" },
@@ -353,7 +353,7 @@ InModuleScope -ModuleName Assert {
             @{ Actual = {abc}; Expected = {abc} }
         ) { 
             param ($Actual, $Expected) 
-            Compare-EquivalentAll -Expected $Expected -Actual $Actual | Verify-Null
+            Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Null
         }
 
         It "Given values '<expected>' and '<actual>' that are not equivalent it returns message '<message>'." -TestCases @(
@@ -375,14 +375,14 @@ InModuleScope -ModuleName Assert {
             @{ Actual = 'a'; Expected = (New-PSObject @{ Name = 'Jakub' }); Message = "Expected object 'PSObject{Name=Jakub}', but got 'a'."}      
         ) { 
             param ($Actual, $Expected, $Message) 
-            Compare-EquivalentAll -Expected $Expected -Actual $Actual | Verify-Equal $Message
+            Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Equal $Message
         }
 
         It "Comparing the same instance of a psObject returns True"{ 
             $actual = $expected = New-PSObject @{ Name = 'Jakub' }
             Verify-Same -Expected $expected -Actual $actual
 
-            $report = Compare-EquivalentAll -Expected $expected -Actual $actual | Verify-Null
+            $report = Compare-Equivalent -Expected $expected -Actual $actual | Verify-Null
         }
 
         It "Given PSObjects '<expected>' and '<actual> that are different instances but have the same values it returns report with Equivalent set to `$true" -TestCases @(
@@ -402,7 +402,7 @@ InModuleScope -ModuleName Assert {
             param ($Expected, $Actual)
             Verify-NotSame -Expected $Expected -Actual $Actual
             
-            Compare-EquivalentAll -Expected $Expected -Actual $Actual | Verify-Null
+            Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Null
         }
 
         It "Given PSObjects '<expected>' and '<actual> that have different values in some of the properties it returns message '<message>'" -TestCases @(
@@ -425,7 +425,7 @@ InModuleScope -ModuleName Assert {
             param ($Expected, $Actual, $Message)
             Verify-NotSame -Expected $Expected -Actual $Actual
 
-            Compare-EquivalentAll -Expected $Expected -Actual $Actual | Verify-Equal $Message
+            Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Equal $Message
         }
 
         It "Given PSObject '<expected>' and object '<actual> that have the same values it returns `$null" -TestCases @(
@@ -435,7 +435,7 @@ InModuleScope -ModuleName Assert {
             }
         ) { 
             param ($Expected, $Actual)
-            Compare-EquivalentAll -Expected $Expected -Actual $Actual | Verify-Null
+            Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Null
         }
 
 
@@ -447,7 +447,7 @@ InModuleScope -ModuleName Assert {
         ) { 
             param ($Expected, $Actual)
 
-            $report = Compare-EquivalentAll -Expected $Expected -Actual $Actual | Verify-Equal "Expected collection in property .Numbers which is '1, 2, 3' to be equivalent to '3, 4, 5' but some values were missing: '1, 2'."
+            $report = Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Equal "Expected collection in property .Numbers which is '1, 2, 3' to be equivalent to '3, 4, 5' but some values were missing: '1, 2'."
         }
 
         It "Comparing psObjects that have collections of objects returns `$null when the objects have the same value" -TestCases @(
@@ -457,7 +457,7 @@ InModuleScope -ModuleName Assert {
             }
         ) { 
             param ($Expected, $Actual)
-            Compare-EquivalentAll -Expected $Expected -Actual $Actual | Verify-Null
+            Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Null
         }
 
         It "Comparing psObjects that have collections of objects returns the correct message when the items in the collection differ" -TestCases @(
@@ -467,7 +467,7 @@ InModuleScope -ModuleName Assert {
             }
         ) { 
             param ($Expected, $Actual)
-            Compare-EquivalentAll -Expected $Expected -Actual $Actual | Verify-Equal "Expected collection in property .Objects which is 'PSObject{Name=Jan}, PSObject{Name=Petr}' to be equivalent to 'PSObject{Name=Jan}, PSObject{Name=Tomas}' but some values were missing: 'PSObject{Name=Petr}'."
+            Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Equal "Expected collection in property .Objects which is 'PSObject{Name=Jan}, PSObject{Name=Petr}' to be equivalent to 'PSObject{Name=Jan}, PSObject{Name=Tomas}' but some values were missing: 'PSObject{Name=Petr}'."
         }
     }
 }
