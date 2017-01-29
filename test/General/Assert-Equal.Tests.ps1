@@ -41,7 +41,7 @@ InModuleScope -ModuleName Assert {
         }
 
         Context "Comparing objects" {
-            It "Passes when two objects are equal" {
+            It "Passes when two objects are the same" {
                 $object = New-Object -TypeName PsObject -Property @{ Name = "Jakub" }
                 $object | Assert-Equal $object
             }
@@ -51,6 +51,32 @@ InModuleScope -ModuleName Assert {
                 $object1 = New-Object -TypeName PsObject -Property @{ Name = "Jakub" }
                 { $object | Assert-Equal $object1 } | Verify-AssertionFailed
             }
+        }
+
+        It "Fails for array input even if the last item is the same as expected" {
+             {  1,2,3 | Assert-Equal 3 } | Verify-AssertionFailed
+        }
+
+        It "Fails with custom message" {
+             $error = { 9 | Assert-Equal 3 -Message "<expected> is not <actual>" } | Verify-AssertionFailed
+             $error.Exception.Message | Verify-Equal "3 is not 9"
+        }
+
+        Context "Validate messages" {
+            It "Given two values that are not the same '<expected>' and '<actual>' it returns expected message '<message>'" -TestCases @(
+                @{ Expected = "a" ; Actual = 10 ; Message = "Expected string 'a', but got int '10'."},
+                @{ Expected = "a" ; Actual = 10.1 ; Message = "Expected string 'a', but got double '10.1'."},
+                @{ Expected = "a" ; Actual = 10.1D ; Message = "Expected string 'a', but got decimal '10.1'."}
+            ) { 
+                param($Expected, $Actual, $Message)
+                $error = { Assert-Equal -Actual $Actual -Expected $Expected } | Verify-AssertionFailed
+                $error.Exception.Message | Verify-Equal $Message
+            }
+        }
+
+        It "Returns the value on output" {
+            $expected = 1
+            $expected | Assert-Equal 1 | Verify-Equal $expected
         }
     }
 }

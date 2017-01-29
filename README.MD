@@ -126,14 +126,14 @@ In the main comparison function we need to check which of the categories of obje
 
 
 ### General
-Assert-Equal
-Assert-NotEqual
+Assert-Equal ✓
+Assert-NotEqual ✓
 
-Assert-Same
-Assert-NotSame
+Assert-Same ✓
+Assert-NotSame ✓
 
-Assert-OfType
-Assert-NotOfType
+Assert-Type
+Assert-NotType
 
 Assert-Null
 Assert-NotNull
