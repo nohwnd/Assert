@@ -141,26 +141,6 @@ InModuleScope -ModuleName Assert {
         }
     }
 
-    Describe "Test-PSObjectExacly" { 
-        It "Given a PSObject '{<value>}' it returns `$true" -TestCases @(
-            @{ Value = New-PSObject @{ Name = 'Jakub' } },
-            @{ Value = [PSCustomObject]@{ Name = 'Jakub'} }
-        ) {
-            param ($Value)
-            Test-PSObjectExactly -Value $Value | Verify-True 
-        }
-
-        It "Given a value '<value>' that is not a PSObject it returns `$false" -TestCases @(
-            @{ Value = $null },
-            @{ Value = 1 },
-            @{ Value = 'abc' },
-            @{ Value = [Type] }
-        ) {
-            param ($Value)
-            Test-PSObjectExactly -Value $Value | Verify-False 
-        }
-    }
-
     Describe "Test-DecimalNumber" { 
         It "Given a number it returns `$true" -TestCases @(
             @{ Value = 1.1; },

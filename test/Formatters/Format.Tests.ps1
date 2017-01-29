@@ -28,31 +28,22 @@
         }
     }
 
-    Describe "Format-PSObject" {
-        It "Formats PSObject '<value>' to '<expected>'" -TestCases @(
-            @{ Value = (New-PSObject @{Name = 'Jakub'; Age = 28}); Expected = "PSObject{Age=28; Name=Jakub}" }
-        ) { 
-            param ($Value, $Expected)
-            Format-PSObject -Value $Value | Verify-Equal $Expected
-        }
-    }
-
     Describe "Format-Object" {
         It "Formats object '<value>' to '<expected>'" -TestCases @(
-            @{ Value = (New-PSObject @{Name = 'Jakub'; Age = 28}); Expected = "PSCustomObject{Age=28; Name=Jakub}"},
-            @{ Value = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28}); Expected = "Person{Age=28; Name=Jakub}"}
+            @{ Value = (New-PSObject @{Name = 'Jakub'; Age = 28}); Expected = "PSObject{Age=28; Name=Jakub}"},
+            @{ Value = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28}); Expected = "Assertions.TestType.Person{Age=28; Name=Jakub}"}
         ) { 
             param ($Value, $Expected)
             Format-Object -Value $Value | Verify-Equal $Expected
         }
 
         It "Formats object '<value>' with selected properties '<selectedProperties>' to '<expected>'" -TestCases @(
-            @{ Value = (New-PSObject @{Name = 'Jakub'; Age = 28}); SelectedProperties = "Age"; Expected = "PSCustomObject{Age=28}"},
-            @{ Value = (Get-Process -Name Idle); SelectedProperties = 'Name','Id'; Expected = "Process{Id=0; Name=Idle}" },
+            @{ Value = (New-PSObject @{Name = 'Jakub'; Age = 28}); SelectedProperties = "Age"; Expected = "PSObject{Age=28}"},
+            @{ Value = (Get-Process -Name Idle); SelectedProperties = 'Name','Id'; Expected = "Diagnostics.Process{Id=0; Name=Idle}" },
             @{ 
                 Value = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28})
                 SelectedProperties = 'Name'
-                Expected = "Person{Name=Jakub}"}
+                Expected = "Assertions.TestType.Person{Name=Jakub}"}
         ) { 
             param ($Value, $SelectedProperties, $Expected)
             Format-Object -Value $Value -Property $SelectedProperties | Verify-Equal $Expected
@@ -91,8 +82,8 @@
             @{ Value = (1,2,3); Expected = '1, 2, 3' },
             @{ Value = 1.1; Expected = '1.1' },
             @{ Value = New-PSObject @{ Name = "Jakub" }; Expected = 'PSObject{Name=Jakub}' },
-            @{ Value = (Get-Process Idle); Expected = 'Process{Id=0; Name=Idle}'},
-            @{ Value = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28}); Expected = "Person{Age=28; Name=Jakub}"}
+            @{ Value = (Get-Process Idle); Expected = 'Diagnostics.Process{Id=0; Name=Idle}'},
+            @{ Value = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28}); Expected = "Assertions.TestType.Person{Age=28; Name=Jakub}"}
         ) { 
             param($Value, $Expected)
             Format-Custom -Value $Value | Verify-Equal $Expected

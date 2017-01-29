@@ -19,15 +19,6 @@ function Test-DecimalNumber ($Value) {
     $Value -is [float] -or $Value -is [single] -or $Value -is [double] -or $Value -is [decimal]
 }
 
-function Test-PSObjectExactly ($Value) { 
-    if ($null -eq $Value) 
-    {
-        return $false
-    } 
-
-    $Value.GetType() -eq [System.Management.Automation.PSCustomObject]
-}
-
 function Test-CollectionSize ($Expected, $Actual) {
     return $Expected.Length -eq $Actual.Length
 }
