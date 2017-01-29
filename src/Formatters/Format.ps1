@@ -1,5 +1,9 @@
 function Format-Collection ($Value, [switch]$Pretty) { 
-    ($Value | % { Format-Custom -Value $_ -Pretty:$Pretty }) -join ', '
+    $separator = ', '
+    if ($Pretty){
+        $separator = ",`n"
+    }
+    ($Value | % { Format-Custom -Value $_ -Pretty:$Pretty }) -join $separator
 }
 
 function Format-Object ($Value, $Property, [switch]$Pretty) {
@@ -9,8 +13,8 @@ function Format-Object ($Value, $Property, [switch]$Pretty) {
     }
     $orderedProperty = $Property | Sort-Object
     $valueType = Get-ShortType $Value
-    $valueFormatted = ([string]([PSObject]$Value | Select-Object -Property $orderedProperty)) 
-    
+    $valueFormatted = ([string]([PSObject]$Value | Select-Object -Property $orderedProperty))
+
     if ($Pretty) {
         $margin = "    "
         $valueFormatted = $valueFormatted `
