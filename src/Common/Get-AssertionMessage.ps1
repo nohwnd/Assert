@@ -1,12 +1,12 @@
-function Get-AssertionMessage ($Expected, $Actual, $Option, $Message, $DefaultMessage) 
+function Get-AssertionMessage ($Expected, $Actual, $Option, $Message, $DefaultMessage, [switch]$Pretty) 
 {
     if (-not $Message)
     {
         $Message = $DefaultMessage
     }
     
-    $expectedFormatted = Format-Custom -Value $Expected
-    $actualFormatted = Format-Custom -Value $Actual
+    $expectedFormatted = Format-Custom -Value $Expected -Pretty:$Pretty
+    $actualFormatted = Format-Custom -Value $Actual -Pretty:$Pretty
 
     $optionMessage = $null;
     if ($null -ne $Option)

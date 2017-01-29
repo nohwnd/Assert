@@ -246,37 +246,12 @@ function Compare-Equivalent ($Actual, $Expected, $Path) {
     Compare-ObjectEquivalent -Expected $Expected -Actual $Actual -Property $Path
 }
 
-function Assert-ObjectEquivalent($Actual, $Expected) {
-    $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected
+function Assert-Equivalent($Actual, $Expected) {
+    $Option = $null
+    $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected | Out-String
+    $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $Option -Pretty "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
     if ($areDifferent)
     {
-        throw [Assertions.AssertionException]"$areDifferent"
+        throw [Assertions.AssertionException]$message
     }
 }
-
-# "`n`n"
-# "Objects are not equivalent:"
-# $expected = New-PSObject @{
-#     Name = 'nohwnd'
-#     HasNoFreeTime = $true
-#     DrinksTooMuchCoffee = $true
-#     VersionsOfPowershellInstalled = (
-#         (New-PSObject @{ Version = 3; OS = 'Vista' }),
-#         (New-PSObject @{ Version = 4; OS = 'Win7' }),
-#         (New-PSObject @{ Version = 5; OS = 'Win10' })
-#     )
-#     VersionsOfPesterInstalled = 3.4, 4.0
-# }
-# $actual = New-PSObject @{
-#     Name = "someGuy"
-#     VersionsOfPowershellInstalled = (
-#         (New-PSObject @{ Version = 5; OS = 'Win10' })
-#     )
-#     VersionsOfPesterInstalled = ,(3.4)
-# }
-
-# "expected: " + ("$expected" -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
-# "actual: " + ($actual -replace '@{',"@{`n  " -replace ';',";`n " -replace '}',"`n}")
-# "Summary:"
-# Compare-Equivalent -Expected $expected -Actual $actual 2> $null
-# "`n`n"
