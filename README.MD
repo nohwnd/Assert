@@ -201,10 +201,11 @@ not priority
 
 
 ### Collections
-Assert-CollectionNotEmpty (already in general)
-Assert-CollectionLength (already in string) (or assert Count?)
+Assert-CollectionNotEmpty
+Assert-CollectionLength 
 
-Assert-CollectionContains (expected is subset of actual)
+Assert-CollectionContain ✓ (expected is subset of actual)
+Assert-CollectionNotContain ✓
 
 Assert-CollectionEqual (same items with the same order, exists in general)
 Assert-CollectionEquivalent (same by value items, different order, exists in general, how about repetitions?)
@@ -214,6 +215,8 @@ Assert-CollectionEquivalent (same by value items, different order, exists in gen
 ? start with
 ? end with
 
+? all
+? any
 
 ### Hashtables ?
 
