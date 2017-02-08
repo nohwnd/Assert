@@ -1,14 +1,11 @@
-Get-ChildItem -Path $PSScriptRoot\src\ -Recurse -Filter *.ps1 | 
-    foreach { . $_.FullName }
+#Get list source Functions
+$srcFunctions = Get-ChildItem -Path $PSScriptRoot\src\ -Recurse -Filter *.ps1
 
-Export-ModuleMember -Function Assert-Equivalent, 
-    Assert-Equal, 
-    Assert-NotEqual, 
-    Assert-Same, 
-    Assert-NotSame, 
-    Assert-Null, 
-    Assert-NotNull, 
-    Assert-Type, 
-    Assert-NotType,
-    Assert-CollectionContain,
-    Assert-CollectionNotContain
+#Dot Source Functions
+$srcFunctions |
+ForEach-Object{ 
+   . $_.FullName
+}
+
+#Export ModuleMembers
+Export-ModuleMember -Function $srcFunctions.BaseName
