@@ -72,6 +72,21 @@
         }
     }
 
+    Describe "Format-Hashtable" { 
+        It "Formats empty hashtable as @{}" {
+            Format-Hashtable @{} | Verify-Equal '@{}'
+        }
+
+        It "Formats hashtable as '<expected>'" -TestCases @(
+            @{ Value = @{Age=28; Name='Jakub'}; Expected = '@{Age=28; Name=Jakub}' }
+            @{ Value = @{Z = 1; H = 1; A = 1}; Expected = '@{A=1; H=1; Z=1}' }
+            @{ Value=@{Hash=@{Hash='Value'}}; Expected = '@{Hash=@{Hash=Value}}' }
+        ) {
+            param ($Value, $Expected)
+            Format-Hashtable $Value | Verify-Equal $Expected
+        }
+    }
+
     Describe "Format-Custom" {
         It "Formats value '<value>' correctly to '<expected>'" -TestCases @(
             @{ Value = $null; Expected = '$null'}
@@ -84,6 +99,7 @@
             @{ Value = New-PSObject @{ Name = "Jakub" }; Expected = 'PSObject{Name=Jakub}' },
             @{ Value = (Get-Process Idle); Expected = 'Diagnostics.Process{Id=0; Name=Idle}'},
             @{ Value = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28}); Expected = "Assertions.TestType.Person{Age=28; Name=Jakub}"}
+            @{ Value = @{Name='Jakub'; Age=28}; Expected = '@{Age=28; Name=Jakub}' }
         ) { 
             param($Value, $Expected)
             Format-Custom -Value $Value | Verify-Equal $Expected

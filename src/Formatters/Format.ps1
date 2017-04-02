@@ -42,6 +42,17 @@ function Format-Number ($Value) {
     [string]$Value
 }
 
+function Format-Hashtable ($Value) {
+    $head = '@{'
+    $tail = '}'
+
+    $entries = $Value.Keys | sort | foreach { 
+        $formattedValue = Format-Custom $Value.$_
+        "$_=$formattedValue" }
+    
+    $head + ( $entries -join '; ') + $tail
+}
+
 function Format-Custom ($Value, [switch]$Pretty) { 
     if ($null -eq $Value) 
     { 
@@ -70,6 +81,10 @@ function Format-Custom ($Value, [switch]$Pretty) {
 
     # dictionaries? (they are IEnumerable so they must go befor collections)
     # hashtables?
+    if (Test-Hashtable -Value $Value)
+    {
+        return Format-Hashtable -Value $Value
+    }
 
     if (Test-Collection -Value $Value) 
     { 

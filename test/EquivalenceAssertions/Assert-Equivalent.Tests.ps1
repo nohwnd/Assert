@@ -314,6 +314,47 @@ InModuleScope -ModuleName Assert {
         }
     }
 
+    Describe "Test-Hashtable" { 
+        It "Given hashtable '<value>' it returns `$true" -TestCases @(
+            @{Value = @{}}
+            @{Value=@{Name="Jakub"}}
+        ) { 
+            param($Value)
+
+            Test-Hashtable -Value $Value | Verify-True
+        }
+
+        It "Given a value '<value>' which is not a hashtable it returns `$false" -TestCases @(
+            @{Value="Jakub"}
+            @{Value=1..4}
+        ) { 
+            param ($Value)
+
+            Test-Hashtable -Value $Value | Verify-False
+        }
+    }
+
+    Describe "Compare-HashtableEquivalent" {
+        It "Given expected '<expected>' that is not a hashtable it throws ArgumentException" -TestCases @(
+            @{ Expected = "a" }
+        ) { 
+            param($Expected) {}
+            $err = { Compare-HashtableEquivalent -Actual "dummy" -Expected $Expected } | Verify-Throw 
+            $err.Exception -is [ArgumentException] | Verify-True
+        }
+
+        It "Given values '<expected>' and '<actual>' that are not equivalent it returns message '<message>'." -TestCases @(
+            @{ Actual = 'a'; Expected = @{ Name = 'Jakub' }; Message = "Expected hashtable '@{Name=Jakub}', but got 'a'." }
+            @{ Actual = @{ }; Expected = @{ Name = 'Jakub' }; Message = "Expected hashtable '@{Name=Jakub}', but got '@{}'.`nExpected has key 'Name' that the other object does not have." }
+            @{ Actual = @{ Name = 'Tomas' }; Expected = @{ Name = 'Jakub' }; Message = "Expected hashtable '@{Name=Jakub}', but got '@{Name=Tomas}'.`nExpected property .Name with value 'Jakub' to be equivalent to the actual value, but got 'Tomas'." }
+            @{ Actual = @{ Name = 'Tomas'; Value = 10 }; Expected = @{ Name = 'Jakub' }; Message = "Expected hashtable '@{Name=Jakub}', but got '@{Name=Tomas; Value=10}'.`nExpected property .Name with value 'Jakub' to be equivalent to the actual value, but got 'Tomas'.`nExpected is missing key 'Value' that the other object has." }
+        ) { 
+            param ($Actual, $Expected, $Message) 
+
+            Compare-HashtableEquivalent -Expected $Expected -Actual $Actual | Verify-Equal $Message
+        }
+    }
+
     Describe "Compare-Equivalent" { 
         It "Given values '<expected>' and '<actual>' that are equivalent returns report with Equivalent set to `$true" -TestCases @(
             @{ Actual = $null; Expected = $null },
@@ -353,6 +394,7 @@ InModuleScope -ModuleName Assert {
             @{ Actual = (New-PSObject @{ Name = 'Jakub' }); Expected = (1,2,3,4); Message = "Expected collection '1, 2, 3, 4' with length '4', but got 'PSObject{Name=Jakub}'."},
             @{ Actual = (New-PSObject @{ Name = 'Jakub' }); Expected = "a"; Message = "Expected 'a' to be equivalent to the actual value, but got 'PSObject{Name=Jakub}'." },
             @{ Actual = 'a'; Expected = (New-PSObject @{ Name = 'Jakub' }); Message = "Expected object 'PSObject{Name=Jakub}', but got 'a'."}      
+            @{ Actual = 'a'; Expected = @{ Name = 'Jakub' }; Message = "Expected hashtable '@{Name=Jakub}', but got 'a'." }
         ) { 
             param ($Actual, $Expected, $Message) 
             Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Equal $Message

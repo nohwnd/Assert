@@ -19,6 +19,10 @@ function Test-DecimalNumber ($Value) {
     $Value -is [float] -or $Value -is [single] -or $Value -is [double] -or $Value -is [decimal]
 }
 
+function Test-Hashtable ($Value) { 
+    $Value -is [hashtable]
+}
+
 function Test-CollectionSize ($Expected, $Actual) {
     return $Expected.Length -eq $Actual.Length
 }
@@ -152,6 +156,52 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
     }
 }
 
+function Compare-HashtableEquivalent ($Actual, $Expected, $Property) { 
+    if (-not (Test-Hashtable -Value $Expected)) 
+    {
+        throw [ArgumentException]"Expected must be a hashtable."
+    }
+
+    if (-not (Test-Hashtable -Value $Actual)) 
+    { 
+        $expectedFormatted = Format-Custom -Value $Expected
+        $actualFormatted = Format-Custom -Value $Actual 
+        return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'."    
+    }
+    
+    $actualKeys = $Actual.Keys
+    $expectedKeys = $Expected.Keys
+
+    $result = @()
+    foreach ($k in $expectedKeys)
+    {
+        $actualHasKey = $actualKeys -contains $k
+        if (-not $actualHasKey)
+        {
+            $result += "Expected has key '$k' that the other object does not have."
+            continue
+        }
+
+        $expectedValue = $Expected[$k]
+        $actualValue = $Actual[$k]
+
+        $result += Compare-Equivalent -Expected $expectedValue -Actual $actualValue -Path "$Property.$k"
+    }
+
+    $keysNotInExpected =  $actualKeys | where {$expectedKeys -notcontains $_ }
+    foreach ($k in $keysNotInExpected)
+    {
+        $result += "Expected is missing key '$k' that the other object has."
+    }    
+
+    if ($result)
+    {
+        $expectedFormatted = Format-Custom -Value $Expected
+        $actualFormatted = Format-Custom -Value $Actual 
+        "Expected hashtable '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
+    }
+}
+
 function Test-Object ($Value) {
     #here we need to approximate that that object is not value or any special category of object, so other checks might need to be added (such as for hashtables)
 
@@ -224,15 +274,20 @@ function Compare-Equivalent ($Actual, $Expected, $Path) {
     { 
         return
     }
+    
+    # dictionaries? (they are IEnumerable so they must go before collections)
+    # hashtables?
+    if (Test-Hashtable -Value $Expected)
+    {
+        Compare-HashtableEquivalent -Expected $Expected -Actual $Actual -Property $Path
+        return 
+    }
 
     #compare collection
     if (Test-Collection -Value $Expected) { 
-
-        return Compare-CollectionEquivalent -Expected $Expected -Actual $Actual -Property $Path
+        Compare-CollectionEquivalent -Expected $Expected -Actual $Actual -Property $Path
+        return
     }
-
-    # dictionaries? (they are IEnumerable so they must go befor collections)
-    # hashtables?
 
     Compare-ObjectEquivalent -Expected $Expected -Actual $Actual -Property $Path
 }
