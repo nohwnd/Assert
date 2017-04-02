@@ -87,6 +87,21 @@
         }
     }
 
+    Describe "Format-Dictionary" { 
+        It "Formats empty dictionary as @{}" {
+            Format-Dictionary (New-Dictionary @{}) | Verify-Equal 'Dictionary{}'
+        }
+
+        It "Formats dictionary as '<expected>'" -TestCases @(
+            @{ Value = New-Dictionary @{Age=28; Name='Jakub'}; Expected = 'Dictionary{Age=28; Name=Jakub}' }
+            @{ Value = New-Dictionary @{Z = 1; H = 1; A = 1}; Expected = 'Dictionary{A=1; H=1; Z=1}' }
+            @{ Value = New-Dictionary @{Dict=( New-Dictionary @{Dict='Value'})}; Expected = 'Dictionary{Dict=Dictionary{Dict=Value}}' }
+        ) {
+            param ($Value, $Expected)
+            Format-Dictionary $Value | Verify-Equal $Expected
+        }
+    }
+
     Describe "Format-Custom" {
         It "Formats value '<value>' correctly to '<expected>'" -TestCases @(
             @{ Value = $null; Expected = '$null'}
@@ -100,6 +115,7 @@
             @{ Value = (Get-Process Idle); Expected = 'Diagnostics.Process{Id=0; Name=Idle}'},
             @{ Value = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28}); Expected = "Assertions.TestType.Person{Age=28; Name=Jakub}"}
             @{ Value = @{Name='Jakub'; Age=28}; Expected = '@{Age=28; Name=Jakub}' }
+            @{ Value = New-Dictionary @{Age=28; Name='Jakub'}; Expected = 'Dictionary{Age=28; Name=Jakub}' }
         ) { 
             param($Value, $Expected)
             Format-Custom -Value $Value | Verify-Equal $Expected

@@ -1,18 +1,19 @@
-param($Path)
-cd $PSScriptRoot
+param($Path = '.')
+pushd $PSScriptRoot
 
 
-get-module pester,assert,axioms | Remove-Module -force
+get-module pester, assert, axioms, testHelpers | Remove-Module -force
 
 Import-Module Pester
-import-module .\..\Assert.psm1
+Import-Module .\..\Assert.psm1
+Import-Module .\TestHelpers.psm1
 Import-Module .\Axioms\Axioms.psm1 -WarningAction SilentlyContinue
 
+
+
+Write-host (New-Dictionary @{name="jakub"})
 Get-Date
 
-if (-not $Path){
-    Invoke-Pester .
-}
-else {
-    Invoke-Pester $Path
-}
+Invoke-Pester (Resolve-Path $Path)
+
+popd

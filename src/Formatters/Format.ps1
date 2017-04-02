@@ -53,6 +53,17 @@ function Format-Hashtable ($Value) {
     $head + ( $entries -join '; ') + $tail
 }
 
+function Format-Dictionary ($Value) {
+    $head = 'Dictionary{'
+    $tail = '}'
+
+    $entries = $Value.Keys | sort | foreach { 
+        $formattedValue = Format-Custom $Value.$_
+        "$_=$formattedValue" }
+    
+    $head + ( $entries -join '; ') + $tail
+}
+
 function Format-Custom ($Value, [switch]$Pretty) { 
     if ($null -eq $Value) 
     { 
@@ -79,11 +90,14 @@ function Format-Custom ($Value, [switch]$Pretty) {
         return $Value
     }
 
-    # dictionaries? (they are IEnumerable so they must go befor collections)
-    # hashtables?
     if (Test-Hashtable -Value $Value)
     {
         return Format-Hashtable -Value $Value
+    }
+    
+    if (Test-Dictionary -Value $Value)
+    {
+        return Format-Dictionary -Value $Value
     }
 
     if (Test-Collection -Value $Value) 

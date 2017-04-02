@@ -355,6 +355,47 @@ InModuleScope -ModuleName Assert {
         }
     }
 
+    Describe "Test-Dictionary" { 
+        It "Given dictionary '<value>' it returns `$true" -TestCases @(
+            @{ Value = New-Object "Collections.Generic.Dictionary[string,object]" }
+            @{ Value= New-Dictionary @{Name="Jakub"} }
+        ) { 
+            param($Value)
+
+            Test-Dictionary -Value $Value | Verify-True
+        }
+
+        It "Given a value '<value>' which is not a dictionary it returns `$false" -TestCases @(
+            @{ Value="Jakub" }
+            @{ Value=1..4 }
+        ) { 
+            param ($Value)
+
+            Test-Dictionary -Value $Value | Verify-False
+        }
+    }
+
+    Describe "Compare-DictionaryEquivalent" {
+        It "Given expected '<expected>' that is not a dictionary it throws ArgumentException" -TestCases @(
+            @{ Expected = "a" }
+        ) { 
+            param($Expected) {}
+            $err = { Compare-DictionaryEquivalent -Actual "dummy" -Expected $Expected } | Verify-Throw 
+            $err.Exception -is [ArgumentException] | Verify-True
+        }
+
+        It "Given values '<expected>' and '<actual>' that are not equivalent it returns message '<message>'." -TestCases @(
+            @{ Actual = 'a'; Expected = New-Dictionary @{ Name = 'Jakub' }; Message = "Expected dictionary 'Dictionary{Name=Jakub}', but got 'a'." }
+            @{ Actual = New-Dictionary @{ }; Expected = New-Dictionary @{ Name = 'Jakub' }; Message = "Expected dictionary 'Dictionary{Name=Jakub}', but got 'Dictionary{}'.`nExpected has key 'Name' that the other object does not have." }
+            @{ Actual = New-Dictionary @{ Name = 'Tomas' }; Expected = New-Dictionary @{ Name = 'Jakub' }; Message = "Expected dictionary 'Dictionary{Name=Jakub}', but got 'Dictionary{Name=Tomas}'.`nExpected property .Name with value 'Jakub' to be equivalent to the actual value, but got 'Tomas'." }
+            @{ Actual = New-Dictionary @{ Name = 'Tomas'; Value = 10 }; Expected = New-Dictionary @{ Name = 'Jakub' }; Message = "Expected dictionary 'Dictionary{Name=Jakub}', but got 'Dictionary{Name=Tomas; Value=10}'.`nExpected property .Name with value 'Jakub' to be equivalent to the actual value, but got 'Tomas'.`nExpected is missing key 'Value' that the other object has." }
+        ) { 
+            param ($Actual, $Expected, $Message) 
+
+            Compare-DictionaryEquivalent -Expected $Expected -Actual $Actual | Verify-Equal $Message
+        }
+    }
+
     Describe "Compare-Equivalent" { 
         It "Given values '<expected>' and '<actual>' that are equivalent returns report with Equivalent set to `$true" -TestCases @(
             @{ Actual = $null; Expected = $null },
@@ -395,6 +436,7 @@ InModuleScope -ModuleName Assert {
             @{ Actual = (New-PSObject @{ Name = 'Jakub' }); Expected = "a"; Message = "Expected 'a' to be equivalent to the actual value, but got 'PSObject{Name=Jakub}'." },
             @{ Actual = 'a'; Expected = (New-PSObject @{ Name = 'Jakub' }); Message = "Expected object 'PSObject{Name=Jakub}', but got 'a'."}      
             @{ Actual = 'a'; Expected = @{ Name = 'Jakub' }; Message = "Expected hashtable '@{Name=Jakub}', but got 'a'." }
+            @{ Actual = 'a'; Expected =  New-Dictionary @{ Name = 'Jakub' }; Message = "Expected dictionary 'Dictionary{Name=Jakub}', but got 'a'." }
         ) { 
             param ($Actual, $Expected, $Message) 
             Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Equal $Message
