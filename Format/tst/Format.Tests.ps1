@@ -1,6 +1,8 @@
 Get-Module Format | Remove-Module
 Import-Module $PSScriptRoot\..\src\Format.psm1 -Force
 
+. $PSScriptRoot\..\..\Compatibility\src\New-PSObject.ps1
+
 Describe "Format-Collection" { 
     It "Formats collection of values '<value>' to '<expected>' using the default separator" -TestCases @(
         @{ Value = (1, 2, 3); Expected = "1, 2, 3" }

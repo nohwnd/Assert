@@ -11,4 +11,6 @@
 
 . $PSScriptRoot\Verify-Throw.ps1
 
+. $PSScriptRoot\Verify-Type.ps1
+
 . $PSScriptRoot\Verify-AssertionFailed.ps1

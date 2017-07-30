@@ -1,3 +1,4 @@
+Import-Module $PSScriptRoot\..\..\TypeClass\src\TypeClass.psm1
 
 function Format-Collection ($Value, [switch]$Pretty) { 
     $separator = ', '
@@ -110,6 +111,8 @@ function Format-Custom ($Value, [switch]$Pretty) {
 }
 
 function Get-IdentityProperty ([Type]$Type) {
+    # rename to Get-DisplayProperty?
+
     <# some objects are simply too big to show all of their properties, 
     so we can create a list of properties to show from an object 
     maybe the default info from Get-FormatData could be utilized here somehow
@@ -141,4 +144,16 @@ function Get-ShortType ($Value) {
         -replace "^Object\[\]$","collection" `
 }
 
-Export-ModuleMember -Function *
+Export-ModuleMember -Function @(
+    'Format-Collection'
+    'Format-Object'
+    'Format-Null'
+    'Format-Boolean'
+    'Format-ScriptBlock'
+    'Format-Number'
+    'Format-Hashtable'
+    'Format-Dictionary'
+    'Format-Custom'
+    'Get-IdentityProperty'
+    'Get-ShortType'
+)

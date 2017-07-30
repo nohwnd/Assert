@@ -17,8 +17,8 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Fails with custom message" {
-            $error = { 9 | Assert-Same 3 -Message "<expected> is not <actual>" } | Verify-AssertionFailed
-            $error.Exception.Message | Verify-Equal "3 is not 9"
+            $error = { "text" | Assert-Same "some other text" -Message "'<expected>' is not '<actual>'" } | Verify-AssertionFailed
+            $error.Exception.Message | Verify-Equal "'some other text' is not 'text'"
         }
 
         It "Given two values that are not the same instance '<expected>' and '<actual>' it returns expected message '<message>'" -TestCases @(
@@ -30,8 +30,16 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Returns the value on output" {
-            $expected = 1
+            $expected = "text"
             $expected | Assert-Same $expected | Verify-Equal $expected
+        }
+
+        Context "Throws when `$expected is integer to warn user about unexpected behavior" {
+            It "a" {
+                $err = { "some text" | Assert-Same -Expected 1 } | Verify-Throw
+                $err.Exception | Verify-Type ([ArgumentException])
+                $err.Exception.Message | Verify-Equal "Assert-Throw provides unexpected results for low integers. See https://github.com/nohwnd/Assertions/issues/6"
+            }
         }
     }
 }

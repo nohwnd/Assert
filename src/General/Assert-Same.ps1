@@ -7,6 +7,11 @@ function Assert-Same {
         [String]$Message
     )
 
+    if ($Expected -is [int])
+    {
+        throw [System.ArgumentException]"Assert-Throw provides unexpected results for low integers. See https://github.com/nohwnd/Assertions/issues/6"
+    }
+
     $Actual = Collect-Input -ParameterInput $Actual -PipelineInput $local:Input
     if (-not ([object]::ReferenceEquals($Expected, $Actual))) 
     { 

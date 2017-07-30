@@ -31,3 +31,13 @@ function Test-Object ($Value) {
 
     -not ($null -eq $Value -or (Test-Value -Value $Value) -or (Test-Collection -Value $Value))
 }
+
+Export-ModuleMember -Function @( 
+    'Test-Value'
+    'Test-Collection'
+    'Test-ScriptBlock'
+    'Test-DecimalNumber'
+    'Test-Hashtable'
+    'Test-Dictionary'
+    'Test-Object'
+)
