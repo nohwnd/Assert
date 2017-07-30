@@ -1,3 +1,5 @@
+Import-Module .\src\TypeClass\TypeClass.psm1
+
 Get-ChildItem -Path $PSScriptRoot\src\ -Recurse -Filter *.ps1 | 
     foreach { . $_.FullName }
 
