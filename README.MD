@@ -142,8 +142,8 @@ Assert-Null ✓
 Assert-NotNull ✓
 
 # comparables
-Assert-GreaterThan (alias: Assert-NotLessThanOrEqual)
-Assert-GreaterThanOrEqual (alias: Assert-NotLessThan)
+Assert-GreaterThan ✓ (alias: Assert-NotLessThanOrEqual)
+Assert-GreaterThanOrEqual ✓ (alias: Assert-NotLessThan)
 
 Assert-LessThan (alias: Assert-NotGreaterThanOrEqual)
 Assert-LessThanOrEqual (alias: Assert-NotGreaterThan)
