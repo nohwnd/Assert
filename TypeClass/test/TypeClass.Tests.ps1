@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\src\TypeClass.psm1
+
 Describe "Test-Value" {
     It "Given '<value>', which is a value, string, enum, scriptblock or array with a single item of those types it returns `$true" -TestCases @(
         @{ Value = 1 },

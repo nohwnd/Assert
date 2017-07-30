@@ -1,4 +1,4 @@
-param($Path = '.')
+cls
 pushd $PSScriptRoot
 
 
@@ -10,10 +10,11 @@ Import-Module .\..\Assert.psm1
 # import modules and utilities for testing 
 Import-Module Pester
 Import-Module .\TestHelpers.psm1
-Import-Module .\Axioms\Axioms.psm1 -WarningAction SilentlyContinue
+Import-Module .\..\Axiom\src\Axiom.psm1 -WarningAction SilentlyContinue
 
 Get-Date
-
-Invoke-Pester (Resolve-Path $Path) -Show Summary, Fails
+$path = (Resolve-Path ($PWD | Split-Path))
+"Running all tests from: $path"
+Invoke-Pester $path -Show Summary, Fails
 
 popd

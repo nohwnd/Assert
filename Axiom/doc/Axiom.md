@@ -1,4 +1,4 @@
-# Axioms
+# Axiom
 
 Proving that your assertions are correct, is a major stumbling point that you have to overcome right at the start of writing your assertion suite. To prove that your assertions are correct you need to write tests for them. To write those tests you need tested assertions. To prove that those assertions are correct you need to write tests for them. To write those tests you need tested assertions. To prove that those assertions are correct you need to write tests for them. To write those tests you need tested assertions. To prove that those assertions are correct you need to write tests for them...And so on, ad-infinitum.
 

@@ -69,17 +69,6 @@ InModuleScope -ModuleName Assert {
         }
     }
 
-    Describe "Get-IdentityProperty" {
-        It "Returns '<expected>' for '<type>'" -TestCases @(
-            @{ Type = "Diagnostics.Process"; Expected = ("Id", "Name") }
-        ) {
-            param ($Type, $Expected)
-            $Actual = Get-IdentityProperty -Type $Type
-            "$Actual" | Verify-Equal "$Expected"
-        }
-
-    }
-
     Describe "Get-ValueNotEquivalentMessage" {
         It "Returns correct message when comparing value to an object" { 
             $e = 'abc'

@@ -1,3 +1,4 @@
+
 function Format-Collection ($Value, [switch]$Pretty) { 
     $separator = ', '
     if ($Pretty){
@@ -107,3 +108,37 @@ function Format-Custom ($Value, [switch]$Pretty) {
 
     Format-Object -Value $Value -Property (Get-IdentityProperty ($Value.GetType())) -Pretty:$Pretty
 }
+
+function Get-IdentityProperty ([Type]$Type) {
+    <# some objects are simply too big to show all of their properties, 
+    so we can create a list of properties to show from an object 
+    maybe the default info from Get-FormatData could be utilized here somehow
+    so we show only stuff that would normally show in format-table view
+    leveraging the work PS team already did #>
+
+    # this will become more advanced, basically something along the lines of:
+    # foreach type, try constructing the type, and if it exists then check if the 
+    # incoming type is assingable to the current type, if so then return the properties,
+    # this way I can specify the map from the most concrete type to the least concrete type
+    # and for types that do not exist
+ 
+    $propertyMap = @{
+        'System.Diagnostics.Process' = 'Id', 'Name'
+    }
+    
+    $propertyMap[$Type.FullName]
+}
+
+function Get-ShortType ($Value) {
+    $type = '<null>'
+    if ($null -ne $value)
+    {
+        $type = ([string]$Value.GetType()) 
+    }
+    $type `
+        -replace "^System\." `
+        -replace "^Management\.Automation\.PSCustomObject$","PSObject" `
+        -replace "^Object\[\]$","collection" `
+}
+
+Export-ModuleMember -Function *
