@@ -152,8 +152,8 @@ Assert-InRange
 Assert-NotInRange
 
 ### Booleans
-Assert-True
-Assert-False
+Assert-True ✓
+Assert-False ✓
 
 ### Strings
 
