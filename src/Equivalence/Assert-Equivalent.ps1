@@ -304,9 +304,9 @@ function Compare-Equivalent ($Actual, $Expected, $Path) {
 function Assert-Equivalent($Actual, $Expected) {
     $Option = $null
     $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected | Out-String
-    $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $Option -Pretty "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
     if ($areDifferent)
     {
+        $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $Option -Pretty -Message "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
         throw [Assertions.AssertionException]$message
     }
 }
