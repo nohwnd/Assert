@@ -1,100 +1,98 @@
-InModuleScope -ModuleName Assert {
-    Describe "Assert-GreaterThanOrEqual" {
-        Context "Comparing strings" {
-            It "Passes when actual is greater than expected" {
-                "z" | Assert-GreaterThanOrEqual "a"
-            }
-
-            It "Passes when actual is equal to expected" {
-                "a" | Assert-GreaterThanOrEqual "a"
-            }
-
-            It "Fails when actual is lower than expected" {
-                { "a" | Assert-GreaterThanOrEqual "z" } | Verify-AssertionFailed
-            }
+Describe "Assert-LessThanOrEqual" {
+    Context "Comparing strings" {
+        It "Passes when actual is less than expected" {
+            "a" | Assert-LessThanOrEqual "z"
         }
 
-        Context "Comparing integers" {
-            It "Passes when expected is greater than actual" {
-                2 | Assert-GreaterThanOrEqual 1
-            }
-
-            It "Passes when actual is equal to expected" {
-                1 | Assert-GreaterThanOrEqual 1
-            }
-
-            It "Fails when actual is lower than expected" {
-                { 1 | Assert-GreaterThanOrEqual 9 } | Verify-AssertionFailed
-            }
+        It "Passes when actual is equal to expected" {
+            "a" | Assert-LessThanOrEqual "a"
         }
 
-        Context "Comparing doubles" {
-            It "Passes when expected is greater than actual" {
-                .2 | Assert-GreaterThanOrEqual .1
-            }
+        It "Fails when actual is greater than expected" {
+            { "z" | Assert-LessThanOrEqual "a" } | Verify-AssertionFailed
+        }
+    }
 
-            It "Passes when actual is equal to expected" {
-                .1 | Assert-GreaterThanOrEqual .1
-            }
-
-            It "Fails when actual is lower than expected" {
-                { .1 | Assert-GreaterThanOrEqual .9 } | Verify-AssertionFailed
-            }
+    Context "Comparing integers" {
+        It "Passes when expected is less than actual" {
+            1 | Assert-LessThanOrEqual 2
         }
 
-        Context "Comparing decimals" {
-            It "Passes when expected is greater than actual" {
-                2D | Assert-GreaterThanOrEqual 1D
-            }
-
-            It "Passes when actual is equal to expected" {
-                1D | Assert-GreaterThanOrEqual 1D
-            }
-
-            It "Fails when actual is lower than expected" {
-                { 1D | Assert-GreaterThanOrEqual 9D } | Verify-AssertionFailed
-            }
+        It "Passes when actual is equal to expected" {
+            1 | Assert-LessThanOrEqual 1
         }
 
-        Context "Comparing objects" {
-            It "Passes when two objects are the same" {
-                $object = New-Object -TypeName PsObject -Property @{ Name = "Jakub" }
-                $object | Assert-GreaterThanOrEqual $object
-            }
+        It "Fails when actual is greater than expected" {
+            { 9 | Assert-LessThanOrEqual 1 } | Verify-AssertionFailed
+        }
+    }
 
-            It "Fails when two objects are not comparable" {
-                $object = New-Object -TypeName PsObject -Property @{ Name = "Jakub" }
-                $object1 = New-Object -TypeName PsObject -Property @{ Name = "Jakub" }
-                $err = { $object | Assert-GreaterThanOrEqual $object1 } | Verify-Throw
-                $err.Exception | Verify-Type ([System.Management.Automation.ExtendedTypeSystemException])
-            }
+    Context "Comparing doubles" {
+        It "Passes when expected is less than actual" {
+            .1 | Assert-LessThanOrEqual .2
         }
 
-        It "Fails for array input even if the last item is greater than then expected value" {
-             $err = {  1,2,3,4 | Assert-GreaterThanOrEqual 3 } | Verify-Throw 
-             $err.Exception | Verify-Type ([System.Management.Automation.RuntimeException])
+        It "Passes when actual is equal to expected" {
+            .1 | Assert-LessThanOrEqual .1
         }
 
-        It "Fails with custom message" {
-             $err = { 2 | Assert-GreaterThanOrEqual 3 -Message "<actual> is not greater than <expected>" } | Verify-AssertionFailed
-             $err.Exception.Message | Verify-Equal "2 is not greater than 3"
+        It "Fails when actual is greater than expected" {
+            { .9 | Assert-LessThanOrEqual .1 } | Verify-AssertionFailed
+        }
+    }
+
+    Context "Comparing decimals" {
+        It "Passes when expected is less than actual" {
+            1D | Assert-LessThanOrEqual 2D
         }
 
-        Context "Validate messages" {
-            It "Given two values '<expected>' and '<actual>' it returns expected message '<message>'" -TestCases @(
-                @{ Expected = "z" ; Actual = "a" ; Message = "Expected string 'a' to be greater than or equal to string 'z', but it was not."},
-                @{ Expected = 10.1 ; Actual = 1.1 ; Message = "Expected double '1.1' to be greater than or equal to double '10.1', but it was not."},
-                @{ Expected = 10.1D ; Actual = 1.1D ; Message = "Expected decimal '1.1' to be greater than or equal to decimal '10.1', but it was not."}
-            ) { 
-                param($Expected, $Actual, $Message)
-                $error = { Assert-GreaterThanOrEqual -Actual $Actual -Expected $Expected } | Verify-AssertionFailed
-                $error.Exception.Message | Verify-Equal $Message
-            }
+        It "Passes when actual is equal to expected" {
+            1D | Assert-LessThanOrEqual 1D
         }
 
-        It "Returns the value on output" {
-            $expected = 1
-            $expected | Assert-GreaterThanOrEqual 0 | Verify-Equal $expected
+        It "Fails when actual is greater than expected" {
+            { 9D | Assert-LessThanOrEqual 1D } | Verify-AssertionFailed
         }
+    }
+
+    Context "Comparing objects" {
+        It "Passes when two objects are the same" {
+            $object = New-Object -TypeName PsObject -Property @{ Name = "Jakub" }
+            $object | Assert-LessThanOrEqual $object
+        }
+
+        It "Fails when two objects are not comparable" {
+            $object = New-Object -TypeName PsObject -Property @{ Name = "Jakub" }
+            $object1 = New-Object -TypeName PsObject -Property @{ Name = "Jakub" }
+            $err = { $object | Assert-LessThanOrEqual $object1 } | Verify-Throw
+            $err.Exception | Verify-Type ([System.Management.Automation.ExtendedTypeSystemException])
+        }
+    }
+
+    It "Fails for array input even if the last item is less than then expected value" {
+            $err = { 4,3,2,1 | Assert-LessThanOrEqual 3 } | Verify-Throw 
+            $err.Exception | Verify-Type ([System.Management.Automation.RuntimeException])
+    }
+
+    It "Fails with custom message" {
+            $err = { 3 | Assert-LessThanOrEqual 2 -Message "<actual> is not less than <expected>" } | Verify-AssertionFailed
+            $err.Exception.Message | Verify-Equal "3 is not less than 2"
+    }
+
+    Context "Validate messages" {
+        It "Given two values '<expected>' and '<actual>' it returns expected message '<message>'" -TestCases @(
+            @{ Expected = "a" ; Actual = "z" ; Message = "Expected string 'z' to be less than or equal to string 'a', but it was not."},
+            @{ Expected = 1.1 ; Actual = 10.1 ; Message = "Expected double '10.1' to be less than or equal to double '1.1', but it was not."},
+            @{ Expected = 1.1D ; Actual = 10.1D ; Message = "Expected decimal '10.1' to be less than or equal to decimal '1.1', but it was not."}
+        ) { 
+            param($Expected, $Actual, $Message)
+            $error = { Assert-LessThanOrEqual -Actual $Actual -Expected $Expected } | Verify-AssertionFailed
+            $error.Exception.Message | Verify-Equal $Message
+        }
+    }
+
+    It "Returns the value on output" {
+        $expected = 0
+        $expected | Assert-LessThanOrEqual 1 | Verify-Equal $expected
     }
 }

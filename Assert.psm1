@@ -7,13 +7,17 @@ Get-ChildItem -Path $PSScriptRoot\src\ -Recurse -Filter *.ps1 |
     foreach { . $_.FullName }
 
 Export-ModuleMember -Function Assert-Equivalent, 
-    Assert-Equal, 
-    Assert-NotEqual, 
-    Assert-Same, 
-    Assert-NotSame, 
-    Assert-Null, 
-    Assert-NotNull, 
-    Assert-Type, 
-    Assert-NotType,
-    Assert-CollectionContain,
-    Assert-CollectionNotContain
+    Assert-Equal, # ?= , ?eq
+    Assert-NotEqual, # ?!= ?ne
+    Assert-Same, # ?=== ?ref ?same 
+    Assert-NotSame, # ?!=== ?notref ?notsame
+    Assert-Null, # ?0  ?null
+    Assert-NotNull, # ?!0  ?notnull
+    Assert-Type, # ?type ?is
+    Assert-NotType, # ?nottype ?isnot
+    Assert-LessThan, # ?< ?lt
+    Assert-LessThanOrEqual, # ?<= ?le
+    Assert-GreaterThan, # ?> ?gt
+    Assert-GreaterThanOrEqual, # ?>= ?ge
+    Assert-CollectionContain, # ?contain
+    Assert-CollectionNotContain #?notcontain
