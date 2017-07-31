@@ -1,4 +1,4 @@
-cls
+param ([switch]$CIBuild)
 pushd $PSScriptRoot
 
 
@@ -15,6 +15,11 @@ Import-Module .\..\Axiom\src\Axiom.psm1 -WarningAction SilentlyContinue
 Get-Date
 $path = (Resolve-Path ($PWD | Split-Path))
 "Running all tests from: $path"
-Invoke-Pester $path -Show Summary, Fails
+if ($CIBuild) {
+    Invoke-Pester $path -EnableExit 
+}
+else {
+    Invoke-Pester $path -Show Summary, Fails
+}
 
 popd
