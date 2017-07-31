@@ -1,10 +1,10 @@
 @{
 
 # Script module or binary module file associated with this manifest.
-# RootModule = ''
+RootModule = 'Assert.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.2.0'
+ModuleVersion = '0.5.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -22,7 +22,7 @@ CompanyName = 'None'
 Copyright = '(c) 2017 nohwnd. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'Collection of assertions.'
+Description = 'Alternative assertions for Pester.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 #PowerShellVersion = '2'
@@ -61,13 +61,36 @@ Description = 'Collection of assertions.'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @()
+FunctionsToExport = @( 
+    'Assert-Equivalent'
+    'Assert-Equal'
+    'Assert-NotEqual'
+    'Assert-Same'
+    'Assert-NotSame'
+    'Assert-Null'
+    'Assert-NotNull'
+    'Assert-Type'
+    'Assert-NotType'
+    'Assert-LessThan'
+    'Assert-LessThanOrEqual'
+    'Assert-GreaterThan'
+    'Assert-GreaterThanOrEqual'
+    'Assert-True'
+    'Assert-False'
+    'Assert-Contain'
+    'Assert-NotContain'
+    'Assert-Any'
+    'Assert-All'
+    'Assert-Throw'
+    'Assert-StringEqual'
+    'Assert-StringNotEqual'
+)
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
 
 # Variables to export from this module
-VariablesToExport = '*'
+VariablesToExport = ''
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
 AliasesToExport = @()
@@ -87,13 +110,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('testing', 'tdd', 'bdd', 'assertion', 'assert', 'pester')
 
         # A URL to the license for this module.
         # LicenseUri = ''
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/nohwnd/Assertions'
 
         # A URL to an icon representing this module.
         # IconUri = ''
