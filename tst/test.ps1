@@ -19,7 +19,7 @@ if ($CIBuild) {
     Invoke-Pester $path -EnableExit 
 }
 else {
-    Invoke-Pester $path -Show Summary, Fails
+    Invoke-Pester $path -Show Summary, Failed
 }
 
 popd
