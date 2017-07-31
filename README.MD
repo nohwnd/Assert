@@ -217,15 +217,13 @@ Assert-CollectionEqual (same items with the same order, exists in general)
 Assert-CollectionEquivalent (same by value items, different order, exists in general, how about repetitions?)
 
 Assert-CollectionAny ✓ (Will apply predicate on every item and check that at least one item complies to it)
-Assert-CollectionAll ( Will apply predicate on every item and check that all items comply to it, should list not compliant items in message)
+Assert-CollectionAll ✓ ( Will apply predicate on every item and check that all items comply to it, should list not compliant items in message)
 
 ? Assert-CollectionInstersect
 
 ? start with
 ? end with
 
-? all
-? any
 
 ### Hashtables ?
 

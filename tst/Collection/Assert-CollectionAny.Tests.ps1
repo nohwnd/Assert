@@ -8,6 +8,15 @@
         $Actual | Assert-CollectionAny -FilterScript { $_ -eq 1 }
     }
 
+    It "Fails when none of the items passes the predicate" -TestCases @(
+        @{ Actual = @(1,2,3) }
+        @{ Actual = @(1) }
+        @{ Actual = 1 }
+    ) {
+        param($Actual)
+        { $Actual | Assert-CollectionAny -FilterScript { $_ -eq 0 } } | Verify-AssertionFailed
+    }
+
     It "Validate messages" -TestCases @(
         @{ Actual = @(3,4,5); Message = "Expected at least one item in collection '3, 4, 5' to pass filter '{ `$_ -eq 1 }', but none of the items passed the filter." }
         @{ Actual = @(3); Message = "Expected at least one item in collection '3' to pass filter '{ `$_ -eq 1 }', but none of the items passed the filter." }
