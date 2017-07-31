@@ -3,6 +3,7 @@ Import-Module $PSScriptRoot\..\src\Format.psm1 -Force
 
 . $PSScriptRoot\..\..\Compatibility\src\New-PSObject.ps1
 
+Add-Type -TypeDefinition 'namespace Assertions.TestType { public class Person { public string Name {get;set;} public int Age {get;set;}}}'
 Describe "Format-Collection" { 
     It "Formats collection of values '<value>' to '<expected>' using the default separator" -TestCases @(
         @{ Value = (1, 2, 3); Expected = "1, 2, 3" }
