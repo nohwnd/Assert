@@ -1,4 +1,4 @@
-function Assert-CollectionNotContain {
+function Assert-NotContain {
     param (
         [Parameter(ValueFromPipeline=$true)]
         $Actual, 

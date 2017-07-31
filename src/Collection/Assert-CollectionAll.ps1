@@ -1,4 +1,4 @@
-function Assert-CollectionAll {
+function Assert-All {
     param (
         [Parameter(ValueFromPipeline=$true, Position=1)]
         $Actual, 

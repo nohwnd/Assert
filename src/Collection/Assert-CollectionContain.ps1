@@ -1,4 +1,4 @@
-function Assert-CollectionContain {
+function Assert-Contain {
     param (
         [Parameter(ValueFromPipeline=$true)]
         $Actual, 
