@@ -22,4 +22,5 @@ Export-ModuleMember -Function Assert-Equivalent,
     Assert-True, # ?true
     Assert-False, # ?false
     Assert-CollectionContain, # ?contain
-    Assert-CollectionNotContain #?notcontain
+    Assert-CollectionNotContain, #?notcontain
+    Assert-CollectionAny # ?any

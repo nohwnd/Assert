@@ -183,7 +183,7 @@ Assert-StringLength
 
 ### Numbers
  
-Assert-NumberEqual (Will get tolerance.)
+Assert-NumberEqual (Will get tolerance in form 0.1,0.1 or 0.1 similar as with context in Select-String. Could also get precision to specify how many decimal places to compare to.)
 Assert-NumberNotEqual
 
 Assert-NumberGreaterThan (alias: Assert-NumberNotLessThanOrEqual)
@@ -207,11 +207,17 @@ not priority
 Assert-CollectionNotEmpty
 Assert-CollectionLength 
 
-Assert-CollectionContain ✓ (expected is subset of actual)
+Assert-CollectionContain ✓ (expected is subset of actual) 1,2,3 | Assert-CollectionContain 1 
 Assert-CollectionNotContain ✓
+
+Assert-CollectionIn (actual is subset of expected) 2 | Assert-CollectionIn 1,2,3
+Assert-CollectionNotIn 
 
 Assert-CollectionEqual (same items with the same order, exists in general)
 Assert-CollectionEquivalent (same by value items, different order, exists in general, how about repetitions?)
+
+Assert-CollectionAny ✓ (Will apply predicate on every item and check that at least one item complies to it)
+Assert-CollectionAll ( Will apply predicate on every item and check that all items comply to it, should list not compliant items in message)
 
 ? Assert-CollectionInstersect
 

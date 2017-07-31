@@ -14,12 +14,12 @@ function Get-AssertionMessage ($Expected, $Actual, $Option, $Message, $DefaultMe
         $optionMessage = "Used options: $($Option -join ", ")."
     }
 
-    $Message = $Message `
-        -replace '<expected>', $expectedFormatted `
-        -replace '<actual>', $actualFormatted `
-        -replace '<expectedType>', (Get-ShortType -Value $Expected) `
-        -replace '<actualType>', (Get-ShortType -Value $Actual) `
-        -replace '<options>', $optionMessage
+
+    $Message = $Message.Replace('<expected>', $expectedFormatted)
+    $Message = $Message.Replace('<actual>', $actualFormatted)
+    $Message = $Message.Replace('<expectedType>', (Get-ShortType -Value $Expected))
+    $Message = $Message.Replace('<actualType>', (Get-ShortType -Value $Actual))
+    $Message = $Message.Replace('<options>', $optionMessage)
 
     $Message
 }
