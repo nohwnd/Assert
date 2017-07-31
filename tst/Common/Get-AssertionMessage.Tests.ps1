@@ -35,5 +35,17 @@
             $customMessage = "Expected 'a', but got 'b'. <options>"
             Get-AssertionMessage -Message $customMessage -Expected 'a' -Actual 'b' -Option "CaseSensitive","IgnoreWhitespace" | Verify-Equal $expected
         }
+
+        It "returns correct message when additional data are provided" { 
+            $expected = "but 3 of them '1, 2, 3' did not pass the filter."
+
+            $customMessage = "but <actualFilteredCount> of them '<actualFiltered>' did not pass the filter."
+            $data = @{ 
+                actualFilteredCount = 3
+                actualFiltered = 1, 2, 3
+            }
+
+            Get-AssertionMessage -Message $customMessage -Data $data | Verify-Equal $expected
+        }
     }
 }

@@ -1,4 +1,4 @@
-function Get-AssertionMessage ($Expected, $Actual, $Option, $Message, $DefaultMessage, [switch]$Pretty) 
+function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @{}, $Message, $DefaultMessage, [switch]$Pretty) 
 {
     if (-not $Message)
     {
@@ -20,6 +20,11 @@ function Get-AssertionMessage ($Expected, $Actual, $Option, $Message, $DefaultMe
     $Message = $Message.Replace('<expectedType>', (Get-ShortType -Value $Expected))
     $Message = $Message.Replace('<actualType>', (Get-ShortType -Value $Actual))
     $Message = $Message.Replace('<options>', $optionMessage)
+
+    foreach ($pair in $Data.GetEnumerator())
+    {
+        $Message = $Message.Replace("<$($pair.Key)>", (Format-Custom -Value $pair.Value))
+    }
 
     $Message
 }
