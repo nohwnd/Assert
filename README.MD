@@ -1,6 +1,6 @@
 
 
-![](./doc/readme/get-word.png)
+![](https://raw.githubusercontent.com/nohwnd/Assertions/master/doc/readme/compare-objects.PNG)
 
 A set of advanced assertions for Pester to simplify how you write tests. 
 
@@ -10,35 +10,35 @@ A set of advanced assertions for Pester to simplify how you write tests.
 
 Assertions use approved verb `Assert` and one function per assertion so you can leverage all your command discovery skills. 
 
-![](./doc/readme/get-command.png)
+![](https://raw.githubusercontent.com/nohwnd/Assertions/master/doc/readme/get-command.PNG)
 
 
 ## Specialized assertions
 
 Assertions are split to generic and specialized. Use the generic assertion to the basic stuff and the specialized assertion to get more fancy. No more guessing what `-Exactly` means for the current type. More types coming soon. 
 
-![](./doc/readme/compare-strings.png)
+![](https://raw.githubusercontent.com/nohwnd/Assertions/master/doc/readme/compare-strings.PNG)
 
 
 ## Helpful failure messages
 
 Assertions provide verbose failure messages that describe what was the input, the output, and why the assertion failed.
 
-![](./doc/readme/verbose-message.png)
+![](https://raw.githubusercontent.com/nohwnd/Assertions/master/doc/readme/verbose-message.PNG)
 
 
 ## Custom failure messages
 
 Bored by standard assertion messages, or they simply don't make much sense for your usecase? Don't worry, you can write your own.
 
-![](./doc/readme/custom-messages.png)
+![](https://raw.githubusercontent.com/nohwnd/Assertions/master/doc/readme/custom-messages.PNG)
 
 
 ## Nicely formatted output
 
 Most objects do not print nicely, so we try hard to fix it for you so you know what exactly is the input and output of your tests. Say no to "Assertion failed because '' was not equal to ''." 
 
-![](./doc/readme/pretty-print.png)
+![](https://raw.githubusercontent.com/nohwnd/Assertions/master/doc/readme/pretty-print.PNG)
 
 
 ## Well tested
@@ -53,7 +53,7 @@ _experimental!_
 
 Got two objects and you need to know how exactly they differ? With this experimential feature you can compare whole objects and get detailed report of their differences. Get in touch and help me throw a lot of testcases on this assertion to make it better!
 
-![](./doc/readme/compare-objects.png)
+![](https://raw.githubusercontent.com/nohwnd/Assertions/master/doc/readme/compare-objects.PNG)
 
 
 ## Chaining assertions
