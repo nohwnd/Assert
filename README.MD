@@ -59,10 +59,31 @@ _experimental!_
 Assertions pass their input to their output so you can easily chain them. Awesome for quick prototyping or when you are missing a complex assertion. Not recommended for production, because of assertion rullette. Be a hero and suggest a way to chain assertions and fail all of them at the same time.
 
 ## Setup
+1) Install 
 
+Install for the current user by running the following:
 
-## FAQ
-why is this not part of Pester?
+```powershell
+Install-Module -Scope CurrentUser -Name Assert
+```
 
-## Get in touch
-@nohwnd
+Or install for all users by running this from and administrator PowerShell commandline:
+
+```powershell
+Install-Module -Name Assert
+```
+2) Import 
+Import the module in your current powershell session by:
+
+```powershell
+Import-Module Assert
+```
+
+3) Use it anywhere!
+
+```powershell 
+"hello" | Assert-NotEqual "world" 
+```
+
+## Help needed
+Best way to help, is to start using this module and report bugs and feature requests. I have big plans, but my tests are still the same, so every new pair of eyes is welcome. :)
