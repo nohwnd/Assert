@@ -40,7 +40,7 @@ Most objects do not print nicely, so we try hard to fix it for you so you know w
 
 ### Well tested
 
-The whole suite was written mostly test first, it currently has 417 tests and growing. (Yes that is almost as much tests as Pester has for the whole framework!) A simplified set of independent assertions is used to test the code to make sure everything is working correctly without.
+The whole suite was written mostly test first, it currently has 417 tests and growing. (Yes that is almost as much tests as Pester has for the whole framework!) A simplified set of independent assertions is used to test the code to make sure everything is working correctly without unwanted dependencies.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/74k092cmss0goh45/branch/master?svg=true)](https://ci.appveyor.com/project/nohwnd/assertions/branch/master)
 
