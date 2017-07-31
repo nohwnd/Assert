@@ -2,6 +2,8 @@
 
 > Prototyping a suite of more advanced and more consistent assertions for Pester.
 
+[![Build status](https://ci.appveyor.com/api/projects/status/74k092cmss0goh45/branch/master?svg=true)](https://ci.appveyor.com/project/nohwnd/assertions/branch/master)
+
 The general way in which the assertions should be used is the pipeline form.
 
 ```powershell
