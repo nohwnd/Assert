@@ -302,11 +302,11 @@ InModuleScope -ModuleName Assert {
             Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Equal $Message
         }
 
-        It "Comparing the same instance of a psObject returns True"{ 
+        It "Comparing the same instance of a psObject returns null"{ 
             $actual = $expected = New-PSObject @{ Name = 'Jakub' }
             Verify-Same -Expected $expected -Actual $actual
 
-            $report = Compare-Equivalent -Expected $expected -Actual $actual | Verify-Null
+            Compare-Equivalent -Expected $expected -Actual $actual | Verify-Null
         }
 
         It "Given PSObjects '<expected>' and '<actual> that are different instances but have the same values it returns report with Equivalent set to `$true" -TestCases @(
@@ -371,7 +371,7 @@ InModuleScope -ModuleName Assert {
         ) { 
             param ($Expected, $Actual)
 
-            $report = Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Equal "Expected collection in property .Numbers which is '1, 2, 3' to be equivalent to '3, 4, 5' but some values were missing: '1, 2'."
+            Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Equal "Expected collection in property .Numbers which is '1, 2, 3' to be equivalent to '3, 4, 5' but some values were missing: '1, 2'."
         }
 
         It "Comparing psObjects that have collections of objects returns `$null when the objects have the same value" -TestCases @(
@@ -392,6 +392,10 @@ InModuleScope -ModuleName Assert {
         ) { 
             param ($Expected, $Actual)
             Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Equal "Expected collection in property .Objects which is 'PSObject{Name=Jan}, PSObject{Name=Petr}' to be equivalent to 'PSObject{Name=Jan}, PSObject{Name=Tomas}' but some values were missing: 'PSObject{Name=Petr}'."
+        }
+
+        It "Can be called with positional parameters" {
+            { Assert-Equivalent 1 2 } | Verify-AssertionFailed
         }
     }
 }

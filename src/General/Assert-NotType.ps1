@@ -1,6 +1,6 @@
 function Assert-NotType {
     param (
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(Position=1, ValueFromPipeline=$true)]
         $Actual, 
         [Parameter(Position=0)]
         [Type]$Expected,

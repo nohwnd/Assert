@@ -41,5 +41,9 @@ InModuleScope -ModuleName Assert {
                 $err.Exception.Message | Verify-Equal "Assert-Throw provides unexpected results for low integers. See https://github.com/nohwnd/Assertions/issues/6"
             }
         }
+
+        It "Can be called with positional parameters" {
+            { Assert-Same "a" "g" } | Verify-AssertionFailed
+        }
     }
 }

@@ -50,5 +50,9 @@
                 { Assert-StringNotEqual -Expected " a b c " -Actual "abc" -IgnoreWhitespace } | Verify-AssertionFailed
             }
         }
+
+        It "Can be called with positional parameters" {
+            { Assert-StringNotEqual "a" "a" } | Verify-AssertionFailed
+        }
     }
 }

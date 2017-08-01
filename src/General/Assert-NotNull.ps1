@@ -1,6 +1,6 @@
 function Assert-NotNull {
     param (
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(Position=1, ValueFromPipeline=$true)]
         $Actual, 
         [String]$Message
     )

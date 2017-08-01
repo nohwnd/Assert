@@ -1,6 +1,6 @@
 function Assert-NotEqual {
     param (
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(Position=1, ValueFromPipeline=$true)]
         $Actual, 
         [Parameter(Position=0)]
         $Expected,

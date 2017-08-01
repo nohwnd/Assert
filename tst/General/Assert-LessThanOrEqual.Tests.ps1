@@ -95,4 +95,8 @@ Describe "Assert-LessThanOrEqual" {
         $expected = 0
         $expected | Assert-LessThanOrEqual 1 | Verify-Equal $expected
     }
+
+    It "Can be called with positional parameters" {
+        { Assert-LessThanOrEqual 1 2 } | Verify-AssertionFailed
+    }
 }

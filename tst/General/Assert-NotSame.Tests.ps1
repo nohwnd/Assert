@@ -34,5 +34,12 @@ InModuleScope -ModuleName Assert {
             $expected = 1
             $expected | Assert-NotSame 7 | Verify-Equal $expected
         }
+
+        It "Can be called with positional parameters" {
+            {   
+                $obj = New-Object -TypeName PSObject
+                Assert-NotSame $obj $obj 
+            } | Verify-AssertionFailed
+        }
     }
 }

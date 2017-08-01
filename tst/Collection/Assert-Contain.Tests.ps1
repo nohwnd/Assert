@@ -17,5 +17,9 @@
             $error = { @(5,6,7) | Assert-Contain 1 } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal "Expected int '1' to be present in collection '5, 6, 7', but it was not there."
         }
+
+         It "Can be called with positional parameters" {
+            { Assert-Contain 1 3,4,5 } | Verify-AssertionFailed
+        }
     }
 }
