@@ -1,5 +1,11 @@
 # Change log
 
+# 0.6.0 (August 1, 2017) 
+
+- Add many assertions
+- Add positional paramaters for Actual
+- Write readme
+
 ## 0.2.0 (January 29, 2017)
 
 - Add Assert-Equal
