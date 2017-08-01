@@ -11,5 +11,9 @@ InModuleScope -ModuleName Assert {
         It "Returns the given value" { 
             $null | Assert-Null | Verify-Null
         }
+
+        It "Can be called with positional parameters" {
+            { Assert-Null 1 } | Verify-AssertionFailed
+        }
     }
 }

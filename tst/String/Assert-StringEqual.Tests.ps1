@@ -116,5 +116,9 @@
                 Assert-StringEqual -Expected " a b c " -Actual "abc" -IgnoreWhitespace
             }
         }
+
+        It "Can be called with positional parameters" {
+            { Assert-StringEqual "a" "b" } | Verify-AssertionFailed
+        }
     }
 }

@@ -17,5 +17,9 @@ InModuleScope -ModuleName Assert {
         It "Passes when collection of multiple items does not contain the expected item" {
             @(5,6,7) | Assert-NotContain 1
         }
+
+        It "Can be called with positional parameters" {
+            { Assert-NotContain 1 1,2,3 } | Verify-AssertionFailed
+        }
     }
 }

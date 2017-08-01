@@ -37,4 +37,8 @@ Describe "Assert-False" {
         $expected = $false
         $expected | Assert-False | Verify-Equal $expected
     }
+
+    It "Can be called with positional parameters" {
+        { Assert-False $true } | Verify-AssertionFailed
+    }
 }

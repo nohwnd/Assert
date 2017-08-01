@@ -76,5 +76,9 @@ InModuleScope -ModuleName Assert {
             $expected = 1
             $expected | Assert-NotEqual 9 | Verify-Equal $expected
         }
+
+        It "Can be called with positional parameters" {
+            { Assert-NotEqual 1 1 } | Verify-AssertionFailed
+        }
     }
 }
