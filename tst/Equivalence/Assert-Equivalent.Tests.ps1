@@ -42,7 +42,7 @@ InModuleScope -ModuleName Assert {
     }
 
     Describe "Get-TestCase" {
-        It "Given a value it returns the value and it's type in a hashtable" {
+        It "Given a value it returns the value and its type in a hashtable" {
             $expected = @{
                 Value = 1
                 Type = [Int]
