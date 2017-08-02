@@ -10,7 +10,7 @@ We have three options:
 - Write a custom suit of assertions
 
 ## Using a third-party set of assertions
-The first option gives us a head start, we have a suite that has all the features that we need and we can start writing our assertion suite right off. This is very convenient, but we are making a trade off. Our test suite is no longer self-contained, and it's correctness depends on the third-party assertions being correct. 
+The first option gives us a head start, we have a suite that has all the features that we need and we can start writing our assertion suite right off. This is very convenient, but we are making a trade off. Our test suite is no longer self-contained, and its correctness depends on the third-party assertions being correct. 
 
 Proving that the third-party assertions are correct is a job for their author, and he possibly did the same trade off. He reused some other suite of assertions, and those assertions might be untested, or possibly even tested with the assertions we are writing. As you can see there is a chain of trust that either terminates in not-automatically tested, or becomes recursive. 
 

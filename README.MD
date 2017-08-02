@@ -19,7 +19,7 @@ Assertions are split to generic and specialized. Use the generic assertion to th
 
 ### Helpful failure messages
 
-Assertions provide verbose failure messages that describe what was the input, the output, and why the assertion failed.
+Assertions provide verbose failure messages that describe what the input was, what the output was, and why the assertion failed.
 
 ![](https://raw.githubusercontent.com/nohwnd/Assertions/master/doc/readme/verbose-message.PNG)
 
@@ -33,14 +33,14 @@ Bored by standard assertion messages, or they simply don't make much sense for y
 
 ### Nicely formatted output
 
-Most objects do not print nicely, so we try hard to fix it for you so you know what exactly is the input and output of your tests. Say no to "Assertion failed because '' was not equal to ''." 
+Most objects do not print nicely, so we try hard to fix it for you so you know exactly what the input and output of your tests was. Say no to "Assertion failed because '' was not equal to ''." 
 
 ![](https://raw.githubusercontent.com/nohwnd/Assertions/master/doc/readme/pretty-print.PNG)
 
 
 ### Well tested
 
-The whole suite was written mostly test first, it currently has 417 tests and growing. (Yes that is almost as much tests as Pester has for the whole framework!) A simplified set of independent assertions is used to test the code to make sure everything is working correctly without unwanted dependencies.
+The whole suite was written mostly test first, it currently has 417 tests and growing. (Yes that is almost as many tests as Pester has for the whole framework!) A simplified set of independent assertions is used to test the code to make sure everything is working correctly without unwanted dependencies.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/74k092cmss0goh45/branch/master?svg=true)](https://ci.appveyor.com/project/nohwnd/assertions/branch/master)
 
