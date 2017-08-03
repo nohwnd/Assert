@@ -3,7 +3,7 @@ Describe "Assert-False" {
             $false | Assert-False
         }
 
-        It "Passes when given falsy" -TestCases @(
+        It "Passes when given falsy value '<actual>'" -TestCases @(
             @{ Actual = 0 }
             @{ Actual = "" }
             @{ Actual = $null }
@@ -23,7 +23,7 @@ Describe "Assert-False" {
     }
 
     Context "Validate messages" {
-        It "Given value '<expected>' that is not `$false it returns expected message '<message>'" -TestCases @(
+        It "Given value '<actual>' that is not `$false it returns expected message '<message>'" -TestCases @(
             @{ Actual = $true ; Message = "Expected bool '`$true' to be bool '`$false' or falsy value 0, """", `$null, @()."},
             @{ Actual = 10 ; Message = "Expected int '10' to be bool '`$false' or falsy value 0, """", `$null, @()."}
         ) { 
