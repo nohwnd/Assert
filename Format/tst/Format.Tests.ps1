@@ -117,6 +117,7 @@ Describe "Format-Custom" {
         @{ Value = 1; Expected = '1' },
         @{ Value = (1, 2, 3); Expected = '1, 2, 3' },
         @{ Value = 1.1; Expected = '1.1' },
+        @{ Value = [int]; Expected = 'int'}
         @{ Value = New-PSObject @{ Name = "Jakub" }; Expected = 'PSObject{Name=Jakub}' },
         @{ Value = (Get-Process Idle); Expected = 'Diagnostics.Process{Id=0; Name=Idle}'},
         @{ Value = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28}); Expected = "Assertions.TestType.Person{Age=28; Name=Jakub}"}
@@ -137,6 +138,21 @@ Describe "Get-IdentityProperty" {
         "$Actual" | Verify-Equal "$Expected"
     }
 }
+
+Describe "Format-Type" {
+    It "Given '<value>' it returns the correct shortened type name '<expected>'" -TestCases @(
+        @{ Value = [int]; Expected = 'int' },
+        @{ Value = [double]; Expected = 'double' },
+        @{ Value = [string]; Expected = 'string' },
+        @{ Value = $null; Expected = '<null>' },
+        @{ Value = [Management.Automation.PSObject]; Expected = 'PSObject'},
+        @{ Value = [Object[]]; Expected = 'collection' }
+    ) {
+        param($Value, $Expected)
+        Format-Type -Value $Value | Verify-Equal $Expected
+    }
+}
+ 
 
 Describe "Get-ShortType" {
     It "Given '<value>' it returns the correct shortened type name '<expected>'" -TestCases @(

@@ -77,6 +77,11 @@ function Format-Custom ($Value, [switch]$Pretty) {
         return Format-Boolean -Value $Value
     }
 
+    if ($value -is [Reflection.TypeInfo])
+    {
+        return Format-Type -Value $Value
+    }
+
     if (Test-DecimalNumber -Value $Value) 
     {
         return Format-Number -Value $Value
@@ -133,16 +138,29 @@ function Get-IdentityProperty ([Type]$Type) {
 }
 
 function Get-ShortType ($Value) {
-    $type = '<null>'
     if ($null -ne $value)
     {
-        $type = ([string]$Value.GetType()) 
+        Format-Type $Value.GetType()
     }
+    else 
+    {
+        Format-Type $null
+    }
+}
+
+function Format-Type ([Type]$Value) {
+    if ($null -eq $Value) {
+        return '<null>'
+    }
+    
+    $type = [string]$Value 
+    
     $type `
         -replace "^System\." `
         -replace "^Management\.Automation\.PSCustomObject$","PSObject" `
         -replace "^Object\[\]$","collection" `
 }
+
 
 Export-ModuleMember -Function @(
     'Format-Collection'
@@ -153,6 +171,7 @@ Export-ModuleMember -Function @(
     'Format-Number'
     'Format-Hashtable'
     'Format-Dictionary'
+    'Format-Type'
     'Format-Custom'
     'Get-IdentityProperty'
     'Get-ShortType'

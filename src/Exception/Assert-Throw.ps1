@@ -1,30 +1,111 @@
 function Assert-Throw {
     param (
-        [Parameter(ValueFromPipeline=$true)]
-        [ScriptBlock] $Actual, 
-        [String]$ExceptionMessage,
+        [Parameter(Position=1, ValueFromPipeline=$true, Mandatory = $true)]
+        [ScriptBlock]$ScriptBlock, 
         [Type]$ExceptionType,
+        [String]$ExceptionMessage,
         [String]$FullyQualifiedErrorId,
+        [Switch]$AllowNonTerminatingError,
         [String]$Message
     )
 
-    $Actual = Collect-Input -ParameterInput $Actual -PipelineInput $local:Input
+    $ScriptBlock = Collect-Input -ParameterInput $ScriptBlock -PipelineInput $local:Input
 
-    $exceptionThrown = $false
+    $errorThrown = $false
+    $err = $null
     try {
-        $null = & $Actual
+        $p = 'stop' 
+        if ($AllowNonTerminatingError) 
+        {
+            $p = 'continue'
+        }
+        $eap = New-Object -TypeName psvariable "erroractionpreference", $p
+        $null = $ScriptBlock.InvokeWithContext($null, $eap, $null) 2>&1
     }
     catch
     {
-        $exceptionThrown = $true
-        $_
+        $errorThrown = $true
+        $err = Get-Error $_
     }
-    
-    if (-not $exceptionThrown) {
-        $Message = Get-AssertionMessage -Expected $Expected -Actual $Actual -Message $Message `
-        -DefaultMessage "Expected exception to be thrown."
+
+    $buts = @()
+    $filters = @()
+
+    $filterOnExceptionType = $null -ne $ExceptionType
+    if ($filterOnExceptionType) {
+        $exceptionFilterTypeFormatted = Format-Type $ExceptionType
+        
+        $filters += "of type $exceptionFilterTypeFormatted"
+
+        $exceptionTypeFilterMatches = $err.Exception -is $ExceptionType
+        if (-not $exceptionTypeFilterMatches) {
+            $exceptionTypeFormatted = Get-ShortType $err.Exception    
+            $buts += "the exception type was '$exceptionTypeFormatted'"
+        }
+    }
+
+    $filterOnMessage = -not [string]::IsNullOrWhiteSpace($ExceptionMessage)
+    if ($filterOnMessage) {
+        $filters += "with message '$ExceptionMessage'"
+        if ($err.ExceptionMessage -notlike $ExceptionMessage) {
+            $buts += "the message was '$($err.ExceptionMessage)'"
+        }
+    }
+
+    $filterOnId = -not [string]::IsNullOrWhiteSpace($FullyQualifiedErrorId)
+    if ($filterOnId) {
+        $filters += "with FullyQualifiedErrorId '$FullyQualifiedErrorId'"
+        if ($err.FullyQualifiedErrorId -notlike $FullyQualifiedErrorId) {
+            $buts += "the FullyQualifiedErrorId was '$($err.FullyQualifiedErrorId)'"
+        }
+    }
+
+    if (-not $errorThrown)
+    {
+        $buts += "no exception was thrown"
+    }
+
+    if ($buts.Count -ne 0) {
+        $filter = Add-SpaceToNonEmptyString ( Join-And $filters -Threshold 3 )
+        $but = Join-And $buts 
+        $defaultMessage = "Expected an exception,$filter to be thrown, but $but."    
+
+        $Message = Get-AssertionMessage -Expected $Expected -Actual $ScriptBlock -Message $Message `
+        -DefaultMessage $defaultMessage
         throw [Assertions.AssertionException]$Message
     }
 
-    $Actual
+    $ScriptBlock
+}
+
+function Get-Error ($ErrorRecord) {
+    
+    $e = $ErrorRecord.Exception.InnerException.ErrorRecord
+    New-Object -TypeName PSObject -Property @{
+        ErrorRecord = $e
+        ExceptionMessage = $e.Exception.Message
+        Exception = $e.Exception
+        ExceptionType = $e.Exception.GetType()
+        FullyQualifiedErrorId = $e.FullyQualifiedErrorId
+    }
+}
+
+function Join-And ($Items, $Threshold=2) { 
+    
+    if ($null -eq $items -or $items.count -lt $Threshold) 
+    { 
+        $items -join ', ' 
+    } 
+    else 
+    { 
+        $c = $items.count
+        ($items[0..($c-2)] -join ', ') + ' and ' + $items[-1]
+    }
+}
+
+function Add-SpaceToNonEmptyString ([string]$Value) { 
+    if ($Value) 
+    {
+        " $Value"
+    }
 }
