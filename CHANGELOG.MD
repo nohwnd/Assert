@@ -1,5 +1,8 @@
 # Change log
 
+# 0.7.0 (August 4, 2017)
+- Add filtering to Assert-Throw and add proper tests
+
 # 0.6.0 (August 1, 2017) 
 
 - Add many assertions
