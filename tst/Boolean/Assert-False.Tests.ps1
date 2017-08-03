@@ -1,13 +1,13 @@
 Describe "Assert-False" {
-        It "Passes when cmdlet Assert-False is given `$false" {
+        It "Passes when given `$false" {
             $false | Assert-False
         }
 
-        It "Passes when cmdlet Assert-False is given an actual value of <Value>" -TestCases @(
-            @{ Actual = 0 ;Value = '0'}
-            @{ Actual = ""; Value = 'Empty String ""' }
-            @{ Actual = $null; Value = '$null' }
-            @{ Actual = @(); Value = 'Empty Collection @()' }
+        It "Passes when given falsy value '<actual>'" -TestCases @(
+            @{ Actual = 0 }
+            @{ Actual = "" }
+            @{ Actual = $null }
+            @{ Actual = @() }
         ) {
             param($Actual)
             Assert-False -Actual $Actual
@@ -23,7 +23,7 @@ Describe "Assert-False" {
     }
 
     Context "Validate messages" {
-        It "Given value '<Actual>' that is not `$false it returns expected message '<message>'" -TestCases @(
+        It "Given value '<actual>' that is not `$false it returns expected message '<message>'" -TestCases @(
             @{ Actual = $true ; Message = "Expected bool '`$true' to be bool '`$false' or falsy value 0, """", `$null, @()."},
             @{ Actual = 10 ; Message = "Expected int '10' to be bool '`$false' or falsy value 0, """", `$null, @()."}
         ) { 
@@ -33,7 +33,7 @@ Describe "Assert-False" {
         }
     }
 
-    It 'Returns the value on output' {
+    It "Returns the value on output" {
         $expected = $false
         $expected | Assert-False | Verify-Equal $expected
     }
