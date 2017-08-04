@@ -1,6 +1,6 @@
 function Assert-Throw {
     param (
-        [Parameter(Position=1, ValueFromPipeline=$true, Mandatory = $true)]
+        [Parameter(ValueFromPipeline=$true, Mandatory = $true)]
         [ScriptBlock]$ScriptBlock, 
         [Type]$ExceptionType,
         [String]$ExceptionMessage,
