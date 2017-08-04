@@ -82,6 +82,8 @@ FunctionsToExport = @(
     'Assert-Any'
     'Assert-All'
     'Assert-Throw'
+    'Assert-Like'
+    'Assert-NotLike'    
     'Assert-StringEqual'
     'Assert-StringNotEqual'
 )

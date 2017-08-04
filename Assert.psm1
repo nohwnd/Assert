@@ -27,6 +27,8 @@ Export-ModuleMember -Function @(
     'Assert-Any' # ?any
     'Assert-All' # ?all
     'Assert-Throw'
+    'Assert-Like'
+    'Assert-NotLike'
     'Assert-StringEqual'
     'Assert-StringNotEqual'
 )

@@ -169,11 +169,11 @@ Assert-StringNotNullOrEmpty
 Assert-StringNullOrWhiteSpace
 Assert-StringNotNullOrWhiteSpace
 
-Assert-StringLike
-Assert-StringNotLike
+Assert-Like ✓
+Assert-NotLike ✓
 
-Assert-StringMatch
-Assert-StringNotMatch
+Assert-Match
+Assert-NotMatch
 
 Assert-StringStartWith
 Assert-StringNotStartWith
