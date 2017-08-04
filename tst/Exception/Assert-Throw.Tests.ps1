@@ -107,6 +107,32 @@ Describe "Assert-Throw" {
             $err.Exception.Message | Verify-Equal "Expected an exception, of type InvalidOperationException, with message 'fail!' and with FullyQualifiedErrorId 'fail!' to be thrown, but the exception type was 'ArgumentException', the message was 'halt!' and the FullyQualifiedErrorId was 'halt!'."
         }
     }
+
+    Context "Unwrapping exception from different sources" {
+        It 'Exception is thrown by throw keyword' {
+            { throw "fail!" } | Assert-Throw
+        }
+        
+        It 'Exception is thrown by static .net method' {
+            { [io.directory]::delete("non-existing") } | Assert-Throw
+        }
+
+         It 'Exception is thrown by failed constructor' {
+            { New-Object DateTime "incorrect parameter" } | Assert-Throw
+        }
+        
+        It 'Terminating error is thrown by cmdlet failing to bind paramaters' {
+            { Get-Item "non-existing" } | Assert-Throw
+        }
+
+        It 'Terminating error is thrown by cmdlet with -ErrorAction Stop' {
+            { Get-Item "non-existing" -ErrorAction 'stop' } | Assert-Throw
+        }
+
+        It 'Non-terminating error is thrown by cmdlet and converted to terminating error by the assertion' {
+            { Get-Item "non-existing" } | Assert-Throw
+        }
+    }
 }
 
 Describe "General try catch behavior" {

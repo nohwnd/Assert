@@ -80,7 +80,14 @@ function Assert-Throw {
 
 function Get-Error ($ErrorRecord) {
     
-    $e = $ErrorRecord.Exception.InnerException.ErrorRecord
+    if ($ErrorRecord.Exception -like '*"InvokeWithContext"*')
+    {
+        $e = $ErrorRecord.Exception.InnerException.ErrorRecord
+    } 
+    else 
+    {
+        $e = $ErrorRecord
+    }
     New-Object -TypeName PSObject -Property @{
         ErrorRecord = $e
         ExceptionMessage = $e.Exception.Message
