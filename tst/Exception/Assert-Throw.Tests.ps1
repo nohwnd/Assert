@@ -117,8 +117,12 @@ Describe "Assert-Throw" {
             { [io.directory]::delete("non-existing") } | Assert-Throw
         }
 
-         It 'Exception is thrown by failed constructor' {
+        It 'Exception is thrown by failed constructor' {
             { New-Object DateTime "incorrect parameter" } | Assert-Throw
+        }
+
+        It 'Exception is thrown by division by zero' {
+            { 1/0 } | Assert-Throw
         }
         
         It 'Terminating error is thrown by cmdlet failing to bind paramaters' {
