@@ -1,11 +1,12 @@
 param ([switch]$CIBuild)
+$ErrorActionPreference = 'stop'
 pushd $PSScriptRoot
 
 
-get-module pester, assert, axioms, testHelpers | Remove-Module -force
+get-module pester, assert, axiom, testHelpers | Remove-Module -force
 
 # import the tested module
-Import-Module .\..\Assert.psm1
+Import-Module .\..\Assert.psd1
 
 # import modules and utilities for testing 
 Import-Module Pester
