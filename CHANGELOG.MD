@@ -1,5 +1,13 @@
 # Change log
 
+## 0.8.1 (August 17, 2017)
+
+- No changes, testing automatic deploy
+
+## 0.8.0 (August 17, 2017)
+
+- Add Assert-Like and Assert-NotLike
+
 ## 0.7.1 (August 4, 2017)
 
 - Fix unwrapping error when thrown from .net method
