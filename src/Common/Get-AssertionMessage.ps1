@@ -1,8 +1,8 @@
-function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @{}, $Message, $DefaultMessage, [switch]$Pretty) 
+function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @{}, $CustomMessage, $DefaultMessage, [switch]$Pretty) 
 {
-    if (-not $Message)
+    if (-not $CustomMessage)
     {
-        $Message = $DefaultMessage
+        $CustomMessage = $DefaultMessage
     }
     
     $expectedFormatted = Format-Custom -Value $Expected -Pretty:$Pretty
@@ -15,16 +15,16 @@ function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @
     }
 
 
-    $Message = $Message.Replace('<expected>', $expectedFormatted)
-    $Message = $Message.Replace('<actual>', $actualFormatted)
-    $Message = $Message.Replace('<expectedType>', (Get-ShortType -Value $Expected))
-    $Message = $Message.Replace('<actualType>', (Get-ShortType -Value $Actual))
-    $Message = $Message.Replace('<options>', $optionMessage)
+    $CustomMessage = $CustomMessage.Replace('<expected>', $expectedFormatted)
+    $CustomMessage = $CustomMessage.Replace('<actual>', $actualFormatted)
+    $CustomMessage = $CustomMessage.Replace('<expectedType>', (Get-ShortType -Value $Expected))
+    $CustomMessage = $CustomMessage.Replace('<actualType>', (Get-ShortType -Value $Actual))
+    $CustomMessage = $CustomMessage.Replace('<options>', $optionMessage)
 
     foreach ($pair in $Data.GetEnumerator())
     {
-        $Message = $Message.Replace("<$($pair.Key)>", (Format-Custom -Value $pair.Value))
+        $CustomMessage = $CustomMessage.Replace("<$($pair.Key)>", (Format-Custom -Value $pair.Value))
     }
 
-    $Message
+    $CustomMessage
 }

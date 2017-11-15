@@ -35,20 +35,20 @@ function Assert-StringEqual
         $Actual, 
         [Parameter(Position=0)]
         [String]$Expected,
-        [String]$Message,
+        [String]$CustomMessage,
         [switch]$CaseSensitive,
         [switch]$IgnoreWhitespace
     )
     
     $_actual = Collect-Input -ParameterInput $Actual -PipelineInput $local:Input
 
-    if (-not $Message)
+    if (-not $CustomMessage)
     {
         $formattedMessage = Get-StringEqualDefaultFailureMessage -Expected $Expected -Actual $_actual
     }
     else 
     {
-        $formattedMessage = Get-CustomFailureMessage -Expected $Expected -Actual $_actual -Message $Message
+        $formattedMessage = Get-CustomFailureMessage -Expected $Expected -Actual $_actual -CustomMessage $CustomMessage
     }
 
     $stringsAreEqual = Test-StringEqual -Expected $Expected -Actual $_actual -CaseSensitive:$CaseSensitive -IgnoreWhitespace:$IgnoreWhiteSpace

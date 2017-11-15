@@ -76,7 +76,7 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Fails with custom message" {
-             $err = { 2 | Assert-GreaterThanOrEqual 3 -Message "<actual> is not greater than <expected>" } | Verify-AssertionFailed
+             $err = { 2 | Assert-GreaterThanOrEqual 3 -CustomMessage "<actual> is not greater than <expected>" } | Verify-AssertionFailed
              $err.Exception.Message | Verify-Equal "2 is not greater than 3"
         }
 

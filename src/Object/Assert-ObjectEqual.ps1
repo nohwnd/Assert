@@ -5,7 +5,7 @@ function Assert-ObjectEqual
         $Actual, 
         [Parameter(Position=0)]
         $Expected,
-        [String]$Message
+        [String]$CustomMessage
     )
 
     if (-not ($Expected -eq $Actual)) 

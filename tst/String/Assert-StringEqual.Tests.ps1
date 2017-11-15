@@ -86,8 +86,8 @@
 
         It "Throws with custom message when test fails" {
             $customMessage = "Test failed becasue it expected '<e>' but got '<a>'. What a shame!"
-            $expected = Get-CustomFailureMessage -Message $customMessage -Expected "abc" -Actual "bde"
-            $exception = { Assert-StringEqual -Expected "abc" -Actual "bde" -Message $customMessage } | Verify-AssertionFailed
+            $expected = Get-CustomFailureMessage -CustomMessage $customMessage -Expected "abc" -Actual "bde"
+            $exception = { Assert-StringEqual -Expected "abc" -Actual "bde" -CustomMessage $customMessage } | Verify-AssertionFailed
             "$exception" | Verify-Equal $expected
         }
 

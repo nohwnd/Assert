@@ -34,7 +34,7 @@ function Assert-NotLike
         [Parameter(Position=0, Mandatory=$true)]
         [String]$Expected,
         [Switch]$CaseSensitive,
-        [String]$Message
+        [String]$CustomMessage
     )
     
     $Actual = Collect-Input -ParameterInput $Actual -PipelineInput $local:Input
@@ -47,13 +47,13 @@ function Assert-NotLike
     $stringsAreANotLike = Test-NotLike -Expected $Expected -Actual $Actual -CaseSensitive:$CaseSensitive -IgnoreWhitespace:$IgnoreWhiteSpace
     if (-not ($stringsAreANotLike)) 
     {
-        if (-not $Message)
+        if (-not $CustomMessage)
         {
             $formattedMessage = Get-NotLikeDefaultFailureMessage -Expected $Expected -Actual $Actual -CaseSensitive:$CaseSensitive
         }
         else 
         {
-            $formattedMessage = Get-CustomFailureMessage -Expected $Expected -Actual $Actual -Message $Message -CaseSensitive:$CaseSensitive
+            $formattedMessage = Get-CustomFailureMessage -Expected $Expected -Actual $Actual -CustomMessage $CustomMessage -CaseSensitive:$CaseSensitive
         }
 
         throw [Assertions.AssertionException]$formattedMessage

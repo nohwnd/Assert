@@ -10,20 +10,20 @@ function Assert-StringNotEqual
         $Actual, 
         [Parameter(Position=0)]
         [String]$Expected,
-        [String]$Message,
+        [String]$CustomMessage,
         [switch]$CaseSensitive,
         [switch]$IgnoreWhitespace
     )
 
     if (Test-StringEqual -Expected $Expected -Actual $Actual -CaseSensitive:$CaseSensitive -IgnoreWhitespace:$IgnoreWhiteSpace) 
     {
-        if (-not $Message)
+        if (-not $CustomMessage)
         {
             $formattedMessage = Get-StringNotEqualDefaultFailureMessage -Expected $Expected -Actual $Actual
         }
         else 
         {
-            $formattedMessage = Get-CustomFailureMessage -Expected $Expected -Actual $Actual -Message $Message
+            $formattedMessage = Get-CustomFailureMessage -Expected $Expected -Actual $Actual -CustomMessage $CustomMessage
         }
 
         throw [Assertions.AssertionException]$formattedMessage

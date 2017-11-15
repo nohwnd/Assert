@@ -58,7 +58,7 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Fails with custom message" {
-            $error = { 3 | Assert-NotEqual 3 -Message "<expected> is <actual>" } | Verify-AssertionFailed
+            $error = { 3 | Assert-NotEqual 3 -CustomMessage "<expected> is <actual>" } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal "3 is 3"
         }
 

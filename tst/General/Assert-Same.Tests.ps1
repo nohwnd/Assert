@@ -17,7 +17,7 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Fails with custom message" {
-            $error = { "text" | Assert-Same "some other text" -Message "'<expected>' is not '<actual>'" } | Verify-AssertionFailed
+            $error = { "text" | Assert-Same "some other text" -CustomMessage "'<expected>' is not '<actual>'" } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal "'some other text' is not 'text'"
         }
 

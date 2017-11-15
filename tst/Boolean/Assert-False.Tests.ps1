@@ -18,7 +18,7 @@ Describe "Assert-False" {
     }
 
     It "Fails with custom message" {
-            $error = { 9 | Assert-False -Message "<actual> is not false" } | Verify-AssertionFailed
+            $error = { 9 | Assert-False -CustomMessage "<actual> is not false" } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal "9 is not false"
     }
 

@@ -6,7 +6,7 @@ function Assert-Throw {
         [String]$ExceptionMessage,
         [String]$FullyQualifiedErrorId,
         [Switch]$AllowNonTerminatingError,
-        [String]$Message
+        [String]$CustomMessage
     )
 
     $ScriptBlock = Collect-Input -ParameterInput $ScriptBlock -PipelineInput $local:Input
@@ -70,7 +70,7 @@ function Assert-Throw {
         $but = Join-And $buts 
         $defaultMessage = "Expected an exception,$filter to be thrown, but $but."    
 
-        $Message = Get-AssertionMessage -Expected $Expected -Actual $ScriptBlock -Message $Message `
+        $Message = Get-AssertionMessage -Expected $Expected -Actual $ScriptBlock -CustomMessage $CustomMessage `
         -DefaultMessage $defaultMessage
         throw [Assertions.AssertionException]$Message
     }

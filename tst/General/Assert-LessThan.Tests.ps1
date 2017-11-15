@@ -75,7 +75,7 @@ Describe "Assert-LessThan" {
     }
 
     It "Fails with custom message" {
-            $err = { 3 | Assert-LessThan 2 -Message "<actual> is not less than <expected>" } | Verify-AssertionFailed
+            $err = { 3 | Assert-LessThan 2 -CustomMessage "<actual> is not less than <expected>" } | Verify-AssertionFailed
             $err.Exception.Message | Verify-Equal "3 is not less than 2"
     }
 

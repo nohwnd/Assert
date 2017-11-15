@@ -18,7 +18,7 @@ InModuleScope -ModuleName Assert {
 
         It "Fails with custom message" {
             $object = 1
-            $error = { $object | Assert-NotSame $object -Message "<expected> is <actual>" } | Verify-AssertionFailed
+            $error = { $object | Assert-NotSame $object -CustomMessage "<expected> is <actual>" } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal "1 is 1"
         }
 

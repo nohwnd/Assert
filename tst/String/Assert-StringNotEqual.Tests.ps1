@@ -24,8 +24,8 @@
 
         It "Throws with custom message when test fails" {
             $customMessage = "Test failed becasue it expected '<e>' but got '<a>'. What a shame!"
-            $expected = Get-CustomFailureMessage -Message $customMessage -Expected "abc" -Actual "abc"
-            $exception = { Assert-StringNotEqual -Expected "abc" -Actual "abc" -Message $customMessage } | Verify-AssertionFailed
+            $expected = Get-CustomFailureMessage -CustomMessage $customMessage -Expected "abc" -Actual "abc"
+            $exception = { Assert-StringNotEqual -Expected "abc" -Actual "abc" -CustomMessage $customMessage } | Verify-AssertionFailed
             "$exception" | Verify-Equal $expected
         }
 

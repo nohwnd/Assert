@@ -306,7 +306,7 @@ function Assert-Equivalent($Actual, $Expected) {
     $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected | Out-String
     if ($areDifferent)
     {
-        $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $Option -Pretty -Message "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
+        $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $Option -Pretty -CustomMessage "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
         throw [Assertions.AssertionException]$message
     }
 }

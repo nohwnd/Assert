@@ -4,13 +4,13 @@ function Assert-Equal {
         $Actual, 
         [Parameter(Position=0)]
         $Expected,
-        [String]$Message
+        [String]$CustomMessage
     )
 
     $Actual = Collect-Input -ParameterInput $Actual -PipelineInput $local:Input
     if ($Expected -ne $Actual) 
     { 
-        $Message = Get-AssertionMessage -Expected $Expected -Actual $Actual -Message $Message -DefaultMessage "Expected <expectedType> '<expected>', but got <actualType> '<actual>'."
+        $Message = Get-AssertionMessage -Expected $Expected -Actual $Actual -CustomMessage $CustomMessage -DefaultMessage "Expected <expectedType> '<expected>', but got <actualType> '<actual>'."
         throw [Assertions.AssertionException]$Message
     }
 

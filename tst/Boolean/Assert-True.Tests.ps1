@@ -14,7 +14,7 @@ Describe "Assert-True" {
         }
 
     It "Fails with custom message" {
-            $error = { $null | Assert-True -Message "<actual> is not true" } | Verify-AssertionFailed
+            $error = { $null | Assert-True -CustomMessage "<actual> is not true" } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal "`$null is not true"
     }
 

@@ -4,7 +4,7 @@ function Assert-All {
         $Actual, 
         [Parameter(Position=0, Mandatory=$true)]
         [scriptblock]$FilterScript,
-        [String]$Message
+        [String]$CustomMessage
     )
     
 
@@ -26,7 +26,7 @@ function Assert-All {
             actualFiltered = $actualFiltered
             actualFilteredCount = @($actualFiltered).Count
         }
-        $Message = Get-AssertionMessage -Expected $Expected -Actual $Actual -Data $data -Message $Message -DefaultMessage "Expected all items in collection '<actual>' to pass filter '<expected>', but <actualFilteredCount> of them '<actualFiltered>' did not pass the filter."
+        $Message = Get-AssertionMessage -Expected $Expected -Actual $Actual -Data $data -CustomMessage $CustomMessage -DefaultMessage "Expected all items in collection '<actual>' to pass filter '<expected>', but <actualFilteredCount> of them '<actualFiltered>' did not pass the filter."
         throw [Assertions.AssertionException]$Message
     }
 
