@@ -1,4 +1,4 @@
-param ([switch]$CIBuild)
+param ($Path, [switch]$CIBuild)
 $ErrorActionPreference = 'stop'
 pushd $PSScriptRoot
 
@@ -14,7 +14,10 @@ Import-Module .\TestHelpers.psm1
 Import-Module .\..\Axiom\src\Axiom.psm1 -WarningAction SilentlyContinue
 
 Get-Date
-$path = (Resolve-Path ($PWD | Split-Path))
+if ($null -eq $Path) {
+    $path = (Resolve-Path ($PWD | Split-Path))
+}
+
 "Running all tests from: $path"
 if ($CIBuild) {
     Invoke-Pester $path -EnableExit 
