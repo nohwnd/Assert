@@ -4,7 +4,16 @@ function Test-Value ($Value) {
 }
 
 function Test-Collection ($Value) { 
-    $Value -is [Array] -or $Value -is [Collections.IEnumerable]
+    # check for value types and strings explicitly
+    # because otherwise it does not work for decimal
+    # so let's skip all values we definitely know
+    # are not collections
+    if ($Value -is [ValueType] -or $Value -is [string])
+    {
+        return $false
+    }
+
+    -not [object]::ReferenceEquals($Value, $($Value))
 }
 
 function Test-ScriptBlock ($Value) {

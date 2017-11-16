@@ -1,4 +1,4 @@
-Import-Module $PSScriptRoot\..\src\TypeClass.psm1
+Import-Module $PSScriptRoot\..\src\TypeClass.psm1 -Force
 
 Describe "Test-Value" {
     It "Given '<value>', which is a value, string, enum, scriptblock or array with a single item of those types it returns `$true" -TestCases @(
@@ -116,17 +116,44 @@ Describe "Test-Dictionary" {
 
 # -- collection
 Describe "Test-Collection" {
-    It "Given a collection '<value>' of type '<type>' implementing IEnumerable it returns `$true" -TestCases @(
-        @{ Value = "abc" }
+    It "Given a collection '<value>' of type '<type>' it returns `$true" -TestCases @(
+        @{ Value = @() }
         @{ Value = 1,2,3 }
+        @{ Value = [System.Collections.Generic.List[int]] 1 }
+        @{ Value = [System.Collections.Generic.List[decimal]] 2 }
         @{ Value = [Collections.Generic.List[Int]](1,2,3) }
+        @{ Value = [Collections.Generic.List[Int]](1,2,3) }
+        @{ Value = (ps -Name Idle, Powershell) }
     ) {
         param($Value)
         Test-Collection -Value $Value | Verify-True
     }
 
     It "Given an object '<value>' of type '<type>' that is not a collection it returns `$false" -TestCases @(
+        @{ Value = $null }
+        
+        @{ Value = [char] 'a' }
+        @{ Value = "a" }
+
         @{ Value = 1 }
+        @{ Value = 1D }
+        @{ Value = 1.1 }
+
+        @{ Value = 101 }
+        @{ Value = 101L }
+        @{ Value = 101D }
+        @{ Value = 101.1 }
+
+        @{ Value = 1MB }
+        @{ Value = 1DMB }
+        @{ Value = 1.1MB }
+
+        @{ Value = {} }
+
+        @{ Value = @{} }
+        @{ Value = @{ Name = 'Jakub' } }
+
+        @{ Value = (ps -Name Idle) }
         @{ Value = New-Object -TypeName Diagnostics.Process }
     ) {
         param($Value)
