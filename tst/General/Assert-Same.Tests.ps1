@@ -17,8 +17,9 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Fails with custom message" {
-            $error = { "text" | Assert-Same "some other text" -CustomMessage "'<expected>' is not '<actual>'" } | Verify-AssertionFailed
-            $error.Exception.Message | Verify-Equal "'some other text' is not 'text'"
+            $object = New-Object Diagnostics.Process
+            $error = { "text" | Assert-Same $object -CustomMessage "'<expected>' is not '<actual>'" } | Verify-AssertionFailed
+            $error.Exception.Message | Verify-Equal "'Diagnostics.Process{Id=; Name=}' is not 'text'"
         }
 
         It "Given two values that are not the same instance '<expected>' and '<actual>' it returns expected message '<message>'" -TestCases @(
@@ -30,20 +31,29 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Returns the value on output" {
-            $expected = "text"
+            $expected = New-Object Diagnostics.Process
             $expected | Assert-Same $expected | Verify-Equal $expected
         }
 
-        Context "Throws when `$expected is integer to warn user about unexpected behavior" {
-            It "a" {
-                $err = { "some text" | Assert-Same -Expected 1 } | Verify-Throw
+        Context "Throws when `$expected is a value type or string to warn user about unexpected behavior" {
+            It "throws for value <value>" -TestCases @(
+                @{ Value = 1 }
+                @{ Value = 1.0D }
+                @{ Value = 1.0 }
+                @{ Value = 'c' }
+                @{ Value = "abc" }
+            ) {
+                param($Value)
+
+                $err = { "dummy" | Assert-Same -Expected $Value } | Verify-Throw
                 $err.Exception | Verify-Type ([ArgumentException])
-                $err.Exception.Message | Verify-Equal "Assert-Throw provides unexpected results for low integers. See https://github.com/nohwnd/Assertions/issues/6"
+                $err.Exception.Message | Verify-Equal "Assert-Same compares objects by reference. You provided a value type or a string, those are not reference types and you most likely don't need to compare them by reference, see https://github.com/nohwnd/Assert/issues/6.`n`nAre you trying to compare two values to see if they are equal? Use Assert-Equal instead."
             }
         }
 
         It "Can be called with positional parameters" {
-            { Assert-Same "a" "g" } | Verify-AssertionFailed
+            $object = New-Object Diagnostics.Process
+            { Assert-Same $object "abc" } | Verify-AssertionFailed
         }
     }
 }
