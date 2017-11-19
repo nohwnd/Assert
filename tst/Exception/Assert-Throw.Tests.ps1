@@ -137,6 +137,13 @@ Describe "Assert-Throw" {
             { Get-Item "non-existing" } | Assert-Throw
         }
     }
+
+    Context 'output' {
+        It 'outputs ErrorRecord' {
+            $r = {throw} | Assert-Throw
+            $r | Should -BeOfType ([System.Management.Automation.ErrorRecord])
+        }
+    }
 }
 
 Describe "General try catch behavior" {
