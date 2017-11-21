@@ -82,5 +82,10 @@ InModuleScope -ModuleName Assert {
         It "Can be called with positional parameters" {
             { Assert-Equal 1 2 } | Verify-AssertionFailed
         }
+
+        It "Given collection to Expected it throws" {
+            $error = { "dummy" | Assert-Equal @() } | Verify-Throw 
+            $error.Exception | Verify-Type ([ArgumentException])
+        }
     }
 }

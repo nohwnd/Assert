@@ -99,4 +99,9 @@ Describe "Assert-LessThanOrEqual" {
     It "Can be called with positional parameters" {
         { Assert-LessThanOrEqual 1 2 } | Verify-AssertionFailed
     }
+
+    It "Given collection to Expected it throws" {
+        $error = { "dummy" | Assert-LessThanOrEqual @() } | Verify-Throw 
+        $error.Exception | Verify-Type ([ArgumentException])
+    }
 }

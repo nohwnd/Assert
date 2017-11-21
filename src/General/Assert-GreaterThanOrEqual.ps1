@@ -8,7 +8,7 @@ function Assert-GreaterThanOrEqual {
     )
 
     $Actual = Collect-Input -ParameterInput $Actual -PipelineInput $local:Input
-    if ($Expected -gt $Actual) 
+    if ((Ensure-ExpectedIsNotCollection $Expected) -gt $Actual) 
     { 
         $Message = Get-AssertionMessage -Expected $Expected -Actual $Actual -CustomMessage $CustomMessage -DefaultMessage "Expected <actualType> '<actual>' to be greater than or equal to <expectedType> '<expected>', but it was not."
         throw [Assertions.AssertionException]$Message

@@ -8,7 +8,7 @@ function Assert-LessThanOrEqual {
     )
 
     $Actual = Collect-Input -ParameterInput $Actual -PipelineInput $local:Input
-    if ($Expected -lt $Actual) 
+    if ((Ensure-ExpectedIsNotCollection $Expected) -lt $Actual) 
     { 
         $Message = Get-AssertionMessage -Expected $Expected -Actual $Actual -CustomMessage $CustomMessage -DefaultMessage "Expected <actualType> '<actual>' to be less than or equal to <expectedType> '<expected>', but it was not."
         throw [Assertions.AssertionException]$Message
