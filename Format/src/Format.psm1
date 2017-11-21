@@ -5,7 +5,7 @@ function Format-Collection ($Value, [switch]$Pretty) {
     if ($Pretty){
         $separator = ",`n"
     }
-    ($Value | % { Format-Custom -Value $_ -Pretty:$Pretty }) -join $separator
+    ($Value | % { Format-Nicely -Value $_ -Pretty:$Pretty }) -join $separator
 }
 
 function Format-Object ($Value, $Property, [switch]$Pretty) {
@@ -49,7 +49,7 @@ function Format-Hashtable ($Value) {
     $tail = '}'
 
     $entries = $Value.Keys | sort | foreach { 
-        $formattedValue = Format-Custom $Value.$_
+        $formattedValue = Format-Nicely $Value.$_
         "$_=$formattedValue" }
     
     $head + ( $entries -join '; ') + $tail
@@ -60,13 +60,13 @@ function Format-Dictionary ($Value) {
     $tail = '}'
 
     $entries = $Value.Keys | sort | foreach { 
-        $formattedValue = Format-Custom $Value.$_
+        $formattedValue = Format-Nicely $Value.$_
         "$_=$formattedValue" }
     
     $head + ( $entries -join '; ') + $tail
 }
 
-function Format-Custom ($Value, [switch]$Pretty) { 
+function Format-Nicely ($Value, [switch]$Pretty) { 
     if ($null -eq $Value) 
     { 
         return Format-Null -Value $Value
@@ -82,32 +82,32 @@ function Format-Custom ($Value, [switch]$Pretty) {
         return Format-Type -Value $Value
     }
 
-    if (Test-DecimalNumber -Value $Value) 
+    if (Is-DecimalNumber -Value $Value) 
     {
         return Format-Number -Value $Value
     }
 
-    if (Test-ScriptBlock -Value $Value)
+    if (Is-ScriptBlock -Value $Value)
     {
         return Format-ScriptBlock -Value $Value
     }
 
-    if (Test-Value -Value $Value) 
+    if (Is-Value -Value $Value) 
     { 
         return $Value
     }
 
-    if (Test-Hashtable -Value $Value)
+    if (Is-Hashtable -Value $Value)
     {
         return Format-Hashtable -Value $Value
     }
     
-    if (Test-Dictionary -Value $Value)
+    if (Is-Dictionary -Value $Value)
     {
         return Format-Dictionary -Value $Value
     }
 
-    if (Test-Collection -Value $Value) 
+    if (Is-Collection -Value $Value) 
     { 
         return Format-Collection -Value $Value -Pretty:$Pretty
     }
@@ -172,7 +172,7 @@ Export-ModuleMember -Function @(
     'Format-Hashtable'
     'Format-Dictionary'
     'Format-Type'
-    'Format-Custom'
+    'Format-Nicely'
     'Get-DisplayProperty'
     'Get-ShortType'
 )

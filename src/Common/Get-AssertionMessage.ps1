@@ -5,8 +5,8 @@ function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @
         $CustomMessage = $DefaultMessage
     }
     
-    $expectedFormatted = Format-Custom -Value $Expected -Pretty:$Pretty
-    $actualFormatted = Format-Custom -Value $Actual -Pretty:$Pretty
+    $expectedFormatted = Format-Nicely -Value $Expected -Pretty:$Pretty
+    $actualFormatted = Format-Nicely -Value $Actual -Pretty:$Pretty
 
     $optionMessage = $null;
     if ($null -ne $Option)
@@ -23,7 +23,7 @@ function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @
 
     foreach ($pair in $Data.GetEnumerator())
     {
-        $CustomMessage = $CustomMessage.Replace("<$($pair.Key)>", (Format-Custom -Value $pair.Value))
+        $CustomMessage = $CustomMessage.Replace("<$($pair.Key)>", (Format-Nicely -Value $pair.Value))
     }
 
     $CustomMessage

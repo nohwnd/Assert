@@ -108,7 +108,7 @@ Describe "Format-Dictionary" {
     }
 }
 
-Describe "Format-Custom" {
+Describe "Format-Nicely" {
     It "Formats value '<value>' correctly to '<expected>'" -TestCases @(
         @{ Value = $null; Expected = '$null'}
         @{ Value = $true; Expected = '$true'}
@@ -125,7 +125,7 @@ Describe "Format-Custom" {
         @{ Value = New-Dictionary @{Age = 28; Name = 'Jakub'}; Expected = 'Dictionary{Age=28; Name=Jakub}' }
     ) { 
         param($Value, $Expected)
-        Format-Custom -Value $Value | Verify-Equal $Expected
+        Format-Nicely -Value $Value | Verify-Equal $Expected
     }
 }
 

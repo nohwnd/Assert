@@ -1,6 +1,6 @@
 Import-Module $PSScriptRoot\..\src\TypeClass.psm1 -Force
 
-Describe "Test-Value" {
+Describe "Is-Value" {
     It "Given '<value>', which is a value, string, enum, scriptblock or array with a single item of those types it returns `$true" -TestCases @(
         @{ Value = 1 },
         @{ Value = 2 },
@@ -13,11 +13,11 @@ Describe "Test-Value" {
         @{ Value = {abc}}
     ) {  
         param($Value)
-        Test-Value -Value $Value | Verify-True
+        Is-Value -Value $Value | Verify-True
     }
 
     It "Given `$null it returns `$false" {
-        Test-Value -Value $null | Verify-False
+        Is-Value -Value $null | Verify-False
     }
 
     It "Given reference type (not string) '<value>' it returns `$false" -TestCases @(
@@ -28,13 +28,13 @@ Describe "Test-Value" {
         @{ Value = (New-Object -TypeName Diagnostics.Process) }
     ) {  
         param($Value)
-        Test-Value -Value $Value | Verify-False
+        Is-Value -Value $Value | Verify-False
     }
 }
 
 #number
 
-Describe "Test-DecimalNumber" { 
+Describe "Is-DecimalNumber" { 
     It "Given a number it returns `$true" -TestCases @(
         @{ Value = 1.1; },
         @{ Value = [double] 1.1; },
@@ -43,22 +43,22 @@ Describe "Test-DecimalNumber" {
         @{ Value = [decimal] 1.1; }
     ) { 
         param ($Value)
-        Test-DecimalNumber -Value $Value | Verify-True
+        Is-DecimalNumber -Value $Value | Verify-True
     }
 
     It "Given a string it returns `$false" { 
-        Test-DecimalNumber -Value "abc" | Verify-False
+        Is-DecimalNumber -Value "abc" | Verify-False
     }
 }
 
-Describe "Test-ScriptBlock" { 
+Describe "Is-ScriptBlock" { 
     It "Given a scriptblock '{<value>}' it returns `$true" -TestCases @(
         @{ Value = {} },
         @{ Value = {abc} },
         @{ Value = { Get-Process -Name Idle } }
     ) {
         param ($Value)
-        Test-ScriptBlock -Value $Value | Verify-True 
+        Is-ScriptBlock -Value $Value | Verify-True 
     }
 
     It "Given a value '<value>' that is not a scriptblock it returns `$false" -TestCases @(
@@ -68,19 +68,19 @@ Describe "Test-ScriptBlock" {
         @{ Value = [Type] }
     ) {
         param ($Value)
-        Test-ScriptBlock -Value $Value | Verify-False 
+        Is-ScriptBlock -Value $Value | Verify-False 
     }
 }
 
 # -- KeyValue collections
-Describe "Test-Hashtable" { 
+Describe "Is-Hashtable" { 
     It "Given hashtable '<value>' it returns `$true" -TestCases @(
         @{Value = @{} }
         @{Value = @{Name="Jakub"} }
     ) { 
         param($Value)
 
-        Test-Hashtable -Value $Value | Verify-True
+        Is-Hashtable -Value $Value | Verify-True
     }
 
     It "Given a value '<value>' which is not a hashtable it returns `$false" -TestCases @(
@@ -89,18 +89,18 @@ Describe "Test-Hashtable" {
     ) { 
         param ($Value)
 
-        Test-Hashtable -Value $Value | Verify-False
+        Is-Hashtable -Value $Value | Verify-False
     }
 }
 
-Describe "Test-Dictionary" { 
+Describe "Is-Dictionary" { 
     It "Given dictionary '<value>' it returns `$true" -TestCases @(
         @{ Value = New-Object "Collections.Generic.Dictionary[string,object]" }
         @{ Value= New-Dictionary @{Name="Jakub"} }
     ) { 
         param($Value)
 
-        Test-Dictionary -Value $Value | Verify-True
+        Is-Dictionary -Value $Value | Verify-True
     }
 
     It "Given a value '<value>' which is not a dictionary it returns `$false" -TestCases @(
@@ -109,13 +109,13 @@ Describe "Test-Dictionary" {
     ) { 
         param ($Value)
 
-        Test-Dictionary -Value $Value | Verify-False
+        Is-Dictionary -Value $Value | Verify-False
     }
 }
 
 
 # -- collection
-Describe "Test-Collection" {
+Describe "Is-Collection" {
     It "Given a collection '<value>' of type '<type>' it returns `$true" -TestCases @(
         @{ Value = @() }
         @{ Value = 1,2,3 }
@@ -126,7 +126,7 @@ Describe "Test-Collection" {
         @{ Value = (ps -Name Idle, Powershell) }
     ) {
         param($Value)
-        Test-Collection -Value $Value | Verify-True
+        Is-Collection -Value $Value | Verify-True
     }
 
     It "Given an object '<value>' of type '<type>' that is not a collection it returns `$false" -TestCases @(
@@ -157,6 +157,6 @@ Describe "Test-Collection" {
         @{ Value = New-Object -TypeName Diagnostics.Process }
     ) {
         param($Value)
-        Test-Collection -Value $Value | Verify-False
+        Is-Collection -Value $Value | Verify-False
     }
 }

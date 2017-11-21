@@ -106,13 +106,13 @@ InModuleScope -ModuleName Assert {
         }
     }
 
-    Describe "Test-CollectionSize" {
+    Describe "Is-CollectionSize" {
         It "Given two collections '<expected>' '<actual>' of the same size it returns `$true" -TestCases @(
             @{ Actual = (1,2,3); Expected = (1,2,3)},
             @{ Actual = (1,2,3); Expected = (3,2,1)}
         ) {
             param ($Actual, $Expected)
-            Test-CollectionSize -Actual $Actual -Expected $Expected | Verify-True
+            Is-CollectionSize -Actual $Actual -Expected $Expected | Verify-True
         }
 
         It "Given two collections '<expected>' '<actual>' of different sizes it returns `$false" -TestCases @(
@@ -121,7 +121,7 @@ InModuleScope -ModuleName Assert {
             @{ Actual = (1,2,3); Expected = @()}
         ) {
             param ($Actual, $Expected)
-            Test-CollectionSize -Actual $Actual -Expected $Expected | Verify-False
+            Is-CollectionSize -Actual $Actual -Expected $Expected | Verify-False
         }
     }
 

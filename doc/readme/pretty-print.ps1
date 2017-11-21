@@ -1,4 +1,4 @@
-& (Get-Module Assert) { $global:formatCustom = get-command Format-Custom  }
+& (Get-Module Assert) { $global:formatCustom = get-command Format-Nicely  }
 
 function Format-Nicely ($o){ &$f $o }
 
