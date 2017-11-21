@@ -123,7 +123,7 @@ Describe "Is-Collection" {
         @{ Value = [System.Collections.Generic.List[decimal]] 2 }
         @{ Value = [Collections.Generic.List[Int]](1,2,3) }
         @{ Value = [Collections.Generic.List[Int]](1,2,3) }
-        @{ Value = (ps -Name Idle, Powershell) }
+        @{ Value = (Get-Process) }
     ) {
         param($Value)
         Is-Collection -Value $Value | Verify-True
