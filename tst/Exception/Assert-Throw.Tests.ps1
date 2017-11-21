@@ -137,6 +137,13 @@ Describe "Assert-Throw" {
             { Get-Item "non-existing" } | Assert-Throw
         }
     }
+
+    It "Given scriptblock that throws it returns ErrorRecord to the output" {
+        $error = { throw [InvalidOperationException]"error" } | Assert-Throw
+        $error | Verify-Type ([Management.Automation.ErrorRecord])
+        $error.Exception | Verify-Type ([System.InvalidOperationException])
+        $error.Exception.Message | Verify-Equal "error"
+    }
 }
 
 Describe "General try catch behavior" {
