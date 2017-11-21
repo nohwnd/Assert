@@ -112,10 +112,10 @@ function Format-Custom ($Value, [switch]$Pretty) {
         return Format-Collection -Value $Value -Pretty:$Pretty
     }
 
-    Format-Object -Value $Value -Property (Get-IdentityProperty ($Value.GetType())) -Pretty:$Pretty
+    Format-Object -Value $Value -Property (Get-DisplayProperty ($Value.GetType())) -Pretty:$Pretty
 }
 
-function Get-IdentityProperty ([Type]$Type) {
+function Get-DisplayProperty ([Type]$Type) {
     # rename to Get-DisplayProperty?
 
     <# some objects are simply too big to show all of their properties, 
@@ -126,7 +126,7 @@ function Get-IdentityProperty ([Type]$Type) {
 
     # this will become more advanced, basically something along the lines of:
     # foreach type, try constructing the type, and if it exists then check if the 
-    # incoming type is assingable to the current type, if so then return the properties,
+    # incoming type is assignable to the current type, if so then return the properties,
     # this way I can specify the map from the most concrete type to the least concrete type
     # and for types that do not exist
  
@@ -173,6 +173,6 @@ Export-ModuleMember -Function @(
     'Format-Dictionary'
     'Format-Type'
     'Format-Custom'
-    'Get-IdentityProperty'
+    'Get-DisplayProperty'
     'Get-ShortType'
 )

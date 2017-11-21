@@ -129,12 +129,12 @@ Describe "Format-Custom" {
     }
 }
 
-Describe "Get-IdentityProperty" {
+Describe "Get-DisplayProperty" {
     It "Returns '<expected>' for '<type>'" -TestCases @(
         @{ Type = "Diagnostics.Process"; Expected = ("Id", "Name") }
     ) {
         param ($Type, $Expected)
-        $Actual = Get-IdentityProperty -Type $Type
+        $Actual = Get-DisplayProperty -Type $Type
         "$Actual" | Verify-Equal "$Expected"
     }
 }
