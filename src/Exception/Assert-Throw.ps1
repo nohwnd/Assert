@@ -75,7 +75,7 @@ function Assert-Throw {
         throw [Assertions.AssertionException]$Message
     }
 
-    $ScriptBlock
+    $err.ErrorRecord
 }
 
 function Get-Error ($ErrorRecord) {

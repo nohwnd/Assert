@@ -31,4 +31,5 @@ Export-ModuleMember -Function @(
     'Assert-NotLike'
     'Assert-StringEqual'
     'Assert-StringNotEqual'
+    'Get-ChildException'
 )
