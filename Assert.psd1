@@ -4,7 +4,7 @@
 RootModule = 'Assert.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.7.1'
+ModuleVersion = '0.9.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -137,4 +137,3 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
-

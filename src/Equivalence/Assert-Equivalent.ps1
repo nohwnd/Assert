@@ -1,13 +1,13 @@
-﻿function Test-Same ($Expected, $Actual) {
+function Test-Same ($Expected, $Actual) {
     [object]::ReferenceEquals($Expected, $Actual)
 }
 
 function Is-CollectionSize ($Expected, $Actual) {
-    return $Expected.Length -eq $Actual.Length
+    return $Expected.Length -eq $Actual.Length -or $Expected.Count -eq $Actual.Count
 }
 
-function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property) { 
-    $Expected = Format-Nicely -Value $Expected 
+function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property) {
+    $Expected = Format-Nicely -Value $Expected
     $Actual = Format-Nicely -Value $Actual
     $propertyInfo = if ($Property) { " property $Property with value" }
     "Expected$propertyInfo '$Expected' to be equivalent to the actual value, but got '$Actual'."
@@ -19,7 +19,7 @@ function Get-CollectionSizeNotTheSameMessage ($Actual, $Expected, $Property) {
     $actualLength = $Actual.Length
     $Expected = Format-Collection -Value $Expected
     $Actual = Format-Collection -Value $Actual
-    
+
     $propertyMessage = $null
     if ($property) {
         $propertyMessage = " in property $Property with values"
@@ -28,14 +28,14 @@ function Get-CollectionSizeNotTheSameMessage ($Actual, $Expected, $Property) {
 }
 
 function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
-    if (-not (Is-Collection -Value $Expected)) 
+    if (-not (Is-Collection -Value $Expected))
     {
         throw [ArgumentException]"Expected must be a collection."
     }
 
-    if (-not (Is-Collection -Value $Actual)) 
-    { 
-        $expectedFormatted = Format-Collection -Value $Expected 
+    if (-not (Is-Collection -Value $Actual))
+    {
+        $expectedFormatted = Format-Collection -Value $Expected
         $expectedLength = $expected.Length
         $actualFormatted = Format-Nicely -Value $actual
         return "Expected collection '$expectedFormatted' with length '$expectedLength', but got '$actualFormatted'."
@@ -45,22 +45,22 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
         return Get-CollectionSizeNotTheSameMessage -Expected $Expected -Actual $Actual -Property $Property
     }
 
-    $eEnd = $Expected.Length
-    $aEnd = $Actual.Length
+    $eEnd = if ($Expected.Length -is [int]) {$Expected.Length} elseif ($Expected.Count -is [int]) {$Expected.Count} else {$Expected.Rows.Count}
+    $aEnd = if ($Actual.Length -is [int]  ) {$Actual.Length  } elseif ($Actual.Count -is [int]  ) {$Actual.Count  } else {$Actual.Rows.Count  }
     $taken = @()
     $notFound = @()
-    for ($e=0; $e -lt $eEnd; $e++) { 
+    for ($e=0; $e -lt $eEnd; $e++) {
         $currentExpected = $Expected[$e]
         $found = $false
-        for ($a=0; $a -lt $aEnd; $a++) { 
+        for ($a=0; $a -lt $aEnd; $a++) {
             $currentActual = $Actual[$a]
-            if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a) 
+            if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a)
             {
                 $taken += $a
                 $found = $true
             }
         }
-        if (-not $found) 
+        if (-not $found)
         {
             $notFound += $currentExpected
         }
@@ -68,22 +68,22 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
     $Expected = Format-Nicely -Value $Expected
     $Actual = Format-Nicely -Value $Actual
     $notFoundFormatted = Format-Nicely -Value ( $notFound | % { Format-Nicely -Value $_ } )
-    
+
     if ($notFound) {
         $propertyMessage = if ($Property) {" in property $Property which is"}
         return "Expected collection$propertyMessage '$Expected' to be equivalent to '$Actual' but some values were missing: '$notFoundFormatted'."
     }
 }
 
-function Compare-ValueEquivalent ($Actual, $Expected, $Property) { 
+function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
     $Expected = $($Expected)
-    if (-not (Is-Value -Value $Expected)) 
+    if (-not (Is-Value -Value $Expected))
     {
         throw [ArgumentException]"Expected must be a Value."
     }
 
      #fix that string 'false' becomes $true boolean
-    if ($Actual -is [Bool] -and $Expected -is [string] -and "$Expected" -eq 'False') 
+    if ($Actual -is [Bool] -and $Expected -is [string] -and "$Expected" -eq 'False')
     {
         $Expected = $false
         if ($Expected -ne $Actual)
@@ -93,7 +93,7 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
         return
     }
 
-    if ($Expected -is [Bool] -and $Actual -is [string] -and "$Actual" -eq 'False') 
+    if ($Expected -is [Bool] -and $Actual -is [string] -and "$Actual" -eq 'False')
     {
         $Actual = $false
         if ($Expected -ne $Actual)
@@ -104,7 +104,7 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
     }
 
     #fix that scriptblocks are compared by reference
-    if (Is-ScriptBlock -Value $Expected) 
+    if (Is-ScriptBlock -Value $Expected)
     {
         #forcing scriptblock to serialize to string and then comparing that
         if ("$Expected" -ne $Actual)
@@ -120,19 +120,19 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
     }
 }
 
-function Compare-HashtableEquivalent ($Actual, $Expected, $Property) { 
-    if (-not (Is-Hashtable -Value $Expected)) 
+function Compare-HashtableEquivalent ($Actual, $Expected, $Property) {
+    if (-not (Is-Hashtable -Value $Expected))
     {
         throw [ArgumentException]"Expected must be a hashtable."
     }
 
-    if (-not (Is-Hashtable -Value $Actual)) 
-    { 
+    if (-not (Is-Hashtable -Value $Actual))
+    {
         $expectedFormatted = Format-Nicely -Value $Expected
-        $actualFormatted = Format-Nicely -Value $Actual 
-        return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'."    
+        $actualFormatted = Format-Nicely -Value $Actual
+        return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'."
     }
-    
+
     $actualKeys = $Actual.Keys
     $expectedKeys = $Expected.Keys
 
@@ -156,29 +156,29 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property) {
     foreach ($k in $keysNotInExpected)
     {
         $result += "Expected is missing key '$k' that the other object has."
-    }    
+    }
 
     if ($result)
     {
         $expectedFormatted = Format-Nicely -Value $Expected
-        $actualFormatted = Format-Nicely -Value $Actual 
+        $actualFormatted = Format-Nicely -Value $Actual
         "Expected hashtable '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
     }
 }
 
-function Compare-DictionaryEquivalent ($Actual, $Expected, $Property) { 
-    if (-not (Is-Dictionary -Value $Expected)) 
+function Compare-DictionaryEquivalent ($Actual, $Expected, $Property) {
+    if (-not (Is-Dictionary -Value $Expected))
     {
         throw [ArgumentException]"Expected must be a dictionary."
     }
 
-    if (-not (Is-Dictionary -Value $Actual)) 
-    { 
+    if (-not (Is-Dictionary -Value $Actual))
+    {
         $expectedFormatted = Format-Nicely -Value $Expected
-        $actualFormatted = Format-Nicely -Value $Actual 
-        return "Expected dictionary '$expectedFormatted', but got '$actualFormatted'."    
+        $actualFormatted = Format-Nicely -Value $Actual
+        return "Expected dictionary '$expectedFormatted', but got '$actualFormatted'."
     }
-    
+
     $actualKeys = $Actual.Keys
     $expectedKeys = $Expected.Keys
 
@@ -202,12 +202,12 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property) {
     foreach ($k in $keysNotInExpected)
     {
         $result += "Expected is missing key '$k' that the other object has."
-    }    
+    }
 
     if ($result)
     {
         $expectedFormatted = Format-Nicely -Value $Expected
-        $actualFormatted = Format-Nicely -Value $Actual 
+        $actualFormatted = Format-Nicely -Value $Actual
         "Expected dictionary '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
     }
 }
@@ -237,7 +237,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
             "Expected has property '$PropertyName' that the other object does not have."
             continue
         }
-    
+
         Compare-Equivalent -Expected $p.Value -Actual $actualProperty.Value -Path "$Property.$propertyName"
     }
 
@@ -245,14 +245,14 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
     $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name
 
     $propertiesNotInExpected =  $actualProperties | where {$expectedPropertyNames -notcontains $_.name }
-        
+
     foreach ($p in $propertiesNotInExpected)
     {
         "Expected is missing property '$($p.Name)' that the other object has."
-    }    
+    }
 }
 
-function Compare-Equivalent ($Actual, $Expected, $Path) { 
+function Compare-Equivalent ($Actual, $Expected, $Path) {
 
     #start by null checks to avoid implementing null handling
     #logic in the functions that follow
@@ -267,7 +267,7 @@ function Compare-Equivalent ($Actual, $Expected, $Path) {
 
     #test value types, strings, and single item arrays with values in them as values
     #expand the single item array to get to the value in it
-    if (Is-Value -Value $Expected) 
+    if (Is-Value -Value $Expected)
     {
         Compare-ValueEquivalent -Actual $Actual -Expected $Expected -Property $Path
         return
@@ -275,14 +275,14 @@ function Compare-Equivalent ($Actual, $Expected, $Path) {
 
     #are the same instance
     if (Test-Same -Expected $Expected -Actual $Actual)
-    { 
+    {
         return
     }
-    
+
     if (Is-Hashtable -Value $Expected)
     {
         Compare-HashtableEquivalent -Expected $Expected -Actual $Actual -Property $Path
-        return 
+        return
     }
 
     # dictionaries? (they are IEnumerable so they must go before collections)
@@ -293,7 +293,7 @@ function Compare-Equivalent ($Actual, $Expected, $Path) {
     }
 
     #compare collection
-    if (Is-Collection -Value $Expected) { 
+    if (Is-Collection -Value $Expected) {
         Compare-CollectionEquivalent -Expected $Expected -Actual $Actual -Property $Path
         return
     }

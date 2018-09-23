@@ -1,4 +1,4 @@
-﻿function Verify-Type {
+function Verify-Type {
     param (
         [Parameter(ValueFromPipeline=$true)]
         $Actual,

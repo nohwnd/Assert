@@ -1,4 +1,4 @@
-﻿function Verify-Equal {
+function Verify-Equal {
     param (
         [Parameter(ValueFromPipeline=$true)]
         $Actual,
