@@ -1,4 +1,3 @@
-﻿
 Describe "Assert-NotLike" {
     Context "Case insensitive matching" {
         It "Fails give strings that have the same value" {

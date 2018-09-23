@@ -167,4 +167,3 @@ Describe "Get-ShortType" {
         Get-ShortType -Value $Value | Verify-Equal $Expected
     }
 }
- 

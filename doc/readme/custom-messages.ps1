@@ -1,4 +1,3 @@
-
 function Get-ActiveComputers () {
     $c = @(
         @{ HostName = "WKS1" },
