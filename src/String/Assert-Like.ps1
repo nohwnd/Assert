@@ -1,4 +1,4 @@
-﻿function Test-Like
+function Test-Like
 {
     param (
         [String]$Expected, 

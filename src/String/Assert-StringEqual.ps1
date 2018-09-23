@@ -1,4 +1,4 @@
-﻿function Test-StringEqual 
+function Test-StringEqual 
 {
     param (
         [String]$Expected, 

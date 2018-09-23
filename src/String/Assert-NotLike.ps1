@@ -1,4 +1,4 @@
-﻿function Test-NotLike
+function Test-NotLike
 {
     param (
         [String]$Expected, 
