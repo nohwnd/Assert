@@ -1,4 +1,4 @@
-﻿InModuleScope -ModuleName Assert {
+InModuleScope -ModuleName Assert {
     Describe "Test-StringEqual" {
         Context "Case insensitive matching" {
             It "strings with the same values are equal" {

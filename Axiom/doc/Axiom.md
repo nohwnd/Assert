@@ -47,5 +47,4 @@ function Verify-True {
 }
 ```
 
-There is nothing surprising or difficult to understand. There is a single condition that throws exception when the input does not equal to $true. All the other assertions follow along those lines. The implementation is absolutely minimal, yet works quite well for most of the cases. 
-
+There is nothing surprising or difficult to understand. There is a single condition that throws exception when the input does not equal to $true. All the other assertions follow along those lines. The implementation is absolutely minimal, yet works quite well for most of the cases.

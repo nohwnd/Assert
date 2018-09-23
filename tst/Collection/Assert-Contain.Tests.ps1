@@ -1,4 +1,4 @@
-﻿InModuleScope -ModuleName Assert {
+InModuleScope -ModuleName Assert {
     Describe "Assert-Contain" {
         It "Passes when collection of single item contains the expected item" {
             @(1) | Assert-Contain 1

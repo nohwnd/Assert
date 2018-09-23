@@ -1,4 +1,3 @@
-
 Import-Module .\assert.psd1  -Force
 
 $expected = [PSCustomObject]@{ 
@@ -13,5 +12,3 @@ $actual = [PSCustomObject]@{
 }
 
 Assert-Equivalent -Actual $actual -Expected $expected
-
-

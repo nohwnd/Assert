@@ -1,4 +1,4 @@
-﻿Describe "Assert-All" {
+Describe "Assert-All" {
     It "Passes when all items in the given collection pass the predicate" -TestCases @(
         @{ Actual = 1,1,1,1 }
         @{ Actual = @(1) }

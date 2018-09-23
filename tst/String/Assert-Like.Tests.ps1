@@ -1,4 +1,3 @@
-﻿
 Describe "Assert-Like" {
     Context "Case insensitive matching" {
         It "Passes give strings that have the same value" {

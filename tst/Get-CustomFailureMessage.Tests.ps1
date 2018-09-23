@@ -1,4 +1,4 @@
-﻿InModuleScope -ModuleName Assert {
+InModuleScope -ModuleName Assert {
     Describe "Get-CustomFailureMessage" {
         It "returns correct custom message when no tokens are provided" {
             $expected = "Static failure message."
