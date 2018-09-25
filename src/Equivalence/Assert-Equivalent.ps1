@@ -74,12 +74,22 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
     for ($e=0; $e -lt $eEnd; $e++) {
         $currentExpected = $Expected[$e]
         $found = $false
-        for ($a=0; $a -lt $aEnd; $a++) {
-            $currentActual = $Actual[$a]
-            if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a)
+        if ($StrictOrder) {
+            $currentActual = $Actual[$e]
+            if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $e)
             {
-                $taken += $a
+                $taken += $e
                 $found = $true
+            }
+        }
+        else {
+            for ($a=0; $a -lt $aEnd; $a++) {
+                $currentActual = $Actual[$a]
+                if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a)
+                {
+                    $taken += $a
+                    $found = $true
+                }
             }
         }
         if (-not $found)
@@ -120,11 +130,20 @@ function Compare-DataTableEquivalent ($Expected, $Actual, $Property) {
     for ($e = 0; $e -lt $eEnd; $e++) {
         $currentExpected = $Expected.Rows[$e]
         $found = $false
-        for ($a = 0; $a -lt $aEnd; $a++) {
-            $currentActual = $Actual.Rows[$a]
-            if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a) {
-                $taken += $a
+        if ($StrictOrder) {
+            $currentActual = $Actual.Rows[$e]
+            if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $e) {
+                $taken += $e
                 $found = $true
+            }
+        }
+        else {
+            for ($a = 0; $a -lt $aEnd; $a++) {
+                $currentActual = $Actual.Rows[$a]
+                if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a) {
+                    $taken += $a
+                    $found = $true
+                }
             }
         }
         if (-not $found) {
@@ -419,7 +438,7 @@ function Compare-Equivalent ($Actual, $Expected, $Path) {
     Compare-ObjectEquivalent -Expected $Expected -Actual $Actual -Property $Path
 }
 
-function Assert-Equivalent($Actual, $Expected) {
+function Assert-Equivalent($Actual, $Expected, [Switch]$StrictOrder) {
     $Option = $null
     $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected | Out-String
     if ($areDifferent)
