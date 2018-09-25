@@ -17,7 +17,7 @@ function Is-Collection ($Value) {
 }
 
 function Is-DataTable ($Value) {
-    $Value -is [Data.DataTable]
+    $Value -is [Data.DataTable] -or $Value.Psobject.TypeNames[0] -like '*System.Data.DataTable'
 }
 
 function Is-ScriptBlock ($Value) {
@@ -46,7 +46,7 @@ function Is-Object ($Value) {
 }
 
 function Is-DataRow ($Value) {
-    $Value -is [Data.DataRow]
+    $Value -is [Data.DataRow] -or $Value.Psobject.TypeNames[0] -like '*System.Data.DataRow'
 }
 
 Export-ModuleMember -Function @(
