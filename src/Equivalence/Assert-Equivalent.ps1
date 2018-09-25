@@ -11,6 +11,10 @@ function Is-CollectionSize ($Expected, $Actual) {
     }
 }
 
+function Is-DataTableSize ($Expected, $Actual) {
+        return $Expected.Rows.Count -eq $Actual.Rows.Count
+}
+
 function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property) {
     $Expected = Format-Nicely -Value $Expected
     $Actual = Format-Nicely -Value $Actual
@@ -30,6 +34,19 @@ function Get-CollectionSizeNotTheSameMessage ($Actual, $Expected, $Property) {
         $propertyMessage = " in property $Property with values"
     }
     "Expected collection$propertyMessage '$Expected' with length '$expectedLength' to be the same size as the actual collection, but got '$Actual' with length '$actualLength'."
+}
+
+function Get-DataTableSizeNotTheSameMessage ($Actual, $Expected, $Property) {
+    $expectedLength = $Expected.Rows.Count
+    $actualLength = $Actual.Rows.Count
+    $Expected = Format-Collection -Value $Expected
+    $Actual = Format-Collection -Value $Actual
+
+    $propertyMessage = $null
+    if ($property) {
+        $propertyMessage = " in property $Property with values"
+    }
+    "Expected DataTable$propertyMessage '$Expected' with length '$expectedLength' to be the same size as the actual DataTable, but got '$Actual' with length '$actualLength'."
 }
 
 function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
@@ -77,6 +94,50 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
     if ($notFound) {
         $propertyMessage = if ($Property) {" in property $Property which is"}
         return "Expected collection$propertyMessage '$Expected' to be equivalent to '$Actual' but some values were missing: '$notFoundFormatted'."
+    }
+}
+
+function Compare-DataTableEquivalent ($Expected, $Actual, $Property) {
+    if (-not (Is-DataTable -Value $Expected)) {
+        throw [ArgumentException]"Expected must be a DataTable."
+    }
+
+    if (-not (Is-DataTable -Value $Actual)) {
+        $expectedFormatted = Format-Collection -Value $Expected
+        $expectedLength = $expected.Rows.Count
+        $actualFormatted = Format-Nicely -Value $actual
+        return "Expected DataTable '$expectedFormatted' with length '$expectedLength', but got '$actualFormatted'."
+    }
+
+    if (-not (Is-DataTableSize -Expected $Expected -Actual $Actual)) {
+        return Get-DataTableSizeNotTheSameMessage -Expected $Expected -Actual $Actual -Property $Property
+    }
+
+    $eEnd = $Expected.Rows.Count
+    $aEnd = $Actual.Rows.Count
+    $taken = @()
+    $notFound = @()
+    for ($e = 0; $e -lt $eEnd; $e++) {
+        $currentExpected = $Expected.Rows[$e]
+        $found = $false
+        for ($a = 0; $a -lt $aEnd; $a++) {
+            $currentActual = $Actual.Rows[$a]
+            if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a) {
+                $taken += $a
+                $found = $true
+            }
+        }
+        if (-not $found) {
+            $notFound += $currentExpected
+        }
+    }
+    $Expected = Format-Nicely -Value $Expected
+    $Actual = Format-Nicely -Value $Actual
+    $notFoundFormatted = Format-Nicely -Value ( $notFound | % { Format-Nicely -Value $_ } )
+
+    if ($notFound) {
+        $propertyMessage = if ($Property) {" in property $Property which is"}
+        return "Expected DataTable$propertyMessage '$Expected' to be equivalent to '$Actual' but some values were missing: '$notFoundFormatted'."
     }
 }
 
@@ -257,6 +318,46 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
     }
 }
 
+function Compare-DataRowEquivalent ($Actual, $Expected, $Property) {
+
+    if (-not (Is-DataRow -Value $Expected))
+    {
+        throw [ArgumentException]"Expected must be a DataRow."
+    }
+
+    if (-not (Is-DataRow -Value $Actual)) {
+        $expectedFormatted = Format-Nicely -Value $Expected
+        $actualFormatted = Format-Nicely -Value $Actual
+        return "Expected DataRow '$expectedFormatted', but got '$actualFormatted'."
+    }
+
+    $actualProperties = $Actual.PsObject.Properties | Where-Object Name -NotIn 'RowError','RowState','Table','ItemArray','HasErrors'
+    $expectedProperties = $Expected.PsObject.Properties | Where-Object Name -NotIn 'RowError','RowState','Table','ItemArray','HasErrors'
+
+    foreach ($p in $expectedProperties)
+    {
+        $propertyName = $p.Name
+        $actualProperty = $actualProperties | Where { $_.Name -eq $propertyName}
+        if (-not $actualProperty)
+        {
+            "Expected has property '$PropertyName' that the other object does not have."
+            continue
+        }
+
+        Compare-Equivalent -Expected $p.Value -Actual $actualProperty.Value -Path "$Property.$propertyName"
+    }
+
+    #check if there are any extra actual object props
+    $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name
+
+    $propertiesNotInExpected =  $actualProperties | where {$expectedPropertyNames -notcontains $_.name }
+
+    foreach ($p in $propertiesNotInExpected)
+    {
+        "Expected is missing property '$($p.Name)' that the other object has."
+    }
+}
+
 function Compare-Equivalent ($Actual, $Expected, $Path) {
 
     #start by null checks to avoid implementing null handling
@@ -297,9 +398,21 @@ function Compare-Equivalent ($Actual, $Expected, $Path) {
         return
     }
 
+    #compare DataTable
+    if (Is-DataTable -Value $Expected) {
+        Compare-DataTableEquivalent -Expected $Expected -Actual $Actual -Property $Path
+        return
+    }
+
     #compare collection
     if (Is-Collection -Value $Expected) {
         Compare-CollectionEquivalent -Expected $Expected -Actual $Actual -Property $Path
+        return
+    }
+
+    #compare DataRow
+    if (Is-DataRow -Value $Expected) {
+        Compare-DataRowEquivalent -Expected $Expected -Actual $Actual -Property $Path
         return
     }
 
