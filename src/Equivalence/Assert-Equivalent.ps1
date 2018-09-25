@@ -3,7 +3,12 @@ function Test-Same ($Expected, $Actual) {
 }
 
 function Is-CollectionSize ($Expected, $Actual) {
-    return $Expected.Length -eq $Actual.Length -or $Expected.Count -eq $Actual.Count
+    if ($Expected.Length -is [Int] -and $Actual.Length -is [Int]) {
+        return $Expected.Length -eq $Actual.Length
+    }
+    else {
+        return $Expected.Count -eq $Actual.Count
+    }
 }
 
 function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property) {
@@ -15,8 +20,8 @@ function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property) {
 
 
 function Get-CollectionSizeNotTheSameMessage ($Actual, $Expected, $Property) {
-    $expectedLength = $Expected.Length
-    $actualLength = $Actual.Length
+    $expectedLength = if ($Expected.Length -is [int]) {$Expected.Length} else {$Expected.Count}
+    $actualLength = if ($Actual.Length -is [int]) {$Actual.Length} else {$Actual.Count}
     $Expected = Format-Collection -Value $Expected
     $Actual = Format-Collection -Value $Actual
 
@@ -45,8 +50,8 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
         return Get-CollectionSizeNotTheSameMessage -Expected $Expected -Actual $Actual -Property $Property
     }
 
-    $eEnd = if ($Expected.Length -is [int]) {$Expected.Length} elseif ($Expected.Count -is [int]) {$Expected.Count} else {$Expected.Rows.Count}
-    $aEnd = if ($Actual.Length -is [int]  ) {$Actual.Length  } elseif ($Actual.Count -is [int]  ) {$Actual.Count  } else {$Actual.Rows.Count  }
+    $eEnd = if ($Expected.Length -is [int]) {$Expected.Length} else {$Expected.Count}
+    $aEnd = if ($Actual.Length -is [int]) {$Actual.Length} else {$Actual.Count}
     $taken = @()
     $notFound = @()
     for ($e=0; $e -lt $eEnd; $e++) {
