@@ -4,7 +4,7 @@
 RootModule = 'Assert.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.9.1'
+ModuleVersion = '0.9.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -61,7 +61,7 @@ Description = 'Alternative assertions for Pester.'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @( 
+FunctionsToExport = @(
     'Assert-Equivalent'
     'Assert-Equal'
     'Assert-NotEqual'
@@ -83,7 +83,7 @@ FunctionsToExport = @(
     'Assert-All'
     'Assert-Throw'
     'Assert-Like'
-    'Assert-NotLike'    
+    'Assert-NotLike'
     'Assert-StringEqual'
     'Assert-StringNotEqual'
 )
