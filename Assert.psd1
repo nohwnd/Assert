@@ -4,7 +4,11 @@
 RootModule = 'Assert.psm1'
 
 # Version number of this module.
+<<<<<<< HEAD
 ModuleVersion = '0.9.2'
+=======
+ModuleVersion = '0.0.0'
+>>>>>>> 26b5277afadc1d57a8e5b0e9e911e74d4e494d01
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
