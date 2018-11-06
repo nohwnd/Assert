@@ -394,7 +394,17 @@ InModuleScope -ModuleName Assert {
             Compare-Equivalent -Expected $Expected -Actual $Actual | Verify-Equal "Expected collection in property .Objects which is 'PSObject{Name=Jan}, PSObject{Name=Petr}' to be equivalent to 'PSObject{Name=Jan}, PSObject{Name=Tomas}' but some values were missing: 'PSObject{Name=Petr}'."
         }
 
-        It "Comparing DataTable" {
+        It "Comparing different Types with -StrictType" {
+            Assert-Equivalent -Expected 5 -Actual 5
+            Assert-Equivalent -Expected 5 -Actual '5'
+            Assert-Equivalent -Expected '5' -Actual 5
+            Assert-Equivalent -Expected 5 -Actual 5 -StrictType
+            {Assert-Equivalent -Expected 5 -Actual '5' -StrictType} | Should -Throw -ExpectedMessage "Expected '[System.Int32]5' to be equivalent to the actual value, but got '[System.String]5'"
+            {Assert-Equivalent -Expected '5' -Actual 5 -StrictType} | Should -Throw -ExpectedMessage "Expected '[System.String]5' to be equivalent to the actual value, but got '[System.Int32]5'"
+        }
+
+        Describe "DataTable" {
+            # Test DataTables
             $Expected = [Data.DataTable]::new('Test')
             $null = $Expected.Columns.Add('IDD', [System.Int32])
             $null = $Expected.Columns.Add('Name')
@@ -411,22 +421,37 @@ InModuleScope -ModuleName Assert {
             $null = $Actual.Rows.Add(3, 'C', $null, $null)
             $null = $Actual.Rows.Add(1, 'A', 'AAA', 5)
 
-            Assert-Equivalent -Actual $Actual -Expected $Expected
+            It "DataTable" {
+                Assert-Equivalent -Actual $Actual -Expected $Expected
+            }
 
-            $ExpectedDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Expected))
-            $ActualDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Actual))
-            Assert-Equivalent -Actual $ActualDeserialized -Expected $ExpectedDeserialized
-            Assert-Equivalent -Actual $Actual -Expected $ExpectedDeserialized
+            # Test Deserialized DataTables
+            $ExpectedDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Expected, 2))
+            $ActualDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Actual, 2))
 
-            {Assert-Equivalent -Actual $Actual -Expected $Expected -StrictOrder} | Should -Throw
+            It "Deserialized DataTable" {
+                Assert-Equivalent -Actual $ActualDeserialized -Expected $ExpectedDeserialized
+                Assert-Equivalent -Actual $Actual -Expected $ExpectedDeserialized
+            }
 
+            It "StrictOrder" {
+                {Assert-Equivalent -Actual $Actual -Expected $Expected -StrictOrder} | Should -Throw -ExpectedMessage 'but some values were missing:'
+            }
+
+            It "DBNull, Deserialized and -StrictType" {
+                Assert-Equivalent -Actual $Actual -Expected $ExpectedDeserialized -StrictType
+                Assert-Equivalent -Actual $ExpectedDeserialized -Expected $Actual -StrictType
+            }
+
+            # Different $Actual data
             $Actual.Rows[1].Name = 'D'
-            {Assert-Equivalent -Actual $Actual -Expected $Expected} | Should -Throw
+            $ActualDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Actual, 2))
 
-            $ExpectedDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Expected))
-            $ActualDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Actual))
-            {Assert-Equivalent -Actual $ActualDeserialized -Expected $ExpectedDeserialized} | Should -Throw
-            {Assert-Equivalent -Actual $Actual -Expected $ExpectedDeserialized} | Should -Throw
+            It "Different DataTable data and Deserialized" {
+                {Assert-Equivalent -Actual $Actual -Expected $Expected} | Should -Throw -ExpectedMessage 'but some values were missing:'
+                {Assert-Equivalent -Actual $ActualDeserialized -Expected $ExpectedDeserialized} | Should -Throw -ExpectedMessage 'but some values were missing:'
+                {Assert-Equivalent -Actual $Actual -Expected $ExpectedDeserialized} | Should -Throw -ExpectedMessage 'but some values were missing:'
+            }
         }
 
         It "Can be called with positional parameters" {

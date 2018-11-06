@@ -1,6 +1,6 @@
 function Is-Value ($Value) {
     $Value = $($Value)
-    $Value -is [ValueType] -or $Value -is [string] -or $value -is [scriptblock]
+    $Value -is [ValueType] -or $Value -is [string] -or $value -is [scriptblock] -or ($null -ne $Value -and $Value.Psobject.TypeNames[0] -like '*System.DBNull')
 }
 
 function Is-Collection ($Value) {

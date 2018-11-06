@@ -167,6 +167,19 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
         throw [ArgumentException]"Expected must be a Value."
     }
 
+    if ($Expected.Psobject.TypeNames[0] -like '*System.DBNull' -and $null -ne $Actual -and $Actual.Psobject.TypeNames[0] -like '*System.DBNull' )
+    {
+        return
+    }
+
+    if ($StrictType -and $Actual -isnot $Expected.GetType())
+    {
+        $Expected = '[{0}]{1}' -f $Expected.GetType(), $Expected
+        $Actual = '[{0}]{1}' -f $Actual.GetType(), $Actual
+        Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
+        return
+    }
+
      #fix that string 'false' becomes $true boolean
     if ($Actual -is [Bool] -and $Expected -is [string] -and "$Expected" -eq 'False')
     {
@@ -438,7 +451,7 @@ function Compare-Equivalent ($Actual, $Expected, $Path) {
     Compare-ObjectEquivalent -Expected $Expected -Actual $Actual -Property $Path
 }
 
-function Assert-Equivalent($Actual, $Expected, [Switch]$StrictOrder) {
+function Assert-Equivalent($Actual, $Expected, [Switch]$StrictOrder, [Switch]$StrictType) {
     $Option = $null
     $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected | Out-String
     if ($areDifferent)
