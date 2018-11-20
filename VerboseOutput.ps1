@@ -52,6 +52,7 @@ m ("-*"*40)
 
 m compare objects 
 
+
 $expected = [PSCustomObject]@{ 
     Name = 'Jakub' 
     Age = 28
@@ -66,7 +67,6 @@ $actual = [PSCustomObject]@{
 }
 
 c -a $actual -e $expected
-
 # m hashtables 
 # c -a @{} -e @{}
 # c -a @() -e @{}

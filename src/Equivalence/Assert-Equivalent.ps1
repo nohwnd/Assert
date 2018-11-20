@@ -1,4 +1,3 @@
-$script:differenceCount = 0
 function Test-Same ($Expected, $Actual) {
     [object]::ReferenceEquals($Expected, $Actual)
 }
@@ -386,7 +385,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
         else {
             v -Difference "Property '$propertyName` is not equivalent."
         }
-        return $differences
+        $differences
     }
 
     #check if there are any extra actual object props
@@ -394,7 +393,12 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
 
     $propertiesNotInExpected =  $actualProperties | where {$expectedPropertyNames -notcontains $_.name }
 
-    v -Difference "`$Actual has ($(@($propertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($propertiesNotInExpected))"
+    if ($propertiesNotInExpected) {
+        v -Difference "`$Actual has ($(@($propertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($propertiesNotInExpected))."
+    }
+    else {
+        v -Difference "`$Actual has no extra properties that `$Expected does not have."
+    }
     foreach ($p in $propertiesNotInExpected)
     {
         "Expected is missing property '$($p.Name)' that the other object has."
@@ -460,7 +464,7 @@ function v {
     }
 
     $p += if ($Difference) {
-        " DIFFERENCE"+ (++$script:differenceCount)
+        " DIFFERENCE"
     }
 
     $p += if ($Equivalence) {
@@ -479,7 +483,7 @@ function v {
 function Compare-Equivalent {
     [CmdletBinding()]
     param($Actual, $Expected, $Path)
-    $script:differenceCount = 0
+
     #start by null checks to avoid implementing null handling
     #logic in the functions that follow
     if ($null -eq $Expected)
@@ -488,12 +492,18 @@ function Compare-Equivalent {
         if ($Expected -ne $Actual)
         {
             v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely $Actual.GetType())."
-           return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
         }
         # we terminate here, either we passed the test and return nothing, or we did not 
         # and the previous statement returned message
         v -Equivalence "`$Actual is equivalent to `$null, because it is `$null."
         return
+    }
+
+    if ($null -eq $Actual)
+    {
+        v -Difference "`$Actual is $(Format-Nicely), but `$Expected has value of type $(Format-Nicely $Expected.GetType()), so they are not equivalent."
+        return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
     }
 
     v "`$Expected has type $($Expected.GetType()), `$Actual has type $($Actual.GetType()), they are both non-null."
@@ -568,11 +578,11 @@ function Assert-Equivalent {
 
     $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected | Out-String
     
-    v -Difference:([bool]$script:differenceCount) -Equivalence:(-not $script:differenceCount) "Found $($script:differenceCount) differences between `$Actual and `$Expected."
-
     if ($areDifferent)
     {
         $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $Option -Pretty -CustomMessage "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
         throw [Assertions.AssertionException]$message
     }
+    
+    v -Equivalence "`$Actual and `$Expected are equivalent."
 }
