@@ -397,7 +397,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
         v -Difference "`$Actual has ($(@($propertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($propertiesNotInExpected))."
     }
     else {
-        v -Difference "`$Actual has no extra properties that `$Expected does not have."
+        v -Equivalence "`$Actual has no extra properties that `$Expected does not have."
     }
     foreach ($p in $propertiesNotInExpected)
     {
