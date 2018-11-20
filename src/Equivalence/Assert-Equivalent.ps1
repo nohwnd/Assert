@@ -167,42 +167,58 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
         throw [ArgumentException]"Expected must be a Value."
     }
 
-     #fix that string 'false' becomes $true boolean
+    # fix that string 'false' becomes $true boolean
     if ($Actual -is [Bool] -and $Expected -is [string] -and "$Expected" -eq 'False')
     {
+        v "`$Actual is a boolean, and `$Expected is a 'False' string, which we consider equivalent to boolean `$false. Setting `$Expected to `$false."
         $Expected = $false
         if ($Expected -ne $Actual)
         {
-            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
+            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
+            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
         }
+        v -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
         return
     }
 
     if ($Expected -is [Bool] -and $Actual -is [string] -and "$Actual" -eq 'False')
     {
+        v "`$Actual is a 'False' string, which we consider equivalent to boolean `$false. `$Expected is a boolean. Setting `$Actual to `$false."
         $Actual = $false
         if ($Expected -ne $Actual)
         {
-            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
+            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
+            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
         }
+        v -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
         return
     }
 
     #fix that scriptblocks are compared by reference
     if (Is-ScriptBlock -Value $Expected)
     {
+        # todo: compare by equivalency like strings?
+        v "`$Expected is a ScriptBlock, scriptblocks are considered equivalent when their content is equal. Converting `$Expected to string."
         #forcing scriptblock to serialize to string and then comparing that
         if ("$Expected" -ne $Actual)
         {
-            Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+            # todo: difference on index?
+            v -Difference "`$Actual is not equivalent to `$Expected because their contents differ."
+            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
         }
+        v -Equivalence "`$Actual is equivalent to `$Expected because their contents are equal."
         return
     }
 
+    v "Comparing values as $(Format-Nicely ($Expected.GetType())) because `$Expected has that type."
     if ($Expected -ne $Actual)
     {
-        Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
+        $type = $Expected.GetType()
+        $coalescedActual = $Actual -as $type
+        v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual), and $(Format-Nicely $Actual) coalesced to $(Format-Nicely $type) is $(Format-Nicely $coalescedActual)."
+        return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
     }
+    v -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual), and $(Format-Nicely $Actual) coalesced to $(Format-Nicely $type) is $(Format-Nicely $coalescedActual)."
 }
 
 function Compare-HashtableEquivalent ($Actual, $Expected, $Property) {
@@ -377,16 +393,55 @@ function Compare-DataRowEquivalent ($Actual, $Expected, $Property) {
     }
 }
 
-function Compare-Equivalent ($Actual, $Expected, $Path) {
+function v {
+    [CmdletBinding()]
+    param(
+        [String] $String,
+        [Switch] $Difference,
+        [Switch] $Equivalence
+    )
+    
+    # we are using implict variable $Path
+    # from the parent scope, this is ugly
+    # and bad practice, but saves us ton of
+    # coding and boilerplate code
+
+    $p = ""
+    $p += if ($Difference) {
+        "DIFFERENCE"
+    }
+    $p += if ($Equivalence) {
+        "EQUIVALENCE"
+    }
+    $p += if ($null -ne $Path) {
+        " ($Path)"
+    }
+    $p += if (""-ne $p) {
+        ": "
+    }
+
+    Write-Verbose "$p$String"
+}
+
+# compares two objects for equivalency and returns $null when they are equivalent
+# or a string message when they are not
+function Compare-Equivalent {
+    [CmdletBinding()]
+    param($Actual, $Expected, $Path)
 
     #start by null checks to avoid implementing null handling
     #logic in the functions that follow
     if ($null -eq $Expected)
     {
+        v "`$Expected is `$null, so we are expecting `$null."
         if ($Expected -ne $Actual)
         {
-           Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely $Actual.GetType())."
+           return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
         }
+        # we terminate here, either we passed the test and return nothing, or we did not 
+        # and the previous statement returned message
+        v -Equivalence "`$Actual is equivalent to `$null, because it is `$null."
         return
     }
 
@@ -394,6 +449,7 @@ function Compare-Equivalent ($Actual, $Expected, $Path) {
     #expand the single item array to get to the value in it
     if (Is-Value -Value $Expected)
     {
+        v "`$Expected is a value (value type, string, single value array, or a scriptblock), we will be comparing `$Actual to value types."
         Compare-ValueEquivalent -Actual $Actual -Expected $Expected -Property $Path
         return
     }
@@ -438,7 +494,14 @@ function Compare-Equivalent ($Actual, $Expected, $Path) {
     Compare-ObjectEquivalent -Expected $Expected -Actual $Actual -Property $Path
 }
 
-function Assert-Equivalent($Actual, $Expected, [Switch]$StrictOrder) {
+function Assert-Equivalent {
+    [CmdletBinding()]
+    param(
+        $Actual, 
+        $Expected, 
+        [Switch]$StrictOrder
+    )
+
     $Option = $null
     $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected | Out-String
     if ($areDifferent)
