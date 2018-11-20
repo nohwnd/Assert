@@ -12,6 +12,7 @@ Import-module .\Assert.psd1
         "`n"
     }
 
+    
     function mm ($string) { m "- $string" }
     function m ($string) { Write-Host -fore Cyan $string}
 m ("-*"*40)
@@ -49,22 +50,22 @@ m ("-*"*40)
 # c -a {} -e ""
 # c -a "" -e {}
 
-# m compare objects 
+m compare objects 
 
-# $expected = [PSCustomObject]@{ 
-#     Name = 'Jakub' 
-#     Age = 28
-#     KnowsPowerShell = $true
-#     Languages = 'Czech', 'English' 
-# }
+$expected = [PSCustomObject]@{ 
+    Name = 'Jakub' 
+    Age = 28
+    KnowsPowerShell = $true
+    Languages = 'Czech', 'English' 
+}
 
-# $actual = [PSCustomObject]@{ 
-#     Name = 'Jkb'
-#     KnowsPowerShell = 0
-#     Languages = 'Czech', 'English', 'German'
-# }
+$actual = [PSCustomObject]@{ 
+    Name = 'Jkb'
+    KnowsPowerShell = 0
+    Languages = 'Czech', 'English', 'German'
+}
 
-# c -a $actual -e $expected
+c -a $actual -e $expected
 
 # m hashtables 
 # c -a @{} -e @{}
@@ -74,7 +75,11 @@ m ("-*"*40)
 # c -a @{} -e @{Name="Jakub"}
 # c -a @{Name="Jakub"} -e @{Name="Jakub"}
 
-
+# m collections
+# c -a 1 -e @()
+# c -a @() -e @()
+# c -a @(1) -e @()
+# c -a @(1,1) -e @(1,2)
 }
 
 

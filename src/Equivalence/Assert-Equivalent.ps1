@@ -58,6 +58,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
 
     if (-not (Is-Collection -Value $Actual))
     {
+        v -Difference "`$Actual is not a collection it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
         $expectedFormatted = Format-Collection -Value $Expected
         $expectedLength = $expected.Length
         $actualFormatted = Format-Nicely -Value $actual
@@ -65,14 +66,17 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
     }
 
     if (-not (Is-CollectionSize -Expected $Expected -Actual $Actual)) {
+        v -Difference "`$Actual does not have the same size ($($Actual.Length)) as `$Expected ($($Expected.Length)) so they are not equivalent."
         return Get-CollectionSizeNotTheSameMessage -Expected $Expected -Actual $Actual -Property $Property
     }
 
     $eEnd = if ($Expected.Length -is [int]) {$Expected.Length} else {$Expected.Count}
     $aEnd = if ($Actual.Length -is [int]) {$Actual.Length} else {$Actual.Count}
+    v "Comparing items in collection, `$Expected has lenght $eEnd, `$Actual has length $aEnd."
     $taken = @()
     $notFound = @()
     for ($e=0; $e -lt $eEnd; $e++) {
+        v "`nSearching for `$Expected[$e]:"
         $currentExpected = $Expected[$e]
         $found = $false
         if ($StrictOrder) {
@@ -81,6 +85,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
             {
                 $taken += $e
                 $found = $true
+                v -Equivalence "`Found `$Expected[$e]."
             }
         }
         else {
@@ -90,11 +95,13 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
                 {
                     $taken += $a
                     $found = $true
+                    v -Equivalence "`Found `$Expected[$e]."
                 }
             }
         }
         if (-not $found)
         {
+            v -Difference "`$Actual does not contain `$Expected[$e]."
             $notFound += $currentExpected
         }
     }
@@ -103,9 +110,11 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
     $notFoundFormatted = Format-Nicely -Value ( $notFound | % { Format-Nicely -Value $_ } )
 
     if ($notFound) {
+        v -Difference "`$Actual and `$Expected arrays are not equivalent."
         $propertyMessage = if ($Property) {" in property $Property which is"}
         return "Expected collection$propertyMessage '$Expected' to be equivalent to '$Actual' but some values were missing: '$notFoundFormatted'."
     }
+    v -Equivalence "`$Actual and `$Expected arrays are equivalent."
 }
 
 function Compare-DataTableEquivalent ($Expected, $Actual, $Property) {
@@ -212,11 +221,11 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
     }
 
     v "Comparing values as $(Format-Nicely ($Expected.GetType())) because `$Expected has that type."
+    # todo: shorter messages when both sides have the same type (do not compare by using -is, instead query the type and compare it) because -is is true even for parent types
+    $type = $Expected.GetType()
+    $coalescedActual = $Actual -as $type
     if ($Expected -ne $Actual)
     {
-        # todo: shorter messages when both sides have the same type (do not compare by using -is, instead query the type and compare it) because -is is true even for parent types
-        $type = $Expected.GetType()
-        $coalescedActual = $Actual -as $type
         v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual), and $(Format-Nicely $Actual) coalesced to $(Format-Nicely $type) is $(Format-Nicely $coalescedActual)."
         return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
     }
@@ -349,6 +358,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
     }
 
     if (-not (Is-Object -Value $Actual)) {
+        v -Difference "`$Actual is not an object it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected object '$expectedFormatted', but got '$actualFormatted'."
@@ -357,17 +367,26 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
     $actualProperties = $Actual.PsObject.Properties
     $expectedProperties = $Expected.PsObject.Properties
 
+    v "Comparing all ($(@($expectedProperties).Count)) properties of `$Expected to `$Actual."
     foreach ($p in $expectedProperties)
     {
         $propertyName = $p.Name
         $actualProperty = $actualProperties | Where { $_.Name -eq $propertyName}
         if (-not $actualProperty)
         {
+            v -Difference "Property '$propertyName` was not found on `$Actual."
             "Expected has property '$PropertyName' that the other object does not have."
             continue
         }
-
-        Compare-Equivalent -Expected $p.Value -Actual $actualProperty.Value -Path "$Property.$propertyName"
+        v "Property '$propertyName` was found on `$Actual, comparing them for equivalence."
+        $differences = Compare-Equivalent -Expected $p.Value -Actual $actualProperty.Value -Path "$Property.$propertyName"
+        if (-not $differences) {
+            v -Equivalence "Property '$propertyName` is equivalent."
+        }
+        else {
+            v -Difference "Property '$propertyName` is not equivalent."
+        }
+        return $differences
     }
 
     #check if there are any extra actual object props
@@ -375,6 +394,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
 
     $propertiesNotInExpected =  $actualProperties | where {$expectedPropertyNames -notcontains $_.name }
 
+    v -Difference "`$Actual has ($(@($propertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($propertiesNotInExpected))"
     foreach ($p in $propertiesNotInExpected)
     {
         "Expected is missing property '$($p.Name)' that the other object has."
@@ -435,20 +455,23 @@ function v {
     # coding and boilerplate code
 
     $p = ""
-    $p += if ($Difference) {
-        "DIFFERENCE"+ (++$script:differenceCount)
-    }
-    $p += if ($Equivalence) {
-        "EQUIVALENCE"
-    }
     $p += if ($null -ne $Path) {
-        " ($Path)"
-    }
-    $p += if (""-ne $p) {
-        ": "
+        "($Path)"
     }
 
-    Write-Verbose "$p$String"
+    $p += if ($Difference) {
+        " DIFFERENCE"+ (++$script:differenceCount)
+    }
+
+    $p += if ($Equivalence) {
+        " EQUIVALENCE"
+    }
+
+    $p += if (""-ne $p) {
+        " - "
+    }
+
+    Write-Verbose ("$p$String".Trim() + " ")
 }
 
 # compares two objects for equivalency and returns $null when they are equivalent
@@ -456,7 +479,7 @@ function v {
 function Compare-Equivalent {
     [CmdletBinding()]
     param($Actual, $Expected, $Path)
-
+    $script:differenceCount = 0
     #start by null checks to avoid implementing null handling
     #logic in the functions that follow
     if ($null -eq $Expected)
@@ -472,6 +495,8 @@ function Compare-Equivalent {
         v -Equivalence "`$Actual is equivalent to `$null, because it is `$null."
         return
     }
+
+    v "`$Expected has type $($Expected.GetType()), `$Actual has type $($Actual.GetType()), they are both non-null."
 
     #test value types, strings, and single item arrays with values in them as values
     #expand the single item array to get to the value in it
@@ -499,28 +524,35 @@ function Compare-Equivalent {
     # dictionaries? (they are IEnumerable so they must go before collections)
     if (Is-Dictionary -Value $Expected)
     {
+        v "`$Expected is a dictionary, we will be comparing `$Actual to dictionaries."
         Compare-DictionaryEquivalent -Expected $Expected -Actual $Actual -Property $Path
         return
     }
 
     #compare DataTable
     if (Is-DataTable -Value $Expected) {
+        # todo add verbose output to data table
+        v "`$Expected is a datatable, we will be comparing `$Actual to datatables."
         Compare-DataTableEquivalent -Expected $Expected -Actual $Actual -Property $Path
         return
     }
 
     #compare collection
     if (Is-Collection -Value $Expected) {
+        v "`$Expected is a collection, we will be comparing `$Actual to collections."
         Compare-CollectionEquivalent -Expected $Expected -Actual $Actual -Property $Path
         return
     }
 
     #compare DataRow
     if (Is-DataRow -Value $Expected) {
+        # todo add verbose output to data row
+        v "`$Expected is a datarow, we will be comparing `$Actual to datarows."
         Compare-DataRowEquivalent -Expected $Expected -Actual $Actual -Property $Path
         return
     }
 
+    v "`$Expected is an object of type $($Expected.GetType()), we will be comparing `$Actual to objects."
     Compare-ObjectEquivalent -Expected $Expected -Actual $Actual -Property $Path
 }
 
@@ -533,9 +565,11 @@ function Assert-Equivalent {
     )
 
     $Option = $null
-    $script:differenceCount = 0
+
     $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected | Out-String
-    v -Difference:($script:differenceCount) -Equivalence:(-not $script:differenceCount) "Found $($script:differenceCount) differences between `$Actual and `$Expected."
+    
+    v -Difference:([bool]$script:differenceCount) -Equivalence:(-not $script:differenceCount) "Found $($script:differenceCount) differences between `$Actual and `$Expected."
+
     if ($areDifferent)
     {
         $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $Option -Pretty -CustomMessage "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
