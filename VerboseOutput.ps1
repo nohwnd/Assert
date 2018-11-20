@@ -39,32 +39,42 @@ m ("-*"*40)
 # c -a { "hello"} -e { "hello" }
 
 # m "normal boolean comparison"
-c -a $true -e $true 
-c -a $false -e $false 
-c -a $true -e $false 
-c -a $false -e $true 
-c -a "" -e $true 
-c -a 1 -e $true 
-c -a 0 -e $true
-c -a {} -e ""
-c -a "" -e {}
+# c -a $true -e $true 
+# c -a $false -e $false 
+# c -a $true -e $false 
+# c -a $false -e $true 
+# c -a "" -e $true 
+# c -a 1 -e $true 
+# c -a 0 -e $true
+# c -a {} -e ""
+# c -a "" -e {}
 
-m compare objects 
+# m compare objects 
 
-$expected = [PSCustomObject]@{ 
-    Name = 'Jakub' 
-    Age = 28
-    KnowsPowerShell = $true
-    Languages = 'Czech', 'English' 
+# $expected = [PSCustomObject]@{ 
+#     Name = 'Jakub' 
+#     Age = 28
+#     KnowsPowerShell = $true
+#     Languages = 'Czech', 'English' 
+# }
+
+# $actual = [PSCustomObject]@{ 
+#     Name = 'Jkb'
+#     KnowsPowerShell = 0
+#     Languages = 'Czech', 'English', 'German'
+# }
+
+# c -a $actual -e $expected
+
+# m hashtables 
+# c -a @{} -e @{}
+# c -a @() -e @{}
+
+# c -a @{Name="Jakub"} -e @{}
+# c -a @{} -e @{Name="Jakub"}
+# c -a @{Name="Jakub"} -e @{Name="Jakub"}
+
+
 }
 
-$actual = [PSCustomObject]@{ 
-    Name = 'Jkb'
-    KnowsPowerShell = 0
-    Languages = 'Czech', 'English', 'German'
-}
 
-c -a $actual -e $expected
-
-
-}

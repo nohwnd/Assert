@@ -1,3 +1,4 @@
+$script:differenceCount = 0
 function Test-Same ($Expected, $Actual) {
     [object]::ReferenceEquals($Expected, $Actual)
 }
@@ -213,6 +214,7 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
     v "Comparing values as $(Format-Nicely ($Expected.GetType())) because `$Expected has that type."
     if ($Expected -ne $Actual)
     {
+        # todo: shorter messages when both sides have the same type (do not compare by using -is, instead query the type and compare it) because -is is true even for parent types
         $type = $Expected.GetType()
         $coalescedActual = $Actual -as $type
         v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual), and $(Format-Nicely $Actual) coalesced to $(Format-Nicely $type) is $(Format-Nicely $coalescedActual)."
@@ -229,31 +231,42 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property) {
 
     if (-not (Is-Hashtable -Value $Actual))
     {
+        v -Difference "`$Actual is not a hashtable it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'."
     }
+    
+    # todo: if either side or both sides are empty hashtable make the verbose output shorter and nicer
 
     $actualKeys = $Actual.Keys
     $expectedKeys = $Expected.Keys
 
+    v "`Comparing all ($($expectedKeys.Count)) keys from `$Expected to keys in `$Actual."
     $result = @()
     foreach ($k in $expectedKeys)
     {
         $actualHasKey = $actualKeys -contains $k
         if (-not $actualHasKey)
-        {
+        {   
+            v -Difference "`$Actual is missing key '$k'."
             $result += "Expected has key '$k' that the other object does not have."
             continue
         }
 
         $expectedValue = $Expected[$k]
         $actualValue = $Actual[$k]
-
+        v "Both `$Actual and `$Expected have key '$k', comparing thier contents."
         $result += Compare-Equivalent -Expected $expectedValue -Actual $actualValue -Path "$Property.$k"
     }
 
-    $keysNotInExpected =  $actualKeys | where {$expectedKeys -notcontains $_ }
+    $keysNotInExpected = $actualKeys | where {$expectedKeys -notcontains $_ }
+    if ($keysNotInExpected) {
+        v -Difference "`$Actual has $($keysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($keysNotInExpected))."
+    }
+    else {
+        v "`$Actual has no keys that we did not find on `$Expected."
+    }
     foreach ($k in $keysNotInExpected)
     {
         $result += "Expected is missing key '$k' that the other object has."
@@ -261,10 +274,12 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property) {
 
     if ($result)
     {
+        v -Difference "Hastables `$Actual and `$Expected are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
-        "Expected hashtable '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
+        return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
     }
+    v -Equivalence "Hastables `$Actual and `$Expected are equivalent."
 }
 
 function Compare-DictionaryEquivalent ($Actual, $Expected, $Property) {
@@ -275,31 +290,42 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property) {
 
     if (-not (Is-Dictionary -Value $Actual))
     {
+        v -Difference "`$Actual is not a dictionary it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected dictionary '$expectedFormatted', but got '$actualFormatted'."
     }
 
+    # todo: if either side or both sides are empty dictionary make the verbose output shorter and nicer
+
     $actualKeys = $Actual.Keys
     $expectedKeys = $Expected.Keys
 
+    v "`Comparing all ($($expectedKeys.Count)) keys from `$Expected to keys in `$Actual."
     $result = @()
     foreach ($k in $expectedKeys)
     {
         $actualHasKey = $actualKeys -contains $k
         if (-not $actualHasKey)
         {
+            v -Difference "`$Actual is missing key '$k'."
             $result += "Expected has key '$k' that the other object does not have."
             continue
         }
 
         $expectedValue = $Expected[$k]
         $actualValue = $Actual[$k]
-
+        v "Both `$Actual and `$Expected have key '$k', comparing thier contents."
         $result += Compare-Equivalent -Expected $expectedValue -Actual $actualValue -Path "$Property.$k"
     }
 
     $keysNotInExpected =  $actualKeys | where {$expectedKeys -notcontains $_ }
+    if ($keysNotInExpected) {
+        v -Difference "`$Actual has $($keysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($keysNotInExpected))."
+    }
+    else {
+        v "`$Actual has no keys that we did not find on `$Expected."
+    }
     foreach ($k in $keysNotInExpected)
     {
         $result += "Expected is missing key '$k' that the other object has."
@@ -307,10 +333,12 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property) {
 
     if ($result)
     {
+        v -Difference "Hastables `$Actual and `$Expected are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
-        "Expected dictionary '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
+        return "Expected dictionary '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
     }
+    v -Equivalence "Hastables `$Actual and `$Expected are equivalent."
 }
 
 function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
@@ -408,7 +436,7 @@ function v {
 
     $p = ""
     $p += if ($Difference) {
-        "DIFFERENCE"
+        "DIFFERENCE"+ (++$script:differenceCount)
     }
     $p += if ($Equivalence) {
         "EQUIVALENCE"
@@ -457,11 +485,13 @@ function Compare-Equivalent {
     #are the same instance
     if (Test-Same -Expected $Expected -Actual $Actual)
     {
+        v -Equivalence "`$Expected and `$Actual are equivalent because they are the same object (by reference)."
         return
     }
 
     if (Is-Hashtable -Value $Expected)
     {
+        v "`$Expected is a hashtable, we will be comparing `$Actual to hashtables."
         Compare-HashtableEquivalent -Expected $Expected -Actual $Actual -Property $Path
         return
     }
@@ -503,7 +533,9 @@ function Assert-Equivalent {
     )
 
     $Option = $null
+    $script:differenceCount = 0
     $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected | Out-String
+    v -Difference:($script:differenceCount) -Equivalence:(-not $script:differenceCount) "Found $($script:differenceCount) differences between `$Actual and `$Expected."
     if ($areDifferent)
     {
         $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $Option -Pretty -CustomMessage "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
