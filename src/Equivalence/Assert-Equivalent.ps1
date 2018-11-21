@@ -75,12 +75,14 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
     $taken = @()
     $notFound = @()
     for ($e=0; $e -lt $eEnd; $e++) {
+        # todo: retest strict order
         v "`nSearching for `$Expected[$e]:"
         $currentExpected = $Expected[$e]
         $found = $false
         if ($StrictOrder) {
+            if ($found) { continue }
             $currentActual = $Actual[$e]
-            if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $e)
+            if ($taken -notcontains $e -and (-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)))
             {
                 $taken += $e
                 $found = $true
@@ -89,12 +91,22 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
         }
         else {
             for ($a=0; $a -lt $aEnd; $a++) {
+                # we already took this item as equivalent to an item
+                # in the expected collection, skip it
+                if ($taken -contains $a) { continue }
                 $currentActual = $Actual[$a]
-                if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)) -and $taken -notcontains $a)
+                # -not, because $null means no differences, and some strings means there are differences
+                if (-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property))
                 {
+                    # add the index to the list of taken items so we can skip it
+                    # in the search, this way we can compare collections with 
+                    # arrays multiple same items
                     $taken += $a
                     $found = $true
-                    v -Equivalence "`Found `$Expected[$e]."
+                    v -Equivalence "`Found equivalent item `$Expected[$e] on `$Actual[$a]."
+                    # we already found the item we 
+                    # can move on to the next item in Exected array
+                    break
                 }
             }
         }
