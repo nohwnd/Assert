@@ -103,7 +103,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
                     # arrays multiple same items
                     $taken += $a
                     $found = $true
-                    v -Equivalence "`Found equivalent item `$Expected[$e] on `$Actual[$a]."
+                    v -Equivalence "`Found equivalent item for `$Expected[$e] at `$Actual[$a]."
                     # we already found the item we 
                     # can move on to the next item in Exected array
                     break
