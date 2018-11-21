@@ -93,9 +93,12 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
             for ($a=0; $a -lt $aEnd; $a++) {
                 # we already took this item as equivalent to an item
                 # in the expected collection, skip it
-                if ($taken -contains $a) { continue }
+                if ($taken -contains $a) { 
+                    v "Skipping `$Actual[$a] because it is already taken."
+                    continue }
                 $currentActual = $Actual[$a]
                 # -not, because $null means no differences, and some strings means there are differences
+                v "Comparing `$Actual[$a] to `$Expected[$e] to see if they are equivalent."
                 if (-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property))
                 {
                     # add the index to the list of taken items so we can skip it
@@ -385,7 +388,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property) {
         $actualProperty = $actualProperties | Where { $_.Name -eq $propertyName}
         if (-not $actualProperty)
         {
-            v -Difference "Property '$propertyName` was not found on `$Actual."
+            v -Difference "Property '$propertyName' was not found on `$Actual."
             "Expected has property '$PropertyName' that the other object does not have."
             continue
         }
