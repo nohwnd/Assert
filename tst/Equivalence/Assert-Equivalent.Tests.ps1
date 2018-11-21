@@ -178,8 +178,16 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Given two collections '<expected>' '<actual>' it compares each value with each value and returns `$null if all of them are equivalent" -TestCases @(
-            @{ Actual = (1,2,3); Expected = (1,2,3)},
+            @{ Actual = (1,2,3); Expected = (1,2,3)}
             @{ Actual = (1,2,3); Expected = (3,2,1)}
+
+            # issue https://github.com/nohwnd/Assert/issues/31
+            @{ Actual = ($null, $null); Expected = ($null, $null) }
+            @{ Actual = ($null, $null, $null); Expected = ($null, $null, $null) }
+            @{ Actual = (1, 1, 1, 1); Expected = (1, 1, 1, 1) }
+            @{ Actual = (1, 2, 2, 1); Expected = (2, 1, 2, 1) }
+            ##
+            
         ) {
             param ($Actual, $Expected)
             Compare-CollectionEquivalent -Actual $Actual -Expected $Expected | Verify-Null
