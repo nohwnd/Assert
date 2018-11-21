@@ -74,13 +74,13 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
     v "Comparing items in collection, `$Expected has lenght $eEnd, `$Actual has length $aEnd."
     $taken = @()
     $notFound = @()
+    $anyDifferent = $false
     for ($e=0; $e -lt $eEnd; $e++) {
         # todo: retest strict order
         v "`nSearching for `$Expected[$e]:"
         $currentExpected = $Expected[$e]
         $found = $false
         if ($StrictOrder) {
-            if ($found) { continue }
             $currentActual = $Actual[$e]
             if ($taken -notcontains $e -and (-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property)))
             {
@@ -116,15 +116,21 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property) {
         if (-not $found)
         {
             v -Difference "`$Actual does not contain `$Expected[$e]."
+            $anyDifferent = $true
             $notFound += $currentExpected
         }
     }
-    $Expected = Format-Nicely -Value $Expected
-    $Actual = Format-Nicely -Value $Actual
-    $notFoundFormatted = Format-Nicely -Value ( $notFound | % { Format-Nicely -Value $_ } )
 
-    if ($notFound) {
+    # do not depend on $notFound collection here
+    # failing to find a single $null, will return 
+    # @($null) which evaluates to false, even though
+    # there was a single item that we did not find
+    if ($anyDifferent) {
         v -Difference "`$Actual and `$Expected arrays are not equivalent."
+        $Expected = Format-Nicely -Value $Expected
+        $Actual = Format-Nicely -Value $Actual
+        $notFoundFormatted = Format-Nicely -Value ( $notFound | % { Format-Nicely -Value $_ } )
+
         $propertyMessage = if ($Property) {" in property $Property which is"}
         return "Expected collection$propertyMessage '$Expected' to be equivalent to '$Actual' but some values were missing: '$notFoundFormatted'."
     }
