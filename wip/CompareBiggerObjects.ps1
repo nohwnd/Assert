@@ -25,3 +25,5 @@ $actual = [PSCustomObject]@{
 }
 
 Assert-Equivalent -a $actual -e $expected -Verbose
+
+

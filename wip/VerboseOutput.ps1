@@ -1,3 +1,8 @@
+# I am using this file to play with the verbose output,
+# this might become a source of examples for assert, don't want to delete it
+# so I commit it.
+
+
 Get-Module Assert | remove-module ;
 Import-module .\Assert.psd1
 
