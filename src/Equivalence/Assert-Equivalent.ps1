@@ -390,12 +390,12 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
     v "Comparing ($(@($expectedProperties).Count)) properties of `$Expected to `$Actual."
     foreach ($p in $expectedProperties)
     {
-        $propertyName = $p.Name
-        $propertyPath = "$Property.$propertyName".Trim('.')
-        if ($Options.ExcludedPaths -contains $propertyPath) {
-            v -Skip "Current path $propertyPath is excluded from the comparison."
+        if (-not (Test-IncludedPath -PathSelector Property -InputObject $p -Options $Options -Path $Property))
+        {
             continue
         }
+
+        $propertyName = $p.Name
         $actualProperty = $actualProperties | Where { $_.Name -eq $propertyName}
         if (-not $actualProperty)
         {
@@ -420,20 +420,8 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
     $propertiesNotInExpected =  $actualProperties | where { $expectedPropertyNames -notcontains $_.name }
 
     
-    $filteredPropertiesNotInExpected = $propertiesNotInExpected | foreach {
-        $propertyName = $_.Name
-        $propertyPath = "$Property.$propertyName".Trim('.')
-
-
-        if ($Options.ExcludedPaths -contains $propertyPath)
-        {
-            v -Skip "Current path $propertyPath is excluded from the comparison."
-        }
-        else 
-        {
-            $_
-        }
-    }
+    $filteredPropertiesNotInExpected = $propertiesNotInExpected | 
+        Test-IncludedPath -PathSelector Property -Options $Options -Path $Property
 
     if ($filteredPropertiesNotInExpected) {
         v -Difference "`$Actual has ($(@($filteredPropertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($filteredPropertiesNotInExpected))."
@@ -656,3 +644,45 @@ function Get-EquivalencyOptions {
         ExcludedPaths = [string[]] $ExcludePath
     }
 }
+
+function Test-IncludedPath {
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)]
+        $InputObject,
+        [String]
+        $Path,
+        $Options,
+        [Parameter(Mandatory)]
+        [ValidateSet("Property")]
+        $PathSelector
+    ) 
+
+    Begin {
+        if ("Property" -eq $PathSelector) {
+            $selector = { param($InputObject ) $InputObject.Name }
+        }
+        else {
+            throw "Unsupported selector"
+        }
+    }
+
+    process { 
+        if ($null -eq $Options.ExcludedPaths)
+        {
+            return $InputObject
+        }
+
+        $subPath =  &$selector $InputObject
+        $fullPath = "$Path.$subPath".Trim('.')
+
+
+        if ($Options.ExcludedPaths -contains $fullPath)
+        {
+            v -Skip "Current path $fullPath is excluded from the comparison."
+        }
+        else 
+        {
+            $InputObject
+        }
+    }
+} 
