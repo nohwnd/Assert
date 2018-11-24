@@ -131,4 +131,34 @@ InModuleScope -ModuleName Assert {
     # emumerable objects, but this many tests should still be enough. The Path unifies how different
     # collections are handled, and we filter out based on the path on the start of Compare-Equivalent
     # so the same rules should apply transitively no matter the collection type
+
+    
+    It "Given a full path to a key on a hashtable it ignores it on the Expected hashtable" {
+        $expected = @{
+            Name = "C#"
+            Type = "OO"
+        }
+
+        $actual = @{
+            Name = "C#"
+        }
+
+        $options = Get-EquivalencyOptions -ExcludePath "Type"
+        Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+    }
+
+    It "Given a full path to a key on a hashtable it ignores it on the Actual hashtable" {
+        $expected = @{
+            Name = "C#"
+        }
+
+        $actual = @{
+            Name = "C#"
+            Type = "OO"
+        }
+
+        $options = Get-EquivalencyOptions -ExcludePath "Type"
+        Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+    }
+
 }

@@ -275,6 +275,10 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
     $result = @()
     foreach ($k in $expectedKeys)
     {
+        if (-not (Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options -InputObject $k)) {
+            continue
+        }
+
         $actualHasKey = $actualKeys -contains $k
         if (-not $actualHasKey)
         {   
@@ -290,13 +294,16 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
     }
 
     $keysNotInExpected = $actualKeys | where {$expectedKeys -notcontains $_ }
-    if ($keysNotInExpected) {
-        v -Difference "`$Actual has $($keysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($keysNotInExpected))."
+
+    $filteredKeysNotInExpected = $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options
+
+    if ($filteredKeysNotInExpected) {
+        v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
     }
     else {
         v "`$Actual has no keys that we did not find on `$Expected."
     }
-    foreach ($k in $keysNotInExpected)
+    foreach ($k in $filteredKeysNotInExpected)
     {
         $result += "Expected is missing key '$k' that the other object has."
     }
@@ -653,16 +660,15 @@ function Test-IncludedPath {
         $Path,
         $Options,
         [Parameter(Mandatory)]
-        [ValidateSet("Property")]
+        [ValidateSet("Property", "Hashtable")]
         $PathSelector
     ) 
 
-    Begin {
-        if ("Property" -eq $PathSelector) {
-            $selector = { param($InputObject ) $InputObject.Name }
-        }
-        else {
-            throw "Unsupported selector"
+    begin {
+        $selector = switch ($PathSelector) {
+            "Property" { { param($InputObject) $InputObject.Name } }
+            "Hashtable" { { param($InputObject) $InputObject } }
+            Default {throw "Unsupported path selector."}
         }
     }
 
