@@ -403,6 +403,7 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Comparing DataTable" {
+            # todo: move this to it's own describe, split the tests to smaller parts, and make them use Verify-* axioms
             $Expected = [Data.DataTable]::new('Test')
             $null = $Expected.Columns.Add('IDD', [System.Int32])
             $null = $Expected.Columns.Add('Name')

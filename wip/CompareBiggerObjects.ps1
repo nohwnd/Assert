@@ -1,4 +1,4 @@
-Get-Module Assert | remove-module ;
+Get-Module Assert | Remove-Module
 Import-module .\Assert.psd1
 
 $expected = [PSCustomObject]@{ 

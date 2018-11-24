@@ -1,5 +1,6 @@
 param ($Path, [switch]$CIBuild)
-$ErrorActionPreference = 'stop'
+$ErrorActionPreference = 'Stop'
+$WarningPreference = 'SilentlyContinue'
 pushd $PSScriptRoot
 
 
