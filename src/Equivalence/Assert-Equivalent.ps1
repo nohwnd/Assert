@@ -341,6 +341,10 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
     $result = @()
     foreach ($k in $expectedKeys)
     {
+        if (-not (Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options -InputObject $k)) {
+            continue
+        }
+
         $actualHasKey = $actualKeys -contains $k
         if (-not $actualHasKey)
         {
@@ -355,26 +359,28 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
         $result += Compare-Equivalent -Expected $expectedValue -Actual $actualValue -Path "$Property.$k" -Options $Options
     }
 
-    $keysNotInExpected =  $actualKeys | where {$expectedKeys -notcontains $_ }
-    if ($keysNotInExpected) {
-        v -Difference "`$Actual has $($keysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($keysNotInExpected))."
+    $keysNotInExpected =  $actualKeys | where { $expectedKeys -notcontains $_ }
+    $filteredKeysNotInExpected = $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options
+
+    if ($filteredKeysNotInExpected) {
+        v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
     }
     else {
         v "`$Actual has no keys that we did not find on `$Expected."
     }
-    foreach ($k in $keysNotInExpected)
+    foreach ($k in $filteredKeysNotInExpected)
     {
         $result += "Expected is missing key '$k' that the other object has."
     }
 
     if ($result)
     {
-        v -Difference "Hastables `$Actual and `$Expected are not equivalent."
+        v -Difference "Dictionaries `$Actual and `$Expected are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected dictionary '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
     }
-    v -Equivalence "Hastables `$Actual and `$Expected are equivalent."
+    v -Equivalence "Dictionaries `$Actual and `$Expected are equivalent."
 }
 
 function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {

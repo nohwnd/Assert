@@ -161,4 +161,32 @@ InModuleScope -ModuleName Assert {
         Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
     }
 
+    It "Given a full path to a key on a dictionary it ignores it on the Expected dictionary" {
+        $expected = New-Dictionary @{
+            Name = "C#"
+            Type = "OO"
+        }
+
+        $actual = New-Dictionary @{
+            Name = "C#"
+        }
+
+        $options = Get-EquivalencyOptions -ExcludePath "Type"
+        Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+    }
+
+    It "Given a full path to a key on a dictionary it ignores it on the Actual dictionary" {
+        $expected = New-Dictionary @{
+            Name = "C#"
+        }
+
+        $actual = New-Dictionary @{
+            Name = "C#"
+            Type = "OO"
+        }
+
+        $options = Get-EquivalencyOptions -ExcludePath "Type"
+        Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+    }
+
 }
