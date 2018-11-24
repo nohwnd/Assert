@@ -536,7 +536,7 @@ function Compare-Equivalent {
         $Path, 
         $Options = (&{
             Write-Warning "Getting default equivalency options, this should never be seen. If you see this and you are not developing Assert, please file issue at https://github.com/nohwnd/Assert/issues"
-            Get-EquivalencyOptions
+            Get-EquivalencyOption
         })
     )
 
@@ -632,25 +632,28 @@ function Assert-Equivalent {
     param(
         $Actual, 
         $Expected, 
-        [Switch]$StrictOrder
+        [Alias("Options")]
+        $Option,
+        [Switch] $StrictOrder
     )
 
     # todo, translate the general options to option for the Get-AssertionMessage below
-    $Option = $null
-    $Options = Get-EquivalencyOptions
+    
+    $Options = if ($null -eq $Option) { Get-EquivalencyOption }
+    $O = Format-EquivalencyOptions $Option
 
-    $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected -Options $Options | Out-String
+    $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected -Options $Option | Out-String
     
     if ($areDifferent)
     {
-        $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $Option -Pretty -CustomMessage "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
+        $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $O -Pretty -CustomMessage "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
         throw [Assertions.AssertionException]$message
     }
     
     v -Equivalence "`$Actual and `$Expected are equivalent."
 }
 
-function Get-EquivalencyOptions {
+function Get-EquivalencyOption {
     param($ExcludePath = @())
 
     [PSCustomObject]@{
@@ -698,3 +701,7 @@ function Test-IncludedPath {
         }
     }
 } 
+
+function Format-EquivalencyOptions ($Options) {
+    $Options.ExcludedPaths | foreach { "Exclude path '$_'" }
+}

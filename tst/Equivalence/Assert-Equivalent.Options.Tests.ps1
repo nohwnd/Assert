@@ -17,7 +17,7 @@ InModuleScope -ModuleName Assert {
                 Name = "Jakub"
             }
 
-            $options = Get-EquivalencyOptions -ExcludePath ("$Path.Age".Trim('.'))
+            $options = Get-EquivalencyOption -ExcludePath ("$Path.Age".Trim('.'))
             Compare-Equivalent -Actual $actual -Expected $expected -Path $Path -Options $options  | Verify-Null
         }
 
@@ -36,7 +36,7 @@ InModuleScope -ModuleName Assert {
                 Age = 30
             }
 
-            $options = Get-EquivalencyOptions -ExcludePath ("$Path.Age".Trim('.'))
+            $options = Get-EquivalencyOption -ExcludePath ("$Path.Age".Trim('.'))
             Compare-Equivalent -Actual $actual -Expected $expected -Path $Path -Options $options | Verify-Null
         }
     
@@ -66,7 +66,7 @@ InModuleScope -ModuleName Assert {
             }
 
             
-            $options = Get-EquivalencyOptions -ExcludePath "ProgrammingLanguages.Type"
+            $options = Get-EquivalencyOption -ExcludePath "ProgrammingLanguages.Type"
             Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
         }
 
@@ -95,7 +95,7 @@ InModuleScope -ModuleName Assert {
             }
 
             
-            $options = Get-EquivalencyOptions -ExcludePath "ProgrammingLanguages.Type"
+            $options = Get-EquivalencyOption -ExcludePath "ProgrammingLanguages.Type"
             Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
         }
 
@@ -123,7 +123,7 @@ InModuleScope -ModuleName Assert {
                 }
             }
 
-            $options = Get-EquivalencyOptions -ExcludePath "ProgrammingLanguages.Language1.Type"
+            $options = Get-EquivalencyOption -ExcludePath "ProgrammingLanguages.Language1.Type"
             Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
         }
 
@@ -143,7 +143,7 @@ InModuleScope -ModuleName Assert {
                 Name = "C#"
             }
 
-            $options = Get-EquivalencyOptions -ExcludePath "Type"
+            $options = Get-EquivalencyOption -ExcludePath "Type"
             Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
         }
 
@@ -157,7 +157,7 @@ InModuleScope -ModuleName Assert {
                 Type = "OO"
             }
 
-            $options = Get-EquivalencyOptions -ExcludePath "Type"
+            $options = Get-EquivalencyOption -ExcludePath "Type"
             Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
         }
 
@@ -171,7 +171,7 @@ InModuleScope -ModuleName Assert {
                 Name = "C#"
             }
 
-            $options = Get-EquivalencyOptions -ExcludePath "Type"
+            $options = Get-EquivalencyOption -ExcludePath "Type"
             Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
         }
 
@@ -185,8 +185,38 @@ InModuleScope -ModuleName Assert {
                 Type = "OO"
             }
 
-            $options = Get-EquivalencyOptions -ExcludePath "Type"
+            $options = Get-EquivalencyOption -ExcludePath "Type"
             Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+        }
+
+        It "Given options it passes them correctly from Assert-Equivalent" { 
+            $expected = [PSCustomObject] @{
+                Name = "Jakub"
+                Location = "Prague"
+                Age = 30
+            }
+
+            $actual = [PSCustomObject] @{
+                Name = "Jakub"
+            }
+
+            $options = Get-EquivalencyOption -ExcludePath "Age", "NonExisting"
+            $err = { Assert-Equivalent -Actual $actual -Expected $expected -Options $Options } | Verify-AssertionFailed
+
+            $err.Exception.Message | Verify-Like "*Expected has property 'Location'*"
+            $err.Exception.Message | Verify-Like "*Exclude path 'Age'*"
+        }
+    }
+
+
+    Describe "Printing Options into difference report" {
+
+        It "Given options that exclude property it shows up in the difference report correctly" { 
+                $options = Get-EquivalencyOption -ExcludePath "Age", "Name", "Person.Age"
+                Clear-WhiteSpace (Format-EquivalencyOptions -Options $options) | Verify-Equal (Clear-WhiteSpace "
+                    Exclude path 'Age'
+                    Exclude path 'Name'
+                    Exclude path 'Person.Age'")
         }
     }
 }

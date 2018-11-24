@@ -9,9 +9,16 @@ function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @
     $actualFormatted = Format-Nicely -Value $Actual -Pretty:$Pretty
 
     $optionMessage = $null;
-    if ($null -ne $Option)
+    if ($null -ne $Option -and $option.Length -gt 0)
     {
-        $optionMessage = "Used options: $($Option -join ", ")."
+        if (-not $Pretty) {
+            $optionMessage = "Used options: $($Option -join ", ")."
+        }
+        else {
+            if ($Pretty) {
+                $optionMessage = "Used options:$($Option | foreach { "`n$_" })."
+            }
+        }
     }
 
 
@@ -26,5 +33,11 @@ function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @
         $CustomMessage = $CustomMessage.Replace("<$($pair.Key)>", (Format-Nicely -Value $pair.Value))
     }
 
-    $CustomMessage
+    if (-not $Pretty) {
+        $CustomMessage
+    }
+    else 
+    {
+        $CustomMessage + "`n`n" 
+    }
 }

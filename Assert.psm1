@@ -7,6 +7,7 @@ Get-ChildItem -Path $PSScriptRoot\src\ -Recurse -Filter *.ps1 |
     foreach { . $_.FullName }
 
 Export-ModuleMember -Function @(
+    'Get-EquivalencyOption'
     'Assert-Equivalent' 
     'Assert-Equal' # ?= ' ?eq
     'Assert-NotEqual' # ?!= ?ne
