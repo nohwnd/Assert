@@ -1,7 +1,13 @@
 InModuleScope -ModuleName Assert {
     Describe "Compare-Equivalent - Exclude path options" {
 
-        It "Given a property name it ignores it on the Expected object" { 
+        It "Given a full path to a property it ignores it on the Expected object" -TestCases @(
+            @{ Path = $null }
+            @{ Path = "ParentProperty1" }
+            @{ Path = "ParentProperty1.ParentProperty2" }
+        ) { 
+            param ($Path)
+
             $expected = [PSCustomObject] @{
                 Name = "Jakub"
                 Age = 30
@@ -11,11 +17,16 @@ InModuleScope -ModuleName Assert {
                 Name = "Jakub"
             }
 
-            $options = Get-EquivalencyOptions -ExcludePath "Age"
-            Compare-Equivalent -Actual $actual -Expected $expected -Options $options| Verify-Null
+            $options = Get-EquivalencyOptions -ExcludePath ("$Path.Age".Trim('.'))
+            Compare-Equivalent -Actual $actual -Expected $expected -Path $Path -Options $options  | Verify-Null
         }
 
-        It "Given a property name it ignores it on the Actual object" {
+        It "Given a full path to a property it ignores it on the Actual object"  -TestCases @(
+            @{ Path = $null }
+            @{ Path = "ParentProperty1" }
+            @{ Path = "ParentProperty1.ParentProperty2" }
+        ) { 
+            param ($Path)
             $expected = [PSCustomObject] @{
                 Name = "Jakub"
             }
@@ -25,8 +36,99 @@ InModuleScope -ModuleName Assert {
                 Age = 30
             }
 
-            $options = Get-EquivalencyOptions -ExcludePath "Age"
-            Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+            $options = Get-EquivalencyOptions -ExcludePath ("$Path.Age".Trim('.'))
+            Compare-Equivalent -Actual $actual -Expected $expected -Path $Path -Options $options | Verify-Null
         }
     }
+
+    It "Given a full path to a property on object that is in collection it ignores it on the Expected object" {
+        $expected = [PSCustomObject] @{
+            ProgrammingLanguages = @(
+                [PSCustomObject] @{
+                    Name = "C#"
+                    Type = "OO"
+                },
+                [PSCustomObject] @{
+                    Name = "PowerShell"
+                }
+            )
+        }
+
+        $actual = [PSCustomObject] @{
+            ProgrammingLanguages = @(
+                [PSCustomObject] @{
+                    Name = "C#"
+                },
+                [PSCustomObject] @{
+                    Name = "PowerShell"
+                }
+            )
+        }
+
+        
+        $options = Get-EquivalencyOptions -ExcludePath "ProgrammingLanguages.Type"
+        Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+    }
+
+    It "Given a full path to a property on object that is in collection it ignores it on the Actual object" {
+        $expected = [PSCustomObject] @{
+            ProgrammingLanguages = @(
+                [PSCustomObject] @{
+                    Name = "C#"
+                },
+                [PSCustomObject] @{
+                    Name = "PowerShell"
+                }
+            )
+        }
+
+        $actual = [PSCustomObject] @{
+            ProgrammingLanguages = @(
+                [PSCustomObject] @{
+                    Name = "C#"
+                    Type = "OO"
+                },
+                [PSCustomObject] @{
+                    Name = "PowerShell"
+                }
+            )
+        }
+
+        
+        $options = Get-EquivalencyOptions -ExcludePath "ProgrammingLanguages.Type"
+        Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+    }
+
+    It "Given a full path to a property on object that is in hashtable it ignores it on the Expected object" {
+        $expected = [PSCustomObject] @{
+            ProgrammingLanguages = @{
+                Language1 = [PSCustomObject] @{
+                    Name = "C#"
+                    Type = "OO"
+                }
+                Language2 = [PSCustomObject] @{
+                    Name = "PowerShell"
+                }
+            }
+        }
+
+        $actual = [PSCustomObject] @{
+            ProgrammingLanguages =  @{
+                Language1 = [PSCustomObject] @{
+                    Name = "C#"
+                }
+                Language2 = [PSCustomObject] @{
+                    Name = "PowerShell"
+                }
+            }
+        }
+
+        $options = Get-EquivalencyOptions -ExcludePath "ProgrammingLanguages.Language1.Type"
+        Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+    }
+
+    # in the above tests we are not testing all the possible options of skippin in all possible
+    # emumerable objects, but this many tests should still be enough. The Path unifies how different
+    # collections are handled, and we filter out based on the path on the start of Compare-Equivalent
+    # so the same rules should apply transitively no matter the collection type
 }
