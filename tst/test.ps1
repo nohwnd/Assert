@@ -14,7 +14,7 @@ if (-not (Get-PackageProvider -ListAvailable | Where { $_.Name -eq "Nuget" -and 
 $minimumPesterVersion = "4.4.0"
 if (-not (Get-Module -ListAvailable | Where { $_.Name -eq"Pester" -and $_.Version -ge $minimumPesterVersion })) {
     "Installing Pester."
-    Install-Module -Name Pester -Force -SkipPublisherCheck -MinimumVersion $minimumPesterVersion
+    Install-Module -Name Pester -Force -SkipPublisherCheck -MinimumVersion $minimumPesterVersion -Scope CurrentUser
 }
 
 get-module pester, assert, axiom, testHelpers | Remove-Module -force
