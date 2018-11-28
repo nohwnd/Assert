@@ -155,7 +155,7 @@ Describe "Is-Collection" {
         @{ Value = @{} }
         @{ Value = @{ Name = 'Jakub' } }
 
-        @{ Value = (ps -Name Idle) }
+        @{ Value = Get-Process -Id $PID }
         @{ Value = New-Object -TypeName Diagnostics.Process }
     ) {
         param($Value)
