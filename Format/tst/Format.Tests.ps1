@@ -44,7 +44,6 @@ Describe "Format-Object" {
 
     It "Formats object '<value>' with selected properties '<selectedProperties>' to '<expected>'" -TestCases @(
         @{ Value = (New-PSObject @{Name = 'Jakub'; Age = 28}); SelectedProperties = "Age"; Expected = "PSObject{Age=28}"},
-        @{ Value = (Get-Process -Name Idle); SelectedProperties = 'Name', 'Id'; Expected = "Diagnostics.Process{Id=0; Name=Idle}" },
         @{ 
             Value              = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28})
             SelectedProperties = 'Name'
@@ -53,6 +52,19 @@ Describe "Format-Object" {
     ) { 
         param ($Value, $SelectedProperties, $Expected)
         Format-Object -Value $Value -Property $SelectedProperties | Verify-Equal $Expected
+    }
+
+    It "Formats current process with selected properties Name and Id correctly" { 
+        # this used to be a normal unit test but Idle process does not exist 
+        # cross platform so we use the current process, which can also have
+        # different names among powershell versions
+        $process = Get-Process -PID $PID
+        $name = $process.Name
+        $id = $process.Id
+        $SelectedProperties = "Name", "Id"
+        $expected = "Diagnostics.Process{Id=$id; Name=$name}"
+
+        Format-Object -Value $process -Property $selectedProperties | Verify-Equal $Expected
     }
 }
 
@@ -119,7 +131,6 @@ Describe "Format-Nicely" {
         @{ Value = 1.1; Expected = '1.1' },
         @{ Value = [int]; Expected = 'int'}
         @{ Value = New-PSObject @{ Name = "Jakub" }; Expected = 'PSObject{Name=Jakub}' },
-        @{ Value = (Get-Process Idle); Expected = 'Diagnostics.Process{Id=0; Name=Idle}'},
         @{ Value = (New-Object -Type Assertions.TestType.Person -Property @{Name = 'Jakub'; Age = 28}); Expected = "Assertions.TestType.Person{Age=28; Name=Jakub}"}
         @{ Value = @{Name = 'Jakub'; Age = 28}; Expected = '@{Age=28; Name=Jakub}' }
         @{ Value = New-Dictionary @{Age = 28; Name = 'Jakub'}; Expected = 'Dictionary{Age=28; Name=Jakub}' }
