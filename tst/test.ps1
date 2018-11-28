@@ -3,6 +3,7 @@ $ErrorActionPreference = 'Stop'
 $WarningPreference = 'SilentlyContinue'
 pushd $PSScriptRoot
 
+Set-StrictMode -Version Latest
 
 $minimumNugetProviderVersion = '2.8.5.201'
 # not using the -Name parameter because it throws when Nuget is not installed
@@ -20,12 +21,12 @@ if (-not (Get-Module -ListAvailable | Where { $_.Name -eq"Pester" -and $_.Versio
 get-module pester, assert, axiom, testHelpers | Remove-Module -force
 
 # import the tested module
-Import-Module .\..\Assert.psd1
+Import-Module ./../Assert.psd1
 
 # import modules and utilities for testing 
 Import-Module Pester
-Import-Module .\TestHelpers.psm1
-Import-Module .\..\Axiom\src\Axiom.psm1 -WarningAction SilentlyContinue
+Import-Module ./TestHelpers.psm1
+Import-Module ./../Axiom/src/Axiom.psm1 -WarningAction SilentlyContinue
 
 Get-Date
 if ($null -eq $Path) {

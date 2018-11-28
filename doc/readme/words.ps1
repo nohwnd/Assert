@@ -1,4 +1,4 @@
-Import-Module .\Assert.psd1
+Import-Module ./Assert.psd1
 
 function Get-Word ([string]$Filter) 
 {

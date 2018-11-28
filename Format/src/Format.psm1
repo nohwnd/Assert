@@ -1,4 +1,4 @@
-Import-Module $PSScriptRoot\..\..\TypeClass\src\TypeClass.psm1 -DisableNameChecking
+Import-Module $PSScriptRoot/../../TypeClass/src/TypeClass.psm1 -DisableNameChecking
 
 function Format-Collection ($Value, [switch]$Pretty) { 
     $separator = ', '

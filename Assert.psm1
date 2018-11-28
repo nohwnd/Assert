@@ -1,9 +1,9 @@
-Import-Module $PSScriptRoot\TypeClass\src\TypeClass.psm1 -DisableNameChecking
-Import-Module $PSScriptRoot\Format\src\Format.psm1 -DisableNameChecking
+Import-Module $PSScriptRoot/TypeClass/src/TypeClass.psm1 -DisableNameChecking
+Import-Module $PSScriptRoot/Format/src/Format.psm1 -DisableNameChecking
 
-. $PSScriptRoot\Compatibility\src\New-PSObject.ps1
+. $PSScriptRoot/Compatibility/src/New-PSObject.ps1
 
-Get-ChildItem -Path $PSScriptRoot\src\ -Recurse -Filter *.ps1 | 
+Get-ChildItem -Path $PSScriptRoot/src/ -Recurse -Filter *.ps1 | 
     foreach { . $_.FullName }
 
 Export-ModuleMember -Function @(

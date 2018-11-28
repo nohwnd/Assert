@@ -1,5 +1,5 @@
 Get-Module Assert | Remove-Module
-Import-module .\Assert.psd1
+Import-module ./Assert.psd1
 
 $expected = [PSCustomObject]@{ 
     Name = 'Jakub' 

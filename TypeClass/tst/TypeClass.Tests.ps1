@@ -1,4 +1,4 @@
-Import-Module $PSScriptRoot\..\src\TypeClass.psm1 -Force
+Import-Module $PSScriptRoot/../src/TypeClass.psm1 -Force
 
 Describe "Is-Value" {
     It "Given '<value>', which is a value, string, enum, scriptblock or array with a single item of those types it returns `$true" -TestCases @(

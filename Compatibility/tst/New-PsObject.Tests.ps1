@@ -1,5 +1,5 @@
-Import-Module -Force $PSScriptRoot\..\..\Axiom\src\Axiom.psm1 -DisableNameChecking
-. $PSScriptRoot\..\src\New-PsObject.ps1
+Import-Module -Force $PSScriptRoot/../../Axiom/src/Axiom.psm1 -DisableNameChecking
+. $PSScriptRoot/../src/New-PsObject.ps1
 
 Describe "New-PSObject" { 
     It "Creates a new object of type PSCustomObject" {

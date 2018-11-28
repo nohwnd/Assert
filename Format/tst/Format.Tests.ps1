@@ -1,7 +1,7 @@
 Get-Module Format | Remove-Module
-Import-Module $PSScriptRoot\..\src\Format.psm1 -Force
+Import-Module $PSScriptRoot/../src/Format.psm1 -Force
 
-. $PSScriptRoot\..\..\Compatibility\src\New-PSObject.ps1
+. $PSScriptRoot/../../Compatibility/src/New-PSObject.ps1
 
 Add-Type -TypeDefinition 'namespace Assertions.TestType { public class Person { public string Name {get;set;} public int Age {get;set;}}}'
 Describe "Format-Collection" { 

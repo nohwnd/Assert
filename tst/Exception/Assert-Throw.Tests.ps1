@@ -222,9 +222,8 @@ InModuleScope -ModuleName "Assert" {
                 $e = $_
             }
             
-            $root = Choose -OnWindows "$($Env:SystemDrive)\" -Elsewhere "/"
             $err = Get-Error $e
-            $err.ExceptionMessage | Verify-Equal "Cannot find path '${root}non-existing' because it does not exist."
+            $err.ExceptionMessage | Verify-Like "Cannot find path*because it does not exist."
             $err.ExceptionType | Verify-Equal ([Management.Automation.ItemNotFoundException])
             $err.FullyQualifiedErrorId | Verify-Equal 'PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand'
         }

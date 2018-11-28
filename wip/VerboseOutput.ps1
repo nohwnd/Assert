@@ -4,7 +4,7 @@
 
 
 Get-Module Assert | remove-module ;
-Import-module .\Assert.psd1
+Import-module ./Assert.psd1
 
 # messages:
 # (in the result use $(Format-Nicely $variable) for the $Expected and $Actual messages so we can see what was actually there and detect errors better))
