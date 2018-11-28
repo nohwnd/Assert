@@ -123,7 +123,9 @@ Describe "Is-Collection" {
         @{ Value = [System.Collections.Generic.List[decimal]] 2 }
         @{ Value = [Collections.Generic.List[Int]](1,2,3) }
         @{ Value = [Collections.Generic.List[Int]](1,2,3) }
-        @{ Value = (Get-Process) }
+        # @ forces this to be an array even if there are 
+        # only 1 processes, like when you run in docker
+        @{ Value = @(Get-Process) }
     ) {
         param($Value)
         Is-Collection -Value $Value | Verify-True

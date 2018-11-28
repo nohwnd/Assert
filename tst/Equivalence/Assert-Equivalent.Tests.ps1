@@ -133,7 +133,7 @@ InModuleScope -ModuleName Assert {
 
     Describe "Compare-ValueEquivalent" {
         It "Given expected that is not a value it throws ArgumentException" {
-            $err = { Compare-ValueEquivalent -Actual "dummy" -Expected (Get-Process idle) } | Verify-Throw
+            $err = { Compare-ValueEquivalent -Actual "dummy" -Expected (Get-Process -Id $PID) } | Verify-Throw
             $err.Exception -is [ArgumentException] | Verify-True
         }
 

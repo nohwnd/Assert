@@ -213,7 +213,7 @@ InModuleScope -ModuleName "Assert" {
             try 
             {
                 $sb = {
-                    Get-Item "c:\non-existing"
+                    Get-Item "/non-existing"
                 }
                 $sb.InvokeWithContext($null, (New-Object -TypeName psvariable "erroractionpreference", "stop"), $null)
             }
@@ -222,8 +222,9 @@ InModuleScope -ModuleName "Assert" {
                 $e = $_
             }
             
+            $root = Choose -OnWindows "$($Env:SystemDrive)\" -Elsewhere "/"
             $err = Get-Error $e
-            $err.ExceptionMessage | Verify-Equal 'Cannot find path ''C:\non-existing'' because it does not exist.'
+            $err.ExceptionMessage | Verify-Equal "Cannot find path '${root}non-existing' because it does not exist."
             $err.ExceptionType | Verify-Equal ([Management.Automation.ItemNotFoundException])
             $err.FullyQualifiedErrorId | Verify-Equal 'PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand'
         }
