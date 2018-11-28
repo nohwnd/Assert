@@ -1,5 +1,6 @@
-Import-Module -Force $PSScriptRoot/../../Axiom/src/Axiom.psm1 -DisableNameChecking
-. $PSScriptRoot/../src/New-PSObject.ps1
+$here = $MyInvocation.MyCommand.Path | Split-Path
+Import-Module -Force $here/../../Axiom/src/Axiom.psm1 -DisableNameChecking
+. $here/../src/New-PSObject.ps1
 
 Describe "New-PSObject" { 
     It "Creates a new object of type PSCustomObject" {

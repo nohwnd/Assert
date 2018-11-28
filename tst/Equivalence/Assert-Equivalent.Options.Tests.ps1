@@ -8,12 +8,12 @@ InModuleScope -ModuleName Assert {
         ) { 
             param ($Path)
 
-            $expected = [PSCustomObject] @{
+            $expected = New-PSObject @{
                 Name = "Jakub"
                 Age = 30
             }
 
-            $actual = [PSCustomObject] @{
+            $actual = New-PSObject @{
                 Name = "Jakub"
             }
 
@@ -27,11 +27,11 @@ InModuleScope -ModuleName Assert {
             @{ Path = "ParentProperty1.ParentProperty2" }
         ) { 
             param ($Path)
-            $expected = [PSCustomObject] @{
+            $expected = New-PSObject @{
                 Name = "Jakub"
             }
 
-            $actual = [PSCustomObject] @{
+            $actual = New-PSObject @{
                 Name = "Jakub"
                 Age = 30
             }
@@ -42,26 +42,26 @@ InModuleScope -ModuleName Assert {
     
 
         It "Given a full path to a property on object that is in collection it ignores it on the Expected object" {
-            $expected = [PSCustomObject] @{
+            $expected = New-PSObject @{
                 ProgrammingLanguages = @(
-                    [PSCustomObject] @{
+                    (New-PSObject @{
                         Name = "C#"
                         Type = "OO"
-                    },
-                    [PSCustomObject] @{
+                    }),
+                    (New-PSObject @{
                         Name = "PowerShell"
-                    }
+                    })
                 )
             }
 
-            $actual = [PSCustomObject] @{
+            $actual = New-PSObject @{
                 ProgrammingLanguages = @(
-                    [PSCustomObject] @{
+                    (New-PSObject @{
                         Name = "C#"
-                    },
-                    [PSCustomObject] @{
+                    }),
+                    (New-PSObject @{
                         Name = "PowerShell"
-                    }
+                    })
                 )
             }
 
@@ -71,26 +71,26 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Given a full path to a property on object that is in collection it ignores it on the Actual object" {
-            $expected = [PSCustomObject] @{
+            $expected = New-PSObject @{
                 ProgrammingLanguages = @(
-                    [PSCustomObject] @{
+                    (New-PSObject @{
                         Name = "C#"
-                    },
-                    [PSCustomObject] @{
+                    }),
+                    (New-PSObject @{
                         Name = "PowerShell"
-                    }
+                    })
                 )
             }
 
-            $actual = [PSCustomObject] @{
+            $actual = New-PSObject @{
                 ProgrammingLanguages = @(
-                    [PSCustomObject] @{
+                    (New-PSObject @{
                         Name = "C#"
                         Type = "OO"
-                    },
-                    [PSCustomObject] @{
+                    }),
+                    (New-PSObject @{
                         Name = "PowerShell"
-                    }
+                    })
                 )
             }
 
@@ -100,26 +100,26 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Given a full path to a property on object that is in hashtable it ignores it on the Expected object" {
-            $expected = [PSCustomObject] @{
+            $expected = New-PSObject @{
                 ProgrammingLanguages = @{
-                    Language1 = [PSCustomObject] @{
+                    Language1 = (New-PSObject @{
                         Name = "C#"
                         Type = "OO"
-                    }
-                    Language2 = [PSCustomObject] @{
+                    });
+                    Language2 = (New-PSObject @{
                         Name = "PowerShell"
-                    }
+                    })
                 }
             }
 
-            $actual = [PSCustomObject] @{
+            $actual = New-PSObject @{
                 ProgrammingLanguages =  @{
-                    Language1 = [PSCustomObject] @{
+                    Language1 = (New-PSObject @{
                         Name = "C#"
-                    }
-                    Language2 = [PSCustomObject] @{
+                    });
+                    Language2 = (New-PSObject @{
                         Name = "PowerShell"
-                    }
+                    })
                 }
             }
 
@@ -190,13 +190,13 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Given options it passes them correctly from Assert-Equivalent" { 
-            $expected = [PSCustomObject] @{
+            $expected = New-PSObject @{
                 Name = "Jakub"
                 Location = "Prague"
                 Age = 30
             }
 
-            $actual = [PSCustomObject] @{
+            $actual = New-PSObject @{
                 Name = "Jakub"
             }
 

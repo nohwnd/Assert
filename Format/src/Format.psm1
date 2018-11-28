@@ -13,9 +13,13 @@ function Format-Object ($Value, $Property, [switch]$Pretty) {
     {
         $Property = $Value.PSObject.Properties | Select-Object -ExpandProperty Name
     }
-    $orderedProperty = $Property | Sort-Object
+    $orderedProperty = $Property |
+        Sort-Object | 
+        # force the values to be strings for powershell v2
+        foreach { "$_" }
+        
     $valueType = Get-ShortType $Value
-    $valueFormatted = ([string]([PSObject]$Value | Select-Object -Property $orderedProperty))
+    $valueFormatted = [string]([PSObject]$Value | Select-Object -Property $orderedProperty)
 
     if ($Pretty) {
         $margin = "    "
@@ -77,7 +81,7 @@ function Format-Nicely ($Value, [switch]$Pretty) {
         return Format-Boolean -Value $Value
     }
 
-    if ($value -is [Reflection.TypeInfo])
+    if ($value -is [type])
     {
         return Format-Type -Value $Value
     }

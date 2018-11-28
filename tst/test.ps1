@@ -1,7 +1,8 @@
 param ($Path, [switch]$CIBuild)
 $ErrorActionPreference = 'Stop'
 $WarningPreference = 'SilentlyContinue'
-pushd $PSScriptRoot
+$here = $MyInvocation.MyCommand.Path | Split-Path
+pushd $here
 
 Set-StrictMode -Version Latest
 

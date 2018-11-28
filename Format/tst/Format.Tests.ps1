@@ -1,9 +1,19 @@
 Get-Module Format | Remove-Module
-Import-Module $PSScriptRoot/../src/Format.psm1 -Force
+$here = $MyInvocation.MyCommand.Path | Split-Path
+Import-Module $here/../src/Format.psm1 -Force
 
-. $PSScriptRoot/../../Compatibility/src/New-PSObject.ps1
+. $here/../../Compatibility/src/New-PSObject.ps1
 
-Add-Type -TypeDefinition 'namespace Assertions.TestType { public class Person { public string Name {get;set;} public int Age {get;set;}}}'
+Add-Type -TypeDefinition '
+namespace Assertions.TestType { 
+    public class Person { 
+        // powershell v2 mandates fully implemented properties
+        string _name;
+        int _age;
+        public string Name { get { return _name; } set { _name = value; } } 
+        public int Age { get { return _age; } set { _age = value; } }
+    }
+}'
 Describe "Format-Collection" { 
     It "Formats collection of values '<value>' to '<expected>' using the default separator" -TestCases @(
         @{ Value = (1, 2, 3); Expected = "1, 2, 3" }
