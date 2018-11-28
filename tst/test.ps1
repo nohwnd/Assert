@@ -24,12 +24,14 @@ if ($CIBuild) {
     $minimumNugetProviderVersion = '2.8.5.201'
     # not using the -Name parameter because it throws when Nuget is not installed
     if (-not (Get-PackageProvider -ListAvailable | Where { $_.Name -eq "Nuget" -and $_.Version -ge $minimumNugetProviderVersion })) {
-        Install-PackageProvider -Name NuGet -MinimumVersion $minimumNugetProviderVersion -Force | Out-Null
+        "Installing Nuget package provider."
+        Install-PackageProvider -Name NuGet -MinimumVersion $minimumNugetProviderVersion -Force
     }
 
     $minimumPesterVersion = "4.4.0"
     if (-not (Get-Module -ListAvailable | Where { $_.Name -eq"Pester" -and $_.Version -ge $minimumPesterVersion })) {
-        Install-Module -Name Pester -Force -SkipPublisherCheck -MinimumVersion $minimumPesterVersion | Out-Null
+        "Installing Pester."
+        Install-Module -Name Pester -Force -SkipPublisherCheck -MinimumVersion $minimumPesterVersion
     }
 
     Invoke-Pester $path -EnableExit
