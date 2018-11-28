@@ -1,6 +1,5 @@
 Import-Module -Force $PSScriptRoot/../../Axiom/src/Axiom.psm1 -DisableNameChecking
-$path = Resolve-Path -Path "$PSScriptRoot/../src/New-PsObject.ps1"
-. $path
+. $PSScriptRoot/../src/New-PSObject.ps1
 
 Describe "New-PSObject" { 
     It "Creates a new object of type PSCustomObject" {
