@@ -714,6 +714,7 @@ function Test-IncludedPath {
 
 function Format-EquivalencyOptions ($Options) {
     $Options.ExcludedPaths | foreach { "Exclude path '$_'" }
+    if ($Options.ExcludePathsNotOnExpected) { "Excluding all paths not found on Expected" }
 }
 
 function Like-Any {
