@@ -1,210 +1,345 @@
 InModuleScope -ModuleName Assert {
     Describe "Compare-Equivalent - Exclude path options" {
+        Context "Full excluded paths" {
 
-        It "Given a full path to a property it ignores it on the Expected object" -TestCases @(
-            @{ Path = $null }
-            @{ Path = "ParentProperty1" }
-            @{ Path = "ParentProperty1.ParentProperty2" }
-        ) { 
-            param ($Path)
+            It "Given a full path to a property it ignores it on the Expected object" -TestCases @(
+                @{ Path = $null }
+                @{ Path = "ParentProperty1" }
+                @{ Path = "ParentProperty1.ParentProperty2" }
+            ) { 
+                param ($Path)
 
-            $expected = [PSCustomObject] @{
-                Name = "Jakub"
-                Age = 30
-            }
-
-            $actual = [PSCustomObject] @{
-                Name = "Jakub"
-            }
-
-            $options = Get-EquivalencyOption -ExcludePath ("$Path.Age".Trim('.'))
-            Compare-Equivalent -Actual $actual -Expected $expected -Path $Path -Options $options  | Verify-Null
-        }
-
-        It "Given a full path to a property it ignores it on the Actual object"  -TestCases @(
-            @{ Path = $null }
-            @{ Path = "ParentProperty1" }
-            @{ Path = "ParentProperty1.ParentProperty2" }
-        ) { 
-            param ($Path)
-            $expected = [PSCustomObject] @{
-                Name = "Jakub"
-            }
-
-            $actual = [PSCustomObject] @{
-                Name = "Jakub"
-                Age = 30
-            }
-
-            $options = Get-EquivalencyOption -ExcludePath ("$Path.Age".Trim('.'))
-            Compare-Equivalent -Actual $actual -Expected $expected -Path $Path -Options $options | Verify-Null
-        }
-    
-
-        It "Given a full path to a property on object that is in collection it ignores it on the Expected object" {
-            $expected = [PSCustomObject] @{
-                ProgrammingLanguages = @(
-                    [PSCustomObject] @{
-                        Name = "C#"
-                        Type = "OO"
-                    },
-                    [PSCustomObject] @{
-                        Name = "PowerShell"
-                    }
-                )
-            }
-
-            $actual = [PSCustomObject] @{
-                ProgrammingLanguages = @(
-                    [PSCustomObject] @{
-                        Name = "C#"
-                    },
-                    [PSCustomObject] @{
-                        Name = "PowerShell"
-                    }
-                )
-            }
-
-            
-            $options = Get-EquivalencyOption -ExcludePath "ProgrammingLanguages.Type"
-            Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
-        }
-
-        It "Given a full path to a property on object that is in collection it ignores it on the Actual object" {
-            $expected = [PSCustomObject] @{
-                ProgrammingLanguages = @(
-                    [PSCustomObject] @{
-                        Name = "C#"
-                    },
-                    [PSCustomObject] @{
-                        Name = "PowerShell"
-                    }
-                )
-            }
-
-            $actual = [PSCustomObject] @{
-                ProgrammingLanguages = @(
-                    [PSCustomObject] @{
-                        Name = "C#"
-                        Type = "OO"
-                    },
-                    [PSCustomObject] @{
-                        Name = "PowerShell"
-                    }
-                )
-            }
-
-            
-            $options = Get-EquivalencyOption -ExcludePath "ProgrammingLanguages.Type"
-            Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
-        }
-
-        It "Given a full path to a property on object that is in hashtable it ignores it on the Expected object" {
-            $expected = [PSCustomObject] @{
-                ProgrammingLanguages = @{
-                    Language1 = [PSCustomObject] @{
-                        Name = "C#"
-                        Type = "OO"
-                    }
-                    Language2 = [PSCustomObject] @{
-                        Name = "PowerShell"
-                    }
+                $expected = [PSCustomObject] @{
+                    Name = "Jakub"
+                    Age = 30
                 }
-            }
 
-            $actual = [PSCustomObject] @{
-                ProgrammingLanguages =  @{
-                    Language1 = [PSCustomObject] @{
-                        Name = "C#"
-                    }
-                    Language2 = [PSCustomObject] @{
-                        Name = "PowerShell"
-                    }
+                $actual = [PSCustomObject] @{
+                    Name = "Jakub"
                 }
+
+                $options = Get-EquivalencyOption -ExcludePath ("$Path.Age".Trim('.'))
+                Compare-Equivalent -Actual $actual -Expected $expected -Path $Path -Options $options  | Verify-Null
             }
 
-            $options = Get-EquivalencyOption -ExcludePath "ProgrammingLanguages.Language1.Type"
-            Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
-        }
+            It "Given a full path to a property it ignores it on the Actual object"  -TestCases @(
+                @{ Path = $null }
+                @{ Path = "ParentProperty1" }
+                @{ Path = "ParentProperty1.ParentProperty2" }
+            ) { 
+                param ($Path)
+                $expected = [PSCustomObject] @{
+                    Name = "Jakub"
+                }
 
-        # in the above tests we are not testing all the possible options of skippin in all possible
-        # emumerable objects, but this many tests should still be enough. The Path unifies how different
-        # collections are handled, and we filter out based on the path on the start of Compare-Equivalent
-        # so the same rules should apply transitively no matter the collection type
+                $actual = [PSCustomObject] @{
+                    Name = "Jakub"
+                    Age = 30
+                }
 
+                $options = Get-EquivalencyOption -ExcludePath ("$Path.Age".Trim('.'))
+                Compare-Equivalent -Actual $actual -Expected $expected -Path $Path -Options $options | Verify-Null
+            }
         
-        It "Given a full path to a key on a hashtable it ignores it on the Expected hashtable" {
-            $expected = @{
-                Name = "C#"
-                Type = "OO"
+
+            It "Given a full path to a property on object that is in collection it ignores it on the Expected object" {
+                $expected = [PSCustomObject] @{
+                    ProgrammingLanguages = @(
+                        [PSCustomObject] @{
+                            Name = "C#"
+                            Type = "OO"
+                        },
+                        [PSCustomObject] @{
+                            Name = "PowerShell"
+                        }
+                    )
+                }
+
+                $actual = [PSCustomObject] @{
+                    ProgrammingLanguages = @(
+                        [PSCustomObject] @{
+                            Name = "C#"
+                        },
+                        [PSCustomObject] @{
+                            Name = "PowerShell"
+                        }
+                    )
+                }
+
+                
+                $options = Get-EquivalencyOption -ExcludePath "ProgrammingLanguages.Type"
+                Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
             }
 
-            $actual = @{
-                Name = "C#"
+            It "Given a full path to a property on object that is in collection it ignores it on the Actual object" {
+                $expected = [PSCustomObject] @{
+                    ProgrammingLanguages = @(
+                        [PSCustomObject] @{
+                            Name = "C#"
+                        },
+                        [PSCustomObject] @{
+                            Name = "PowerShell"
+                        }
+                    )
+                }
+
+                $actual = [PSCustomObject] @{
+                    ProgrammingLanguages = @(
+                        [PSCustomObject] @{
+                            Name = "C#"
+                            Type = "OO"
+                        },
+                        [PSCustomObject] @{
+                            Name = "PowerShell"
+                        }
+                    )
+                }
+
+                
+                $options = Get-EquivalencyOption -ExcludePath "ProgrammingLanguages.Type"
+                Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
             }
 
-            $options = Get-EquivalencyOption -ExcludePath "Type"
-            Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+            It "Given a full path to a property on object that is in hashtable it ignores it on the Expected object" {
+                $expected = [PSCustomObject] @{
+                    ProgrammingLanguages = @{
+                        Language1 = [PSCustomObject] @{
+                            Name = "C#"
+                            Type = "OO"
+                        }
+                        Language2 = [PSCustomObject] @{
+                            Name = "PowerShell"
+                        }
+                    }
+                }
+
+                $actual = [PSCustomObject] @{
+                    ProgrammingLanguages =  @{
+                        Language1 = [PSCustomObject] @{
+                            Name = "C#"
+                        }
+                        Language2 = [PSCustomObject] @{
+                            Name = "PowerShell"
+                        }
+                    }
+                }
+
+                $options = Get-EquivalencyOption -ExcludePath "ProgrammingLanguages.Language1.Type"
+                Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+            }
+
+            # in the above tests we are not testing all the possible options of skippin in all possible
+            # emumerable objects, but this many tests should still be enough. The Path unifies how different
+            # collections are handled, and we filter out based on the path on the start of Compare-Equivalent
+            # so the same rules should apply transitively no matter the collection type
+
+            
+            It "Given a full path to a key on a hashtable it ignores it on the Expected hashtable" {
+                $expected = @{
+                    Name = "C#"
+                    Type = "OO"
+                }
+
+                $actual = @{
+                    Name = "C#"
+                }
+
+                $options = Get-EquivalencyOption -ExcludePath "Type"
+                Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+            }
+
+            It "Given a full path to a key on a hashtable it ignores it on the Actual hashtable" {
+                $expected = @{
+                    Name = "C#"
+                }
+
+                $actual = @{
+                    Name = "C#"
+                    Type = "OO"
+                }
+
+                $options = Get-EquivalencyOption -ExcludePath "Type"
+                Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+            }
+
+            It "Given a full path to a key on a dictionary it ignores it on the Expected dictionary" {
+                $expected = New-Dictionary @{
+                    Name = "C#"
+                    Type = "OO"
+                }
+
+                $actual = New-Dictionary @{
+                    Name = "C#"
+                }
+
+                $options = Get-EquivalencyOption -ExcludePath "Type"
+                Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+            }
+
+            It "Given a full path to a key on a dictionary it ignores it on the Actual dictionary" {
+                $expected = New-Dictionary @{
+                    Name = "C#"
+                }
+
+                $actual = New-Dictionary @{
+                    Name = "C#"
+                    Type = "OO"
+                }
+
+                $options = Get-EquivalencyOption -ExcludePath "Type"
+                Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+            }
+
+            It "Given options it passes them correctly from Assert-Equivalent" { 
+                $expected = [PSCustomObject] @{
+                    Name = "Jakub"
+                    Location = "Prague"
+                    Age = 30
+                }
+
+                $actual = [PSCustomObject] @{
+                    Name = "Jakub"
+                }
+
+                $options = Get-EquivalencyOption -ExcludePath "Age", "NonExisting"
+                $err = { Assert-Equivalent -Actual $actual -Expected $expected -Options $Options } | Verify-AssertionFailed
+
+                $err.Exception.Message | Verify-Like "*Expected has property 'Location'*"
+                $err.Exception.Message | Verify-Like "*Exclude path 'Age'*"
+            }
         }
 
-        It "Given a full path to a key on a hashtable it ignores it on the Actual hashtable" {
-            $expected = @{
-                Name = "C#"
+        Context "Wildcard path exclusions" {
+            It "Given wildcarded path it ignores it on the expected object" { 
+                $expected = [PSCustomObject] @{
+                    Name = "Jakub"
+                    Location = "Prague"
+                }
+    
+                $actual = [PSCustomObject] @{
+                    Name = "Jakub"
+                }
+    
+                $options = Get-EquivalencyOption -ExcludePath Loc*
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
             }
 
-            $actual = @{
-                Name = "C#"
-                Type = "OO"
+            It "Given wildcarded path it ignores it on the actual object" { 
+                $expected = [PSCustomObject] @{
+                    Name = "Jakub"
+                }
+    
+                $actual = [PSCustomObject] @{
+                    Name = "Jakub"
+                    Location = "Prague"
+                }
+    
+                $options = Get-EquivalencyOption -ExcludePath Loc*
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
             }
 
-            $options = Get-EquivalencyOption -ExcludePath "Type"
-            Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
+            It "Given wildcarded path it ignores it on the expected hashtable" { 
+                $expected = @{
+                    Name = "Jakub"
+                    Location = "Prague"
+                }
+    
+                $actual = @{
+                    Name = "Jakub"
+                }
+    
+                $options = Get-EquivalencyOption -ExcludePath Loc*
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+            }
+
+            It "Given wildcarded path it ignores it on the actual hashtable" { 
+                $expected = @{
+                    Name = "Jakub"
+                }
+    
+                $actual = @{
+                    Name = "Jakub"
+                    Location = "Prague"
+                }
+    
+                $options = Get-EquivalencyOption -ExcludePath Loc*
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+            }
+
+            It "Given wildcarded path it ignores it on the expected dictionary" { 
+                $expected = New-Dictionary @{
+                    Name = "Jakub"
+                    Location = "Prague"
+                }
+    
+                $actual = New-Dictionary @{
+                    Name = "Jakub"
+                }
+    
+                $options = Get-EquivalencyOption -ExcludePath Loc*
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+            }
+
+            It "Given wildcarded path it ignores it on the actual dictionary" { 
+                $expected = New-Dictionary @{
+                    Name = "Jakub"
+                }
+    
+                $actual = New-Dictionary @{
+                    Name = "Jakub"
+                    Location = "Prague"
+                }
+    
+                $options = Get-EquivalencyOption -ExcludePath Loc*
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+            }
         }
 
-        It "Given a full path to a key on a dictionary it ignores it on the Expected dictionary" {
-            $expected = New-Dictionary @{
-                Name = "C#"
-                Type = "OO"
+        Context "-ExcludePathsNotOnExpected" {
+            It "Given actual object that has more properties that expected it skips them" { 
+                $expected = [PSCustomObject] @{
+                    Name = "Jakub"
+                }
+    
+                $actual = [PSCustomObject] @{
+                    Name = "Jakub"
+                    Location = "Prague"
+                    Age = 30
+                }
+    
+                $options = Get-EquivalencyOption -ExcludePathsNotOnExpected
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
             }
 
-            $actual = New-Dictionary @{
-                Name = "C#"
+            It "Given actual hashtable that has more keys that expected it skips them" { 
+                $expected = @{
+                    Name = "Jakub"
+                }
+
+                $actual = @{
+                    Name = "Jakub"
+                    Location = "Prague"
+                    Age = 30
+                }
+
+                $options = Get-EquivalencyOption -ExcludePathsNotOnExpected
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
             }
 
-            $options = Get-EquivalencyOption -ExcludePath "Type"
-            Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
-        }
+            It "Given actual dictionary that has more keys that expected it skips them" { 
+                $expected = New-Dictionary @{
+                    Name = "Jakub"
+                }
 
-        It "Given a full path to a key on a dictionary it ignores it on the Actual dictionary" {
-            $expected = New-Dictionary @{
-                Name = "C#"
+                $actual = New-Dictionary @{
+                    Name = "Jakub"
+                    Location = "Prague"
+                    Age = 30
+                }
+
+                $options = Get-EquivalencyOption -ExcludePathsNotOnExpected
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
             }
-
-            $actual = New-Dictionary @{
-                Name = "C#"
-                Type = "OO"
-            }
-
-            $options = Get-EquivalencyOption -ExcludePath "Type"
-            Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
-        }
-
-        It "Given options it passes them correctly from Assert-Equivalent" { 
-            $expected = [PSCustomObject] @{
-                Name = "Jakub"
-                Location = "Prague"
-                Age = 30
-            }
-
-            $actual = [PSCustomObject] @{
-                Name = "Jakub"
-            }
-
-            $options = Get-EquivalencyOption -ExcludePath "Age", "NonExisting"
-            $err = { Assert-Equivalent -Actual $actual -Expected $expected -Options $Options } | Verify-AssertionFailed
-
-            $err.Exception.Message | Verify-Like "*Expected has property 'Location'*"
-            $err.Exception.Message | Verify-Like "*Exclude path 'Age'*"
         }
     }
 
@@ -219,4 +354,6 @@ InModuleScope -ModuleName Assert {
                     Exclude path 'Person.Age'")
         }
     }
+
+
 }

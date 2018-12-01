@@ -293,19 +293,21 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
         $result += Compare-Equivalent -Expected $expectedValue -Actual $actualValue -Path "$Property.$k" -Options $Options
     }
 
-    $keysNotInExpected = $actualKeys | where {$expectedKeys -notcontains $_ }
+    if (!$Options.ExcludePathsNotOnExpected) {
+        $keysNotInExpected = $actualKeys | where {$expectedKeys -notcontains $_ }
 
-    $filteredKeysNotInExpected = $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options
+        $filteredKeysNotInExpected = $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options
 
-    if ($filteredKeysNotInExpected) {
-        v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
-    }
-    else {
-        v "`$Actual has no keys that we did not find on `$Expected."
-    }
-    foreach ($k in $filteredKeysNotInExpected)
-    {
-        $result += "Expected is missing key '$k' that the other object has."
+        if ($filteredKeysNotInExpected) {
+            v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
+        }
+        else {
+            v "`$Actual has no keys that we did not find on `$Expected."
+        }
+        foreach ($k in $filteredKeysNotInExpected)
+        {
+            $result += "Expected is missing key '$k' that the other object has."
+        }
     }
 
     if ($result)
@@ -315,6 +317,7 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
     }
+
     v -Equivalence "Hastables `$Actual and `$Expected are equivalent."
 }
 
@@ -358,19 +361,20 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
         v "Both `$Actual and `$Expected have key '$k', comparing thier contents."
         $result += Compare-Equivalent -Expected $expectedValue -Actual $actualValue -Path "$Property.$k" -Options $Options
     }
+    if (!$Options.ExcludePathsNotOnExpected) {
+        $keysNotInExpected =  $actualKeys | where { $expectedKeys -notcontains $_ }
+        $filteredKeysNotInExpected = $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options
 
-    $keysNotInExpected =  $actualKeys | where { $expectedKeys -notcontains $_ }
-    $filteredKeysNotInExpected = $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options
-
-    if ($filteredKeysNotInExpected) {
-        v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
-    }
-    else {
-        v "`$Actual has no keys that we did not find on `$Expected."
-    }
-    foreach ($k in $filteredKeysNotInExpected)
-    {
-        $result += "Expected is missing key '$k' that the other object has."
+        if ($filteredKeysNotInExpected) {
+            v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
+        }
+        else {
+            v "`$Actual has no keys that we did not find on `$Expected."
+        }
+        foreach ($k in $filteredKeysNotInExpected)
+        {
+            $result += "Expected is missing key '$k' that the other object has."
+        }
     }
 
     if ($result)
@@ -427,24 +431,26 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
         $differences
     }
 
-    #check if there are any extra actual object props
-    $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name
+    if (!$Options.ExcludePathsNotOnExpected) {
+        #check if there are any extra actual object props
+        $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name
 
-    $propertiesNotInExpected =  $actualProperties | where { $expectedPropertyNames -notcontains $_.name }
+        $propertiesNotInExpected =  $actualProperties | where { $expectedPropertyNames -notcontains $_.name }
 
-    
-    $filteredPropertiesNotInExpected = $propertiesNotInExpected | 
-        Test-IncludedPath -PathSelector Property -Options $Options -Path $Property
+        $filteredPropertiesNotInExpected = $propertiesNotInExpected | 
+            Test-IncludedPath -PathSelector Property -Options $Options -Path $Property
 
-    if ($filteredPropertiesNotInExpected) {
-        v -Difference "`$Actual has ($(@($filteredPropertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($filteredPropertiesNotInExpected))."
-    }
-    else {
-        v -Equivalence "`$Actual has no extra properties that `$Expected does not have."
-    }
-    foreach ($p in $filteredPropertiesNotInExpected)
-    {
-        "Expected is missing property '$($p.Name)' that the other object has."
+        if ($filteredPropertiesNotInExpected) {
+            v -Difference "`$Actual has ($(@($filteredPropertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($filteredPropertiesNotInExpected))."
+        }
+        else {
+            v -Equivalence "`$Actual has no extra properties that `$Expected does not have."
+        }
+
+        foreach ($p in $filteredPropertiesNotInExpected)
+        {
+            "Expected is missing property '$($p.Name)' that the other object has."
+        }
     }
 }
 
@@ -654,10 +660,14 @@ function Assert-Equivalent {
 }
 
 function Get-EquivalencyOption {
-    param($ExcludePath = @())
+    param(
+        [string[]] $ExcludePath = @(),
+        [switch] $ExcludePathsNotOnExpected
+    )
 
     [PSCustomObject]@{
         ExcludedPaths = [string[]] $ExcludePath
+        ExcludePathsNotOnExpected = [bool] $ExcludePathsNotOnExpected
     }
 }
 
@@ -691,7 +701,7 @@ function Test-IncludedPath {
         $fullPath = "$Path.$subPath".Trim('.')
 
 
-        if ($Options.ExcludedPaths -contains $fullPath)
+        if ($fullPath | Like-Any $Options.ExcludedPaths)
         {
             v -Skip "Current path $fullPath is excluded from the comparison."
         }
@@ -704,4 +714,23 @@ function Test-IncludedPath {
 
 function Format-EquivalencyOptions ($Options) {
     $Options.ExcludedPaths | foreach { "Exclude path '$_'" }
+}
+
+function Like-Any {
+    param(
+        [String[]] $PathFilters,
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [String] $Path
+    )
+    process {
+        foreach ($pathFilter in $PathFilters | where { $_ }) {
+            $r = $Path -like $pathFilter
+            if ($r) { 
+                v -Skip "Path '$Path' matches filter '$pathFilter'."
+                return $true
+            }
+        }
+
+        return $false
+    }
 }
