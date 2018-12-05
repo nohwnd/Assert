@@ -15,11 +15,12 @@ function Is-DataTableSize ($Expected, $Actual) {
         return $Expected.Rows.Count -eq $Actual.Rows.Count
 }
 
-function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property) {
+function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property, $Options) {
     $Expected = Format-Nicely -Value $Expected
     $Actual = Format-Nicely -Value $Actual
     $propertyInfo = if ($Property) { " property $Property with value" }
-    "Expected$propertyInfo '$Expected' to be equivalent to the actual value, but got '$Actual'."
+    $comparison = if ("Equality" -eq $Options.Comparator) { 'equal' } else { 'equivalent' }
+    "Expected$propertyInfo '$Expected' to be $comparison to the actual value, but got '$Actual'."
 }
 
 
@@ -190,54 +191,66 @@ function Compare-DataTableEquivalent ($Expected, $Actual, $Property, $Options) {
     }
 }
 
-function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
+function Compare-ValueEquivalent ($Actual, $Expected, $Property, $Options) {
     $Expected = $($Expected)
     if (-not (Is-Value -Value $Expected))
     {
         throw [ArgumentException]"Expected must be a Value."
     }
 
-    # fix that string 'false' becomes $true boolean
-    if ($Actual -is [Bool] -and $Expected -is [string] -and "$Expected" -eq 'False')
-    {
-        v "`$Actual is a boolean, and `$Expected is a 'False' string, which we consider equivalent to boolean `$false. Setting `$Expected to `$false."
-        $Expected = $false
-        if ($Expected -ne $Actual)
+    # we don't specify the options in some tests so here we make 
+    # sure that equivalency is used as the default
+    # not ideal but better than rewriting 100 tests
+    if (($null -eq $Options) -or 
+        ($null -eq $Options.Comparator) -or 
+        ("Equivalency" -eq $Options.Comparator)) {
+        v "Equivalency comparator is used, values will be compared for equivalency."
+        # fix that string 'false' becomes $true boolean
+        if ($Actual -is [Bool] -and $Expected -is [string] -and "$Expected" -eq 'False')
         {
-            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
-            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
+            v "`$Actual is a boolean, and `$Expected is a 'False' string, which we consider equivalent to boolean `$false. Setting `$Expected to `$false."
+            $Expected = $false
+            if ($Expected -ne $Actual)
+            {
+                v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
+                return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property -Options $Options
+            }
+            v -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
+            return
         }
-        v -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
-        return
-    }
 
-    if ($Expected -is [Bool] -and $Actual -is [string] -and "$Actual" -eq 'False')
-    {
-        v "`$Actual is a 'False' string, which we consider equivalent to boolean `$false. `$Expected is a boolean. Setting `$Actual to `$false."
-        $Actual = $false
-        if ($Expected -ne $Actual)
+        if ($Expected -is [Bool] -and $Actual -is [string] -and "$Actual" -eq 'False')
         {
-            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
-            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
+            v "`$Actual is a 'False' string, which we consider equivalent to boolean `$false. `$Expected is a boolean. Setting `$Actual to `$false."
+            $Actual = $false
+            if ($Expected -ne $Actual)
+            {
+                v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
+                return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property -Options $Options
+            }
+            v -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
+            return
         }
-        v -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
-        return
-    }
 
-    #fix that scriptblocks are compared by reference
-    if (Is-ScriptBlock -Value $Expected)
-    {
-        # todo: compare by equivalency like strings?
-        v "`$Expected is a ScriptBlock, scriptblocks are considered equivalent when their content is equal. Converting `$Expected to string."
-        #forcing scriptblock to serialize to string and then comparing that
-        if ("$Expected" -ne $Actual)
+        #fix that scriptblocks are compared by reference
+        if (Is-ScriptBlock -Value $Expected)
         {
-            # todo: difference on index?
-            v -Difference "`$Actual is not equivalent to `$Expected because their contents differ."
-            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+            # todo: compare by equivalency like strings?
+            v "`$Expected is a ScriptBlock, scriptblocks are considered equivalent when their content is equal. Converting `$Expected to string."
+            #forcing scriptblock to serialize to string and then comparing that
+            if ("$Expected" -ne $Actual)
+            {
+                # todo: difference on index?
+                v -Difference "`$Actual is not equivalent to `$Expected because their contents differ."
+                return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path -Options $Options
+            }
+            v -Equivalence "`$Actual is equivalent to `$Expected because their contents are equal."
+            return
         }
-        v -Equivalence "`$Actual is equivalent to `$Expected because their contents are equal."
-        return
+    }
+    else 
+    {
+        v "Equality comparator is used, values will be compared for equality."
     }
 
     v "Comparing values as $(Format-Nicely ($Expected.GetType())) because `$Expected has that type."
@@ -247,7 +260,7 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
     if ($Expected -ne $Actual)
     {
         v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual), and $(Format-Nicely $Actual) coalesced to $(Format-Nicely $type) is $(Format-Nicely $coalescedActual)."
-        return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property
+        return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property -Options $Options
     }
     v -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual), and $(Format-Nicely $Actual) coalesced to $(Format-Nicely $type) is $(Format-Nicely $coalescedActual)."
 }
@@ -559,7 +572,7 @@ function Compare-Equivalent {
         if ($Expected -ne $Actual)
         {
             v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely $Actual.GetType())."
-            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path -Options $Options
         }
         # we terminate here, either we passed the test and return nothing, or we did not 
         # and the previous statement returned message
@@ -570,7 +583,7 @@ function Compare-Equivalent {
     if ($null -eq $Actual)
     {
         v -Difference "`$Actual is $(Format-Nicely), but `$Expected has value of type $(Format-Nicely $Expected.GetType()), so they are not equivalent."
-        return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
+        return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path -Options $Options
     }
 
     v "`$Expected has type $($Expected.GetType()), `$Actual has type $($Actual.GetType()), they are both non-null."
@@ -637,22 +650,18 @@ function Assert-Equivalent {
     [CmdletBinding()]
     param(
         $Actual, 
-        $Expected, 
-        [Alias("Options")]
-        $Option,
+        $Expected,
+        $Options = (Get-EquivalencyOption),
         [Switch] $StrictOrder
     )
 
-    # todo, translate the general options to option for the Get-AssertionMessage below
-    
-    $Options = if ($null -eq $Option) { Get-EquivalencyOption }
-    $O = Format-EquivalencyOptions $Option
-
-    $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected -Options $Option | Out-String
+    $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected -Options $Options | Out-String
     
     if ($areDifferent)
     {
-        $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $O -Pretty -CustomMessage "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
+        $optionsFormatted = Format-EquivalencyOptions -Options $Options
+        # the paremeter is -Option not -Options
+        $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $optionsFormatted -Pretty -CustomMessage "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
         throw [Assertions.AssertionException]$message
     }
     
@@ -662,12 +671,15 @@ function Assert-Equivalent {
 function Get-EquivalencyOption {
     param(
         [string[]] $ExcludePath = @(),
-        [switch] $ExcludePathsNotOnExpected
+        [switch] $ExcludePathsNotOnExpected, 
+        [ValidateSet('Equivalency', 'Equality')]
+        [string] $Comparator = 'Equivalency'
     )
 
     [PSCustomObject]@{
         ExcludedPaths = [string[]] $ExcludePath
         ExcludePathsNotOnExpected = [bool] $ExcludePathsNotOnExpected
+        Comparator = [string] $Comparator
     }
 }
 
