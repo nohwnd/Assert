@@ -2,7 +2,7 @@ Get-Module Format | Remove-Module
 $here = $MyInvocation.MyCommand.Path | Split-Path
 Import-Module $here/../src/Format.psm1 -Force
 
-. $here/../../Compatibility/src/New-PSObject.ps1
+. $here/../../Compatibility/src/Compatibility.ps1
 
 Add-Type -TypeDefinition '
 namespace Assertions.TestType { 
