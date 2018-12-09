@@ -1,4 +1,5 @@
-Import-Module $PSScriptRoot/../src/TypeClass.psm1 -Force
+$here = $MyInvocation.MyCommand.Path | Split-Path
+Import-Module $here/../src/TypeClass.psm1 -Force
 
 Describe "Is-Value" {
     It "Given '<value>', which is a value, string, enum, scriptblock or array with a single item of those types it returns `$true" -TestCases @(
@@ -119,10 +120,12 @@ Describe "Is-Collection" {
     It "Given a collection '<value>' of type '<type>' it returns `$true" -TestCases @(
         @{ Value = @() }
         @{ Value = 1,2,3 }
-        @{ Value = [System.Collections.Generic.List[int]] 1 }
-        @{ Value = [System.Collections.Generic.List[decimal]] 2 }
-        @{ Value = [Collections.Generic.List[Int]](1,2,3) }
-        @{ Value = [Collections.Generic.List[Int]](1,2,3) }
+        # powershell v2 requires the coma before the number to make it 
+        # array that is convertible to a list
+        @{ Value = [System.Collections.Generic.List[int]] ,1 }
+        @{ Value = [System.Collections.Generic.List[decimal]] ,2 }
+        @{ Value = [Collections.Generic.List[Int]] [int[]](1,2,3) }
+        @{ Value = [Collections.Generic.List[Int]] [int[]](1,2,3) }
         # @ forces this to be an array even if there are 
         # only 1 processes, like when you run in docker
         @{ Value = @(Get-Process) }

@@ -57,7 +57,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
 
     if (-not (Is-Collection -Value $Actual))
     {
-        v -Difference "`$Actual is not a collection it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
+        v -Difference "`$Actual is not a collection it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Collection -Value $Expected
         $expectedLength = $expected.Length
         $actualFormatted = Format-Nicely -Value $actual
@@ -240,9 +240,9 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
         return
     }
 
-    v "Comparing values as $(Format-Nicely ($Expected.GetType())) because `$Expected has that type."
+    v "Comparing values as $(Format-Nicely (Get-Type $Expected)) because `$Expected has that type."
     # todo: shorter messages when both sides have the same type (do not compare by using -is, instead query the type and compare it) because -is is true even for parent types
-    $type = $Expected.GetType()
+    $type = Get-Type $Expected
     $coalescedActual = $Actual -as $type
     if ($Expected -ne $Actual)
     {
@@ -260,7 +260,7 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
 
     if (-not (Is-Hashtable -Value $Actual))
     {
-        v -Difference "`$Actual is not a hashtable it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
+        v -Difference "`$Actual is not a hashtable it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'."
@@ -298,21 +298,22 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
 
         $filteredKeysNotInExpected = $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options
 
-        if ($filteredKeysNotInExpected) {
-            v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
-        }
-        else {
-            v "`$Actual has no keys that we did not find on `$Expected."
-        }
-        foreach ($k in $filteredKeysNotInExpected)
-        {
-            $result += "Expected is missing key '$k' that the other object has."
-        }
+    # fix for powershell v2 where foreach goes once over null
+    if ($filteredKeysNotInExpected | where { $_ }) {
+        v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
+    }
+    else {
+        v "`$Actual has no keys that we did not find on `$Expected."
+    }
+    
+    foreach ($k in $filteredKeysNotInExpected | where { $_ })
+    {
+        $result += "Expected is missing key '$k' that the other object has."
     }
 
-    if ($result)
+    if ($result | where { $_ })
     {
-        v -Difference "Hastables `$Actual and `$Expected are not equivalent."
+        v -Difference "Hashtables `$Actual and `$Expected are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
@@ -329,7 +330,7 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
 
     if (-not (Is-Dictionary -Value $Actual))
     {
-        v -Difference "`$Actual is not a dictionary it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
+        v -Difference "`$Actual is not a dictionary it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected dictionary '$expectedFormatted', but got '$actualFormatted'."
@@ -365,16 +366,16 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
         $keysNotInExpected =  $actualKeys | where { $expectedKeys -notcontains $_ }
         $filteredKeysNotInExpected = $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options
 
-        if ($filteredKeysNotInExpected) {
-            v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
-        }
-        else {
-            v "`$Actual has no keys that we did not find on `$Expected."
-        }
-        foreach ($k in $filteredKeysNotInExpected)
-        {
-            $result += "Expected is missing key '$k' that the other object has."
-        }
+    # fix for powershell v2 where foreach goes once over null
+    if ($filteredKeysNotInExpected | where { $_ }) {
+        v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
+    }
+    else {
+        v "`$Actual has no keys that we did not find on `$Expected."
+    }
+    foreach ($k in $filteredKeysNotInExpected | where { $_ })
+    {
+        $result += "Expected is missing key '$k' that the other object has."
     }
 
     if ($result)
@@ -395,7 +396,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
     }
 
     if (-not (Is-Object -Value $Actual)) {
-        v -Difference "`$Actual is not an object it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
+        v -Difference "`$Actual is not an object it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected object '$expectedFormatted', but got '$actualFormatted'."
@@ -435,22 +436,23 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
         #check if there are any extra actual object props
         $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name
 
-        $propertiesNotInExpected =  $actualProperties | where { $expectedPropertyNames -notcontains $_.name }
+    $propertiesNotInExpected =  @( $actualProperties | where { $expectedPropertyNames -notcontains $_.name })
 
-        $filteredPropertiesNotInExpected = $propertiesNotInExpected | 
-            Test-IncludedPath -PathSelector Property -Options $Options -Path $Property
+    # fix for powershell v2 we need to make the array explicit    
+    $filteredPropertiesNotInExpected = $propertiesNotInExpected | 
+        Test-IncludedPath -PathSelector Property -Options $Options -Path $Property
 
-        if ($filteredPropertiesNotInExpected) {
-            v -Difference "`$Actual has ($(@($filteredPropertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($filteredPropertiesNotInExpected))."
-        }
-        else {
-            v -Equivalence "`$Actual has no extra properties that `$Expected does not have."
-        }
+    if ($filteredPropertiesNotInExpected) {
+        v -Difference "`$Actual has ($(@($filteredPropertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($filteredPropertiesNotInExpected))."
+    }
+    else {
+        v -Equivalence "`$Actual has no extra properties that `$Expected does not have."
+    }
 
-        foreach ($p in $filteredPropertiesNotInExpected)
-        {
-            "Expected is missing property '$($p.Name)' that the other object has."
-        }
+    # fix for powershell v2 where foreach goes once over null
+    foreach ($p in $filteredPropertiesNotInExpected | where { $_ })
+    {
+        "Expected is missing property '$($p.Name)' that the other object has."
     }
 }
 
@@ -467,8 +469,8 @@ function Compare-DataRowEquivalent ($Actual, $Expected, $Property, $Options) {
         return "Expected DataRow '$expectedFormatted', but got '$actualFormatted'."
     }
 
-    $actualProperties = $Actual.PsObject.Properties | Where-Object Name -NotIn 'RowError','RowState','Table','ItemArray','HasErrors'
-    $expectedProperties = $Expected.PsObject.Properties | Where-Object Name -NotIn 'RowError','RowState','Table','ItemArray','HasErrors'
+    $actualProperties = $Actual.PsObject.Properties | Where-Object {'RowError','RowState','Table','ItemArray','HasErrors' -notcontains $_.Name }
+    $expectedProperties = $Expected.PsObject.Properties | Where-Object  {'RowError','RowState','Table','ItemArray','HasErrors' -notcontains $_.Name }
 
     foreach ($p in $expectedProperties)
     {
@@ -486,9 +488,10 @@ function Compare-DataRowEquivalent ($Actual, $Expected, $Property, $Options) {
     #check if there are any extra actual object props
     $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name
 
-    $propertiesNotInExpected =  $actualProperties | where {$expectedPropertyNames -notcontains $_.name }
+    $propertiesNotInExpected =  @($actualProperties | where {$expectedPropertyNames -notcontains $_.name })
 
-    foreach ($p in $propertiesNotInExpected)
+    # fix for powershell v2 where foreach goes once over null
+    foreach ($p in $propertiesNotInExpected | where { $_ })
     {
         "Expected is missing property '$($p.Name)' that the other object has."
     }
@@ -558,7 +561,7 @@ function Compare-Equivalent {
         v "`$Expected is `$null, so we are expecting `$null."
         if ($Expected -ne $Actual)
         {
-            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely $Actual.GetType())."
+            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely Get-Type $Actual)."
             return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
         }
         # we terminate here, either we passed the test and return nothing, or we did not 
@@ -569,11 +572,11 @@ function Compare-Equivalent {
 
     if ($null -eq $Actual)
     {
-        v -Difference "`$Actual is $(Format-Nicely), but `$Expected has value of type $(Format-Nicely $Expected.GetType()), so they are not equivalent."
+        v -Difference "`$Actual is $(Format-Nicely), but `$Expected has value of type $(Format-Nicely Get-Type $Expected), so they are not equivalent."
         return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
     }
 
-    v "`$Expected has type $($Expected.GetType()), `$Actual has type $($Actual.GetType()), they are both non-null."
+    v "`$Expected has type $(Get-Type $Expected), `$Actual has type $(Get-Type $Actual), they are both non-null."
 
     #test value types, strings, and single item arrays with values in them as values
     #expand the single item array to get to the value in it
@@ -629,7 +632,7 @@ function Compare-Equivalent {
         return
     }
 
-    v "`$Expected is an object of type $($Expected.GetType()), we will be comparing `$Actual to objects."
+    v "`$Expected is an object of type $(Get-Type $Expected), we will be comparing `$Actual to objects."
     Compare-ObjectEquivalent -Expected $Expected -Actual $Actual -Property $Path -Options $Options
 }
 
@@ -673,12 +676,12 @@ function Get-EquivalencyOption {
 
 function Test-IncludedPath {
     param(
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         $InputObject,
         [String]
         $Path,
         $Options,
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory=$true)]
         [ValidateSet("Property", "Hashtable")]
         $PathSelector
     ) 

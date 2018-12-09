@@ -121,8 +121,10 @@ Describe "Assert-Throw" {
             { New-Object DateTime "incorrect parameter" } | Assert-Throw
         }
 
+        # division by zero circumvents try catch in pwsh v2
+        # so we divide by $null to trigger the same exception
         It 'Exception is thrown by division by zero' {
-            { 1/0 } | Assert-Throw
+            { 1/$null } | Assert-Throw
         }
         
         It 'Terminating error is thrown by cmdlet failing to bind paramaters' {
@@ -215,7 +217,7 @@ InModuleScope -ModuleName "Assert" {
                 $sb = {
                     Get-Item "/non-existing"
                 }
-                $sb.InvokeWithContext($null, (New-Object -TypeName psvariable "erroractionpreference", "stop"), $null)
+                Invoke-WithContext $sb -Variables @{ ErrorActionPreference = "Stop" }
             }
             catch 
             {
