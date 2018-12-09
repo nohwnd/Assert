@@ -202,7 +202,7 @@ InModuleScope -ModuleName Assert {
             }
 
                 $options = Get-EquivalencyOption -ExcludePath "Age", "NonExisting"
-                $err = { Assert-Equivalent -Actual $actual -Expected $expected -Options $Options } | Verify-AssertionFailed
+                $err = { Assert-Equivalent -Actual $actual -Expected $expected -Options $options } | Verify-AssertionFailed
 
                 $err.Exception.Message | Verify-Like "*Expected has property 'Location'*"
                 $err.Exception.Message | Verify-Like "*Exclude path 'Age'*"
@@ -340,6 +340,21 @@ InModuleScope -ModuleName Assert {
                 $options = Get-EquivalencyOption -ExcludePathsNotOnExpected
                 Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
             }
+        }
+    }
+
+    Describe "Compare-Equiavlent - equality comparison options" { 
+        It "Given objects that are equivalent and -Comparator Equality option it compares them as different" { 
+            $expected = New-PsObject @{
+                LikesIfsInMocks = $false
+            }
+
+            $actual = New-PsObject @{
+                LikesIfsInMocks = "False"
+            }
+
+            $options = Get-EquivalencyOption -Comparator Equality
+            { Assert-Equivalent -Actual $actual -Expected $expected -Options $options } | Verify-AssertionFailed
         }
     }
 

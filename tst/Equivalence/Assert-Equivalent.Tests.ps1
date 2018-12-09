@@ -113,6 +113,14 @@ InModuleScope -ModuleName Assert {
             Get-ValueNotEquivalentMessage -Actual 1 -Expected 2 -Property ".Age" |
                 Verify-Equal "Expected property .Age with value '2' to be equivalent to the actual value, but got '1'."
         }
+
+        It "Changes wording to 'equal' when options specify Equality comparator" {
+            $e = 1
+            $a = 2
+            $options = Get-EquivalencyOption -Comparator Equality
+            Get-ValueNotEquivalentMessage -Actual 1 -Expected 2 -Options $options |
+                Verify-Equal "Expected '2' to be equal to the actual value, but got '1'."
+        }
     }
 
     Describe "Is-CollectionSize" {
