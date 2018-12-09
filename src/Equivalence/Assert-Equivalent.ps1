@@ -307,21 +307,23 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
     }
 
     if (!$Options.ExcludePathsNotOnExpected) {
-        $keysNotInExpected = $actualKeys | where {$expectedKeys -notcontains $_ }
+        # fix for powershell 2 where the array needs to be explicit
+        $keysNotInExpected = @( $actualKeys | where { $expectedKeys -notcontains $_ })
 
-        $filteredKeysNotInExpected = $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options
+        $filteredKeysNotInExpected = @( $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options)
 
-    # fix for powershell v2 where foreach goes once over null
-    if ($filteredKeysNotInExpected | where { $_ }) {
-        v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
-    }
-    else {
-        v "`$Actual has no keys that we did not find on `$Expected."
-    }
-    
-    foreach ($k in $filteredKeysNotInExpected | where { $_ })
-    {
-        $result += "Expected is missing key '$k' that the other object has."
+        # fix for powershell v2 where foreach goes once over null
+        if ($filteredKeysNotInExpected | where { $_ }) {
+            v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
+        }
+        else {
+            v "`$Actual has no keys that we did not find on `$Expected."
+        }
+        
+        foreach ($k in $filteredKeysNotInExpected | where { $_ })
+        {
+            $result += "Expected is missing key '$k' that the other object has."
+        }
     }
 
     if ($result | where { $_ })
@@ -376,19 +378,22 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
         $result += Compare-Equivalent -Expected $expectedValue -Actual $actualValue -Path "$Property.$k" -Options $Options
     }
     if (!$Options.ExcludePathsNotOnExpected) {
-        $keysNotInExpected =  $actualKeys | where { $expectedKeys -notcontains $_ }
-        $filteredKeysNotInExpected = $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options
-
-    # fix for powershell v2 where foreach goes once over null
-    if ($filteredKeysNotInExpected | where { $_ }) {
-        v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
-    }
-    else {
-        v "`$Actual has no keys that we did not find on `$Expected."
-    }
-    foreach ($k in $filteredKeysNotInExpected | where { $_ })
-    {
-        $result += "Expected is missing key '$k' that the other object has."
+        # fix for powershell 2 where the array needs to be explicit
+        $keysNotInExpected = @( $actualKeys | where { $expectedKeys -notcontains $_ } )
+        $filteredKeysNotInExpected = @( $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options )
+        
+        # fix for powershell v2 where foreach goes once over null
+        if ($filteredKeysNotInExpected | where { $_ }) {
+            v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
+        }
+        else {
+            v "`$Actual has no keys that we did not find on `$Expected."
+        }
+        
+        foreach ($k in $filteredKeysNotInExpected | where { $_ })
+        {
+            $result += "Expected is missing key '$k' that the other object has."
+        }
     }
 
     if ($result)
@@ -447,25 +452,26 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
 
     if (!$Options.ExcludePathsNotOnExpected) {
         #check if there are any extra actual object props
-        $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name
+        $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name 
 
-    $propertiesNotInExpected =  @( $actualProperties | where { $expectedPropertyNames -notcontains $_.name })
+        $propertiesNotInExpected =  @( $actualProperties | where { $expectedPropertyNames -notcontains $_.name })
 
-    # fix for powershell v2 we need to make the array explicit    
-    $filteredPropertiesNotInExpected = $propertiesNotInExpected | 
-        Test-IncludedPath -PathSelector Property -Options $Options -Path $Property
+        # fix for powershell v2 we need to make the array explicit    
+        $filteredPropertiesNotInExpected = $propertiesNotInExpected | 
+            Test-IncludedPath -PathSelector Property -Options $Options -Path $Property
 
-    if ($filteredPropertiesNotInExpected) {
-        v -Difference "`$Actual has ($(@($filteredPropertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($filteredPropertiesNotInExpected))."
-    }
-    else {
-        v -Equivalence "`$Actual has no extra properties that `$Expected does not have."
-    }
+        if ($filteredPropertiesNotInExpected) {
+            v -Difference "`$Actual has ($(@($filteredPropertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($filteredPropertiesNotInExpected))."
+        }
+        else {
+            v -Equivalence "`$Actual has no extra properties that `$Expected does not have."
+        }
 
-    # fix for powershell v2 where foreach goes once over null
-    foreach ($p in $filteredPropertiesNotInExpected | where { $_ })
-    {
-        "Expected is missing property '$($p.Name)' that the other object has."
+        # fix for powershell v2 where foreach goes once over null
+        foreach ($p in $filteredPropertiesNotInExpected | where { $_ })
+        {
+            "Expected is missing property '$($p.Name)' that the other object has."
+        }
     }
 }
 
@@ -735,7 +741,7 @@ function Format-EquivalencyOptions ($Options) {
 function Like-Any {
     param(
         [String[]] $PathFilters,
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [String] $Path
     )
     process {
