@@ -57,7 +57,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
 
     if (-not (Is-Collection -Value $Actual))
     {
-        v -Difference "`$Actual is not a collection it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
+        v -Difference "`$Actual is not a collection it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Collection -Value $Expected
         $expectedLength = $expected.Length
         $actualFormatted = Format-Nicely -Value $actual
@@ -240,9 +240,9 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property) {
         return
     }
 
-    v "Comparing values as $(Format-Nicely ($Expected.GetType())) because `$Expected has that type."
+    v "Comparing values as $(Format-Nicely (Get-Type $Expected)) because `$Expected has that type."
     # todo: shorter messages when both sides have the same type (do not compare by using -is, instead query the type and compare it) because -is is true even for parent types
-    $type = $Expected.GetType()
+    $type = Get-Type $Expected
     $coalescedActual = $Actual -as $type
     if ($Expected -ne $Actual)
     {
@@ -260,7 +260,7 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
 
     if (-not (Is-Hashtable -Value $Actual))
     {
-        v -Difference "`$Actual is not a hashtable it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
+        v -Difference "`$Actual is not a hashtable it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'."
@@ -328,7 +328,7 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
 
     if (-not (Is-Dictionary -Value $Actual))
     {
-        v -Difference "`$Actual is not a dictionary it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
+        v -Difference "`$Actual is not a dictionary it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected dictionary '$expectedFormatted', but got '$actualFormatted'."
@@ -394,7 +394,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
     }
 
     if (-not (Is-Object -Value $Actual)) {
-        v -Difference "`$Actual is not an object it is a $(Format-Nicely ($Actual.GetType())), so they are not equivalent."
+        v -Difference "`$Actual is not an object it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected object '$expectedFormatted', but got '$actualFormatted'."
@@ -558,7 +558,7 @@ function Compare-Equivalent {
         v "`$Expected is `$null, so we are expecting `$null."
         if ($Expected -ne $Actual)
         {
-            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely $Actual.GetType())."
+            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely Get-Type $Actual)."
             return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
         }
         # we terminate here, either we passed the test and return nothing, or we did not 
@@ -569,11 +569,11 @@ function Compare-Equivalent {
 
     if ($null -eq $Actual)
     {
-        v -Difference "`$Actual is $(Format-Nicely), but `$Expected has value of type $(Format-Nicely $Expected.GetType()), so they are not equivalent."
+        v -Difference "`$Actual is $(Format-Nicely), but `$Expected has value of type $(Format-Nicely Get-Type $Expected), so they are not equivalent."
         return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
     }
 
-    v "`$Expected has type $($Expected.GetType()), `$Actual has type $($Actual.GetType()), they are both non-null."
+    v "`$Expected has type $(Get-Type $Expected), `$Actual has type $(Get-Type $Actual), they are both non-null."
 
     #test value types, strings, and single item arrays with values in them as values
     #expand the single item array to get to the value in it
@@ -629,7 +629,7 @@ function Compare-Equivalent {
         return
     }
 
-    v "`$Expected is an object of type $($Expected.GetType()), we will be comparing `$Actual to objects."
+    v "`$Expected is an object of type $(Get-Type $Expected), we will be comparing `$Actual to objects."
     Compare-ObjectEquivalent -Expected $Expected -Actual $Actual -Property $Path -Options $Options
 }
 

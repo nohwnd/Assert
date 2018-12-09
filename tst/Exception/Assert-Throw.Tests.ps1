@@ -121,7 +121,7 @@ Describe "Assert-Throw" {
             { New-Object DateTime "incorrect parameter" } | Assert-Throw
         }
 
-        # divistion by zero circumvents try catch in pwsh v2
+        # division by zero circumvents try catch in pwsh v2
         # so we divide by $null to trigger the same exception
         It 'Exception is thrown by division by zero' {
             { 1/$null } | Assert-Throw

@@ -431,20 +431,39 @@ InModuleScope -ModuleName Assert {
 
             Assert-Equivalent -Actual $Actual -Expected $Expected
 
-            # $ExpectedDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Expected))
-            # $ActualDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Actual))
-            # Assert-Equivalent -Actual $ActualDeserialized -Expected $ExpectedDeserialized
-            # Assert-Equivalent -Actual $Actual -Expected $ExpectedDeserialized
+            function SerializeDeserialize ($InputObject) {
+                # psv2 compatibility
+                # $ExpectedDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Expected))
+                # Alternatively this could be done in memory via https://github.com/Jaykul/Reflection/blob/master/CliXml.psm1, but I don't want to fiddle with more 
+                # relfection right now
+                try {
+                    $path = [IO.Path]::GetTempFileName()
+                
+                    Export-Clixml -Path $path -InputObject $InputObject -Force | Out-Null 
+                    Import-Clixml -Path $path 
+                }
+                finally {
+                    if ($null -ne $path -and (Test-Path $path)) {
+                        Remove-Item -Path $path -Force
+                    }
+                }
+            } 
+           
+            
+            $ExpectedDeserialized = SerializeDeserialize $Expected
+            $ActualDeserialized = SerializeDeserialize $Actual
+            Assert-Equivalent -Actual $ActualDeserialized -Expected $ExpectedDeserialized
+            Assert-Equivalent -Actual $Actual -Expected $ExpectedDeserialized
 
-            # {Assert-Equivalent -Actual $Actual -Expected $Expected -StrictOrder} | Should -Throw
+            {Assert-Equivalent -Actual $Actual -Expected $Expected -StrictOrder} | Should -Throw
 
-            # $Actual.Rows[1].Name = 'D'
-            # {Assert-Equivalent -Actual $Actual -Expected $Expected} | Should -Throw
+            $Actual.Rows[1].Name = 'D'
+            {Assert-Equivalent -Actual $Actual -Expected $Expected} | Should -Throw
 
-            # $ExpectedDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Expected))
-            # $ActualDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Actual))
-            # {Assert-Equivalent -Actual $ActualDeserialized -Expected $ExpectedDeserialized} | Should -Throw
-            # {Assert-Equivalent -Actual $Actual -Expected $ExpectedDeserialized} | Should -Throw
+            $ExpectedDeserialized = SerializeDeserialize $Expected
+            $ActualDeserialized = SerializeDeserialize $Actual
+            {Assert-Equivalent -Actual $ActualDeserialized -Expected $ExpectedDeserialized} | Should -Throw
+            {Assert-Equivalent -Actual $Actual -Expected $ExpectedDeserialized} | Should -Throw
         }
 
         It "Can be called with positional parameters" {

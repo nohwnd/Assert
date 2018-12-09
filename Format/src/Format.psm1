@@ -1,4 +1,5 @@
 Import-Module $PSScriptRoot/../../TypeClass/src/TypeClass.psm1 -DisableNameChecking
+. $PSScriptRoot/../../Compatibility/src/Compatibility.ps1
 
 function Format-Collection ($Value, [switch]$Pretty) { 
     $separator = ', '
@@ -116,7 +117,7 @@ function Format-Nicely ($Value, [switch]$Pretty) {
         return Format-Collection -Value $Value -Pretty:$Pretty
     }
 
-    Format-Object -Value $Value -Property (Get-DisplayProperty ($Value.GetType())) -Pretty:$Pretty
+    Format-Object -Value $Value -Property (Get-DisplayProperty (Get-Type $Value)) -Pretty:$Pretty
 }
 
 function Get-DisplayProperty ([Type]$Type) {
@@ -144,7 +145,7 @@ function Get-DisplayProperty ([Type]$Type) {
 function Get-ShortType ($Value) {
     if ($null -ne $value)
     {
-        Format-Type $Value.GetType()
+        Format-Type (Get-Type $Value)
     }
     else 
     {
