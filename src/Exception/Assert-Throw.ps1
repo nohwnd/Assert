@@ -1,7 +1,7 @@
 function Assert-Throw {
     param (
         [Parameter(ValueFromPipeline=$true, Mandatory = $true)]
-        [ScriptBlock]$ScriptBlock, 
+        [ScriptBlock]$ScriptBlock,
         [Type]$ExceptionType,
         [String]$ExceptionMessage,
         [String]$FullyQualifiedErrorId,
@@ -14,13 +14,16 @@ function Assert-Throw {
     $errorThrown = $false
     $err = $null
     try {
-        $p = 'stop' 
-        if ($AllowNonTerminatingError) 
+        $p = 'stop'
+        if ($AllowNonTerminatingError)
         {
             $p = 'continue'
         }
-        $eap = New-Object -TypeName psvariable "erroractionpreference", $p
-        $null = $ScriptBlock.InvokeWithContext($null, $eap, $null) 2>&1
+        # compatibility fix for powershell v2
+        # $eap = New-Object -TypeName psvariable "erroractionpreference", $p
+        # $null = $ScriptBlock.InvokeWithContext($null, $eap, $null) 2>&1
+
+        $null = (Invoke-WithContext -ScriptBlock $ScriptBlock -Variables @{ ErrorActionPreference = $p }) 2>&1
     }
     catch
     {
@@ -34,17 +37,17 @@ function Assert-Throw {
     $filterOnExceptionType = $null -ne $ExceptionType
     if ($filterOnExceptionType) {
         $exceptionFilterTypeFormatted = Format-Type $ExceptionType
-        
+
         $filters += "of type $exceptionFilterTypeFormatted"
 
         $exceptionTypeFilterMatches = $err.Exception -is $ExceptionType
         if (-not $exceptionTypeFilterMatches) {
-            $exceptionTypeFormatted = Get-ShortType $err.Exception    
+            $exceptionTypeFormatted = Get-ShortType $err.Exception
             $buts += "the exception type was '$exceptionTypeFormatted'"
         }
     }
 
-    $filterOnMessage = -not [string]::IsNullOrWhiteSpace($ExceptionMessage)
+    $filterOnMessage = -not (Test-NullOrWhiteSpace $ExceptionMessage)
     if ($filterOnMessage) {
         $filters += "with message '$ExceptionMessage'"
         if ($err.ExceptionMessage -notlike $ExceptionMessage) {
@@ -52,7 +55,7 @@ function Assert-Throw {
         }
     }
 
-    $filterOnId = -not [string]::IsNullOrWhiteSpace($FullyQualifiedErrorId)
+    $filterOnId = -not (Test-NullOrWhiteSpace $FullyQualifiedErrorId)
     if ($filterOnId) {
         $filters += "with FullyQualifiedErrorId '$FullyQualifiedErrorId'"
         if ($err.FullyQualifiedErrorId -notlike $FullyQualifiedErrorId) {
@@ -67,8 +70,8 @@ function Assert-Throw {
 
     if ($buts.Count -ne 0) {
         $filter = Add-SpaceToNonEmptyString ( Join-And $filters -Threshold 3 )
-        $but = Join-And $buts 
-        $defaultMessage = "Expected an exception,$filter to be thrown, but $but."    
+        $but = Join-And $buts
+        $defaultMessage = "Expected an exception,$filter to be thrown, but $but."
 
         $Message = Get-AssertionMessage -Expected $Expected -Actual $ScriptBlock -CustomMessage $CustomMessage `
         -DefaultMessage $defaultMessage
@@ -79,12 +82,12 @@ function Assert-Throw {
 }
 
 function Get-Error ($ErrorRecord) {
-    
+
     if ($ErrorRecord.Exception -like '*"InvokeWithContext"*')
     {
         $e = $ErrorRecord.Exception.InnerException.ErrorRecord
-    } 
-    else 
+    }
+    else
     {
         $e = $ErrorRecord
     }
@@ -97,21 +100,21 @@ function Get-Error ($ErrorRecord) {
     }
 }
 
-function Join-And ($Items, $Threshold=2) { 
-    
-    if ($null -eq $items -or $items.count -lt $Threshold) 
-    { 
-        $items -join ', ' 
-    } 
-    else 
-    { 
+function Join-And ($Items, $Threshold=2) {
+
+    if ($null -eq $items -or $items.count -lt $Threshold)
+    {
+        $items -join ', '
+    }
+    else
+    {
         $c = $items.count
         ($items[0..($c-2)] -join ', ') + ' and ' + $items[-1]
     }
 }
 
-function Add-SpaceToNonEmptyString ([string]$Value) { 
-    if ($Value) 
+function Add-SpaceToNonEmptyString ([string]$Value) {
+    if ($Value)
     {
         " $Value"
     }

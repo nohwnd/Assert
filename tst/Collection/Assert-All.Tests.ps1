@@ -32,6 +32,11 @@ Describe "Assert-All" {
         $v[1] | Verify-Equal $expected[1]
     }
 
+    It "Can filter using variables from the sorrounding context" {
+        $f = 1
+        2,4 | Assert-All { $_ / $f }
+    }
+
     It "Accepts FilterScript and Actual by position" {
         Assert-All { $true } 1,2
     }

@@ -1,4 +1,13 @@
-Add-Type -TypeDefinition 'namespace Assertions.TestType { public class Person { public string Name {get;set;} public int Age {get;set;}}}'
+Add-Type -TypeDefinition 'namespace Assertions.TestType { 
+    public class Person2 { 
+        // powershell v2 mandates fully implemented properties
+        string _name;
+        int _age;
+        public string Name { get { return _name; } set { _name = value; } } 
+        public int Age { get { return _age; } set { _age = value; } }
+    }
+}'
+
 InModuleScope -ModuleName Assert {
     Describe "Test-Same" {
         It "Given the same instance of a reference type it returns `$true" -TestCases @(
@@ -370,7 +379,7 @@ InModuleScope -ModuleName Assert {
 
         It "Given PSObject '<expected>' and object '<actual> that have the same values it returns `$null" -TestCases @(
             @{
-                Expected = New-Object -TypeName Assertions.TestType.Person -Property @{ Name = 'Jakub'; Age  = 28}
+                Expected = New-Object -TypeName Assertions.TestType.Person2 -Property @{ Name = 'Jakub'; Age  = 28}
                 Actual =   New-PSObject @{ Name = 'Jakub'; Age = 28 }
             }
         ) {
@@ -412,7 +421,7 @@ InModuleScope -ModuleName Assert {
 
         It "Comparing DataTable" {
             # todo: move this to it's own describe, split the tests to smaller parts, and make them use Verify-* axioms
-            $Expected = [Data.DataTable]::new('Test')
+            $Expected = New-Object Data.DataTable 'Test'
             $null = $Expected.Columns.Add('IDD', [System.Int32])
             $null = $Expected.Columns.Add('Name')
             $null = $Expected.Columns.Add('Junk')
@@ -420,7 +429,7 @@ InModuleScope -ModuleName Assert {
             $null = $Expected.Rows.Add(1, 'A', 'AAA', 5)
             $null = $Expected.Rows.Add(3, 'C', $null, $null)
 
-            $Actual = [Data.DataTable]::new('Test')
+            $Actual = New-Object Data.DataTable 'Test'
             $null = $Actual.Columns.Add('IDD', [System.Int32])
             $null = $Actual.Columns.Add('Name')
             $null = $Actual.Columns.Add('Junk')
@@ -430,8 +439,27 @@ InModuleScope -ModuleName Assert {
 
             Assert-Equivalent -Actual $Actual -Expected $Expected
 
-            $ExpectedDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Expected))
-            $ActualDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Actual))
+            function SerializeDeserialize ($InputObject) {
+                # psv2 compatibility
+                # $ExpectedDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Expected))
+                # Alternatively this could be done in memory via https://github.com/Jaykul/Reflection/blob/master/CliXml.psm1, but I don't want to fiddle with more 
+                # relfection right now
+                try {
+                    $path = [IO.Path]::GetTempFileName()
+                
+                    Export-Clixml -Path $path -InputObject $InputObject -Force | Out-Null 
+                    Import-Clixml -Path $path 
+                }
+                finally {
+                    if ($null -ne $path -and (Test-Path $path)) {
+                        Remove-Item -Path $path -Force
+                    }
+                }
+            } 
+           
+            
+            $ExpectedDeserialized = SerializeDeserialize $Expected
+            $ActualDeserialized = SerializeDeserialize $Actual
             Assert-Equivalent -Actual $ActualDeserialized -Expected $ExpectedDeserialized
             Assert-Equivalent -Actual $Actual -Expected $ExpectedDeserialized
 
@@ -440,8 +468,8 @@ InModuleScope -ModuleName Assert {
             $Actual.Rows[1].Name = 'D'
             {Assert-Equivalent -Actual $Actual -Expected $Expected} | Should -Throw
 
-            $ExpectedDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Expected))
-            $ActualDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Actual))
+            $ExpectedDeserialized = SerializeDeserialize $Expected
+            $ActualDeserialized = SerializeDeserialize $Actual
             {Assert-Equivalent -Actual $ActualDeserialized -Expected $ExpectedDeserialized} | Should -Throw
             {Assert-Equivalent -Actual $Actual -Expected $ExpectedDeserialized} | Should -Throw
         }

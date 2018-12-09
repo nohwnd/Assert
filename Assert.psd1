@@ -1,7 +1,7 @@
 @{
 
 # Script module or binary module file associated with this manifest.
-RootModule = 'Assert.psm1'
+ModuleToProcess = 'Assert.psm1'
 
 # Version number of this module.
 ModuleVersion = '0.0.0'
