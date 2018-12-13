@@ -10,3 +10,6 @@ environment:
 build_script:
   - ps:   if ( $env:PowerShellEdition -eq 'WindowsPowerShell' ) { ./tst/test.ps1 -CIBuild }
   - pwsh: if ( $env:PowerShellEdition -eq 'PowerShellCore'    ) { ./tst/test.ps1 -CIBuild }
+  
+on_finish:
+  -pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Join-Path $pwd 'TestResults.xml'))
