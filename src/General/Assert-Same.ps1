@@ -1,7 +1,7 @@
 function Assert-Same {
     param (
         [Parameter(Position=1, ValueFromPipeline=$true)]
-        $Actual, 
+        $Actual,
         [Parameter(Position=0)]
         $Expected,
         [String]$CustomMessage
@@ -13,11 +13,11 @@ function Assert-Same {
     }
 
     $Actual = Collect-Input -ParameterInput $Actual -PipelineInput $local:Input
-    if (-not ([object]::ReferenceEquals($Expected, $Actual))) 
-    { 
+    if (-not ([object]::ReferenceEquals($Expected, $Actual)))
+    {
         $Message = Get-AssertionMessage -Expected $Expected -Actual $Actual -CustomMessage $CustomMessage -DefaultMessage "Expected <expectedType> '<expected>', to be the same instance but it was not."
         throw [Assertions.AssertionException]$Message
     }
-    
+
     $Actual
 }

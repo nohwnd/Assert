@@ -8,7 +8,7 @@ Describe "Assert-Throw" {
     }
 
     It "Passes when non-terminating exception is thrown" {
-        
+
         { Write-Error "fail!" } | Assert-Throw
     }
 
@@ -112,7 +112,7 @@ Describe "Assert-Throw" {
         It 'Exception is thrown by throw keyword' {
             { throw "fail!" } | Assert-Throw
         }
-        
+
         It 'Exception is thrown by static .net method' {
             { [io.directory]::delete("non-existing") } | Assert-Throw
         }
@@ -126,7 +126,7 @@ Describe "Assert-Throw" {
         It 'Exception is thrown by division by zero' {
             { 1/$null } | Assert-Throw
         }
-        
+
         It 'Terminating error is thrown by cmdlet failing to bind paramaters' {
             { Get-Item "non-existing" } | Assert-Throw
         }
@@ -150,59 +150,59 @@ Describe "Assert-Throw" {
 
 Describe "General try catch behavior" {
     It 'Gets error record when exception is thrown by throw keyword' {
-        try 
+        try
         {
             &{ throw "fail!" }
         }
-        catch 
+        catch
         {
             $err = $_
         }
-        
+
         $err | Verify-NotNull
         $err | Verify-Type ([Management.Automation.ErrorRecord])
     }
-    
+
     It 'Gets error record when exception is thrown from .net' {
-        try 
+        try
         {
             &{ [io.directory]::delete("non-existing"); }
         }
-        catch 
+        catch
         {
             $err = $_
         }
-        
+
         $err | Verify-NotNull
         $err | Verify-Type ([Management.Automation.ErrorRecord])
     }
 
     It 'Gets error record when non-terminating error is translated to terminating error' {
-        try 
+        try
         {
             &{ Get-Item "non-existing" -ErrorAction 'stop' }
         }
-        catch 
+        catch
         {
             $err = $_
         }
-        
+
         $err | Verify-NotNull
         $err | Verify-Type ([Management.Automation.ErrorRecord])
     }
 
-    
+
     It 'Gets error record when non-terminating error is translated to terminating error' {
-        try 
+        try
         {
             $ErrorActionPreference = 'stop'
             &{ Get-Item "non-existing" }
         }
-        catch 
+        catch
         {
             $err = $_
         }
-        
+
         $err | Verify-NotNull
         $err | Verify-Type ([Management.Automation.ErrorRecord])
     }
@@ -212,18 +212,18 @@ InModuleScope -ModuleName "Assert" {
     Describe "Get-Error" {
         It 'Unwraps error from invoke with context' {
             $ErrorActionPreference = 'stop'
-            try 
+            try
             {
                 $sb = {
                     Get-Item "/non-existing"
                 }
                 Invoke-WithContext $sb -Variables @{ ErrorActionPreference = "Stop" }
             }
-            catch 
+            catch
             {
                 $e = $_
             }
-            
+
             $err = Get-Error $e
             $err.ExceptionMessage | Verify-Like "Cannot find path*because it does not exist."
             $err.ExceptionType | Verify-Equal ([Management.Automation.ItemNotFoundException])

@@ -22,7 +22,7 @@ Describe "Assert-True" {
         It "Given value '<expected>' that is not `$true it returns expected message '<message>'" -TestCases @(
             @{ Actual = $false ; Message = "Expected bool '`$false' to be bool '`$true' or truthy value."},
             @{ Actual = 0 ; Message = "Expected int '0' to be bool '`$true' or truthy value."}
-        ) { 
+        ) {
             param($Actual, $Message)
             $error = { Assert-True -Actual $Actual } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal $Message

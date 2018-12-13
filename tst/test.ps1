@@ -5,7 +5,7 @@ $here = $MyInvocation.MyCommand.Path | Split-Path
 Set-StrictMode -Version Latest
 
 try {
-    pushd $here
+    Push-Location $here
 
     # this is useful also for running in docker
     # but keeping it without the build switch
@@ -14,13 +14,13 @@ try {
     if ($CIBuild) {
         $minimumNugetProviderVersion = '2.8.5.201'
         # not using the -Name parameter because it throws when Nuget is not installed
-        if (-not (Get-PackageProvider -ListAvailable | Where { $_.Name -eq "Nuget" -and $_.Version -ge $minimumNugetProviderVersion })) {
+        if (-not (Get-PackageProvider -ListAvailable | Where-Object { $_.Name -eq "Nuget" -and $_.Version -ge $minimumNugetProviderVersion })) {
             "Installing Nuget package provider."
             Install-PackageProvider -Name NuGet -MinimumVersion $minimumNugetProviderVersion -Force
         }
 
         $minimumPesterVersion = "4.4.0"
-        if (-not (Get-Module -ListAvailable | Where { $_.Name -eq"Pester" -and $_.Version -ge $minimumPesterVersion })) {
+        if (-not (Get-Module -ListAvailable | Where-Object { $_.Name -eq"Pester" -and $_.Version -ge $minimumPesterVersion })) {
             "Installing Pester."
             Install-Module -Name Pester -Force -SkipPublisherCheck -MinimumVersion $minimumPesterVersion -Scope CurrentUser
         }
@@ -31,7 +31,7 @@ try {
     # import the tested module
     Import-Module ./../Assert.psd1
 
-    # import modules and utilities for testing 
+    # import modules and utilities for testing
     Import-Module Pester
     Import-Module ./TestHelpers.psm1
     Import-Module ./../Axiom/src/Axiom.psm1 -WarningAction SilentlyContinue
@@ -50,5 +50,5 @@ try {
     }
 }
 finally {
-    popd
+    Pop-Location
 }

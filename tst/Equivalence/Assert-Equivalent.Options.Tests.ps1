@@ -6,7 +6,7 @@ InModuleScope -ModuleName Assert {
                 @{ Path = $null }
                 @{ Path = "ParentProperty1" }
                 @{ Path = "ParentProperty1.ParentProperty2" }
-            ) { 
+            ) {
                 param ($Path)
 
             $expected = New-PSObject @{
@@ -26,7 +26,7 @@ InModuleScope -ModuleName Assert {
             @{ Path = $null }
             @{ Path = "ParentProperty1" }
             @{ Path = "ParentProperty1.ParentProperty2" }
-        ) { 
+        ) {
             param ($Path)
             $expected = New-PSObject @{
                 Name = "Jakub"
@@ -40,7 +40,7 @@ InModuleScope -ModuleName Assert {
                 $options = Get-EquivalencyOption -ExcludePath ("$Path.Age".Trim('.'))
                 Compare-Equivalent -Actual $actual -Expected $expected -Path $Path -Options $options | Verify-Null
             }
-        
+
 
         It "Given a full path to a property on object that is in collection it ignores it on the Expected object" {
             $expected = New-PSObject @{
@@ -66,7 +66,7 @@ InModuleScope -ModuleName Assert {
                 )
             }
 
-                
+
                 $options = Get-EquivalencyOption -ExcludePath "ProgrammingLanguages.Type"
                 Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
             }
@@ -95,7 +95,7 @@ InModuleScope -ModuleName Assert {
                 )
             }
 
-                
+
                 $options = Get-EquivalencyOption -ExcludePath "ProgrammingLanguages.Type"
                 Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
             }
@@ -133,7 +133,7 @@ InModuleScope -ModuleName Assert {
             # collections are handled, and we filter out based on the path on the start of Compare-Equivalent
             # so the same rules should apply transitively no matter the collection type
 
-            
+
             It "Given a full path to a key on a hashtable it ignores it on the Expected hashtable" {
                 $expected = @{
                     Name = "C#"
@@ -190,7 +190,7 @@ InModuleScope -ModuleName Assert {
                 Compare-Equivalent -Actual $actual -Expected $expected -Options $options | Verify-Null
             }
 
-        It "Given options it passes them correctly from Assert-Equivalent" { 
+        It "Given options it passes them correctly from Assert-Equivalent" {
             $expected = New-PSObject @{
                 Name = "Jakub"
                 Location = "Prague"
@@ -210,108 +210,108 @@ InModuleScope -ModuleName Assert {
         }
 
         Context "Wildcard path exclusions" {
-            It "Given wildcarded path it ignores it on the expected object" { 
+            It "Given wildcarded path it ignores it on the expected object" {
                 $expected = [PSCustomObject] @{
                     Name = "Jakub"
                     Location = "Prague"
                 }
-    
+
                 $actual = [PSCustomObject] @{
                     Name = "Jakub"
                 }
-    
+
                 $options = Get-EquivalencyOption -ExcludePath Loc*
-                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options
             }
 
-            It "Given wildcarded path it ignores it on the actual object" { 
+            It "Given wildcarded path it ignores it on the actual object" {
                 $expected = [PSCustomObject] @{
                     Name = "Jakub"
                 }
-    
+
                 $actual = [PSCustomObject] @{
                     Name = "Jakub"
                     Location = "Prague"
                 }
-    
+
                 $options = Get-EquivalencyOption -ExcludePath Loc*
-                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options
             }
 
-            It "Given wildcarded path it ignores it on the expected hashtable" { 
+            It "Given wildcarded path it ignores it on the expected hashtable" {
                 $expected = @{
                     Name = "Jakub"
                     Location = "Prague"
                 }
-    
+
                 $actual = @{
                     Name = "Jakub"
                 }
-    
+
                 $options = Get-EquivalencyOption -ExcludePath Loc*
-                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options
             }
 
-            It "Given wildcarded path it ignores it on the actual hashtable" { 
+            It "Given wildcarded path it ignores it on the actual hashtable" {
                 $expected = @{
                     Name = "Jakub"
                 }
-    
+
                 $actual = @{
                     Name = "Jakub"
                     Location = "Prague"
                 }
-    
+
                 $options = Get-EquivalencyOption -ExcludePath Loc*
-                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options
             }
 
-            It "Given wildcarded path it ignores it on the expected dictionary" { 
+            It "Given wildcarded path it ignores it on the expected dictionary" {
                 $expected = New-Dictionary @{
                     Name = "Jakub"
                     Location = "Prague"
                 }
-    
+
                 $actual = New-Dictionary @{
                     Name = "Jakub"
                 }
-    
+
                 $options = Get-EquivalencyOption -ExcludePath Loc*
-                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options
             }
 
-            It "Given wildcarded path it ignores it on the actual dictionary" { 
+            It "Given wildcarded path it ignores it on the actual dictionary" {
                 $expected = New-Dictionary @{
                     Name = "Jakub"
                 }
-    
+
                 $actual = New-Dictionary @{
                     Name = "Jakub"
                     Location = "Prague"
                 }
-    
+
                 $options = Get-EquivalencyOption -ExcludePath Loc*
-                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options
             }
         }
 
         Context "-ExcludePathsNotOnExpected" {
-            It "Given actual object that has more properties that expected it skips them" { 
+            It "Given actual object that has more properties that expected it skips them" {
                 $expected = [PSCustomObject] @{
                     Name = "Jakub"
                 }
-    
+
                 $actual = [PSCustomObject] @{
                     Name = "Jakub"
                     Location = "Prague"
                     Age = 30
                 }
-    
+
                 $options = Get-EquivalencyOption -ExcludePathsNotOnExpected
-                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options
             }
 
-            It "Given actual hashtable that has more keys that expected it skips them" { 
+            It "Given actual hashtable that has more keys that expected it skips them" {
                 $expected = @{
                     Name = "Jakub"
                 }
@@ -323,10 +323,10 @@ InModuleScope -ModuleName Assert {
                 }
 
                 $options = Get-EquivalencyOption -ExcludePathsNotOnExpected
-                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options
             }
 
-            It "Given actual dictionary that has more keys that expected it skips them" { 
+            It "Given actual dictionary that has more keys that expected it skips them" {
                 $expected = New-Dictionary @{
                     Name = "Jakub"
                 }
@@ -338,13 +338,13 @@ InModuleScope -ModuleName Assert {
                 }
 
                 $options = Get-EquivalencyOption -ExcludePathsNotOnExpected
-                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options 
+                Assert-Equivalent -Actual $actual -Expected $expected -Options $Options
             }
         }
     }
 
-    Describe "Compare-Equiavlent - equality comparison options" { 
-        It "Given objects that are equivalent and -Comparator Equality option it compares them as different" { 
+    Describe "Compare-Equiavlent - equality comparison options" {
+        It "Given objects that are equivalent and -Comparator Equality option it compares them as different" {
             $expected = New-PsObject @{
                 LikesIfsInMocks = $false
             }
@@ -361,7 +361,7 @@ InModuleScope -ModuleName Assert {
 
     Describe "Printing Options into difference report" {
 
-        It "Given options that exclude property it shows up in the difference report correctly" { 
+        It "Given options that exclude property it shows up in the difference report correctly" {
                 $options = Get-EquivalencyOption -ExcludePath "Age", "Name", "Person.Age", "Person.Created*"
                 Clear-WhiteSpace (Format-EquivalencyOptions -Options $options) | Verify-Equal (Clear-WhiteSpace "
                     Exclude path 'Age'
@@ -370,7 +370,7 @@ InModuleScope -ModuleName Assert {
                     Exclude path 'Person.Created*'")
         }
 
-        It "Given options that exclude property it shows up in the difference report correctly" { 
+        It "Given options that exclude property it shows up in the difference report correctly" {
             $options = Get-EquivalencyOption -ExcludePathsNotOnExpected
             Clear-WhiteSpace (Format-EquivalencyOptions -Options $options) | Verify-Equal (Clear-WhiteSpace "
             Excluding all paths not found on Expected")

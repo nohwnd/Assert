@@ -1,10 +1,10 @@
-function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @{}, $CustomMessage, $DefaultMessage, [switch]$Pretty) 
+function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @{}, $CustomMessage, $DefaultMessage, [switch]$Pretty)
 {
     if (-not $CustomMessage)
     {
         $CustomMessage = $DefaultMessage
     }
-    
+
     $expectedFormatted = Format-Nicely -Value $Expected -Pretty:$Pretty
     $actualFormatted = Format-Nicely -Value $Actual -Pretty:$Pretty
 
@@ -16,7 +16,7 @@ function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @
         }
         else {
             if ($Pretty) {
-                $optionMessage = "Used options:$($Option | foreach { "`n$_" })."
+                $optionMessage = "Used options:$($Option | ForEach-Object { "`n$_" })."
             }
         }
     }
@@ -36,8 +36,8 @@ function Get-AssertionMessage ($Expected, $Actual, $Option, [hashtable]$Data = @
     if (-not $Pretty) {
         $CustomMessage
     }
-    else 
+    else
     {
-        $CustomMessage + "`n`n" 
+        $CustomMessage + "`n`n"
     }
 }

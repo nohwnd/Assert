@@ -26,7 +26,7 @@ Describe "Assert-False" {
         It "Given value '<actual>' that is not `$false it returns expected message '<message>'" -TestCases @(
             @{ Actual = $true ; Message = "Expected bool '`$true' to be bool '`$false' or falsy value 0, """", `$null, @()."},
             @{ Actual = 10 ; Message = "Expected int '10' to be bool '`$false' or falsy value 0, """", `$null, @()."}
-        ) { 
+        ) {
             param($Actual, $Message)
             $error = { Assert-False -Actual $Actual } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal $Message

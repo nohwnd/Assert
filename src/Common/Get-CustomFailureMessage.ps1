@@ -1,4 +1,4 @@
-function Get-CustomFailureMessage ($CustomMessage, $Expected, $Actual) 
+function Get-CustomFailureMessage ($CustomMessage, $Expected, $Actual)
 {
     $formatted = $CustomMessage -f $Expected, $Actual
     $tokensReplaced = $formatted -replace '<expected>', $Expected -replace '<actual>', $Actual

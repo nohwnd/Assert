@@ -9,9 +9,9 @@ function Verify-Type {
     if ($Actual -isnot $Expected) {
         $message = "Expected value to be of type $($Expected.FullName)`n"+
         "Expected: '$($Expected.FullName)'`n"+
-        "Actual  : '$($Actual.GetType().FullName)'" 
+        "Actual  : '$($Actual.GetType().FullName)'"
         throw [Exception]$message
     }
-    
+
     $Actual
 }

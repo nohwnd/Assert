@@ -1,11 +1,11 @@
 Get-Module Assert | Remove-Module
 Import-module ./Assert.psd1
 
-$expected = [PSCustomObject]@{ 
-    Name = 'Jakub' 
+$expected = [PSCustomObject]@{
+    Name = 'Jakub'
     Age = 28
     KnowsPowerShell = $true
-    Languages = 'Czech', 'English' 
+    Languages = 'Czech', 'English'
     ProgrammingLanguage =
         [PSCustomObject]@{
             Name = 'PowerShell'
@@ -13,15 +13,15 @@ $expected = [PSCustomObject]@{
         }
 }
 
-$actual = [PSCustomObject]@{ 
+$actual = [PSCustomObject]@{
     Name = 'Jkb'
     KnowsPowerShell = 0
     Languages = 'Czech', 'English', 'German'
-    ProgrammingLanguage = 
+    ProgrammingLanguage =
         [PSCustomObject]@{
             Name = 'C#'
             Type = 'ObjectOriented'
-        }    
+        }
 }
 
 Assert-Equivalent -a $actual -e $expected -Verbose

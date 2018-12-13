@@ -5,37 +5,37 @@ function New-PSObject ([hashtable]$Property) {
 function Invoke-WithContext {
     param(
         [Parameter(Mandatory = $true )]
-        [ScriptBlock] $ScriptBlock, 
+        [ScriptBlock] $ScriptBlock,
         [Parameter(Mandatory = $true)]
         [hashtable] $Variables)
-    
-    # this functions is a psv2 compatible version of 
-    # ScriptBlock InvokeWithContext that is not available 
+
+    # this functions is a psv2 compatible version of
+    # ScriptBlock InvokeWithContext that is not available
     # in that version of PowerShell
 
     # this is what the code below does
     # which in effect sets the context without detaching the
     # scriptblock from the original scope
     # & {
-    #     # context 
-    #     $a = 10 
+    #     # context
+    #     $a = 10
     #     $b = 20
     #     # invoking our original scriptblock
     #     & $sb
     # }
 
     # a similar solution was $SessionState.PSVariable.Set('a', 10)
-    # but that sets the variable for all "scopes" in the current 
+    # but that sets the variable for all "scopes" in the current
     # scope so the value persist after the original has run which
-    # is not correct, 
+    # is not correct,
 
     $scriptBlockWithContext = {
         param($context)
 
-        foreach ($pair in $context.Variables.GetEnumerator()) { 
+        foreach ($pair in $context.Variables.GetEnumerator()) {
             New-Variable -Name $pair.Key -Value $pair.Value
         }
-        
+
         # this cleans up the variable from the session
         # the subexpression outputs the value of the variable
         # and then deletes the variable, so the value is still passed
@@ -64,7 +64,7 @@ function Get-Type ($InputObject) {
     try {
         $ErrorActionPreference = 'Stop'
         # normally this would not ever throw
-        # but in psv2 when datatable is deserialized then 
+        # but in psv2 when datatable is deserialized then
         # [Deserialized.System.Data.DataTable] does not contain
         # .GetType()
         $InputObject.GetType()
