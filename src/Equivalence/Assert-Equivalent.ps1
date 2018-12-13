@@ -58,7 +58,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
 
     if (-not (Is-Collection -Value $Actual))
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is not a collection it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
+        v -Difference "`$Actual is not a collection it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Collection -Value $Expected
         $expectedLength = $expected.Length
         $actualFormatted = Format-Nicely -Value $actual
@@ -66,19 +66,19 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
     }
 
     if (-not (Is-CollectionSize -Expected $Expected -Actual $Actual)) {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual does not have the same size ($($Actual.Length)) as `$Expected ($($Expected.Length)) so they are not equivalent."
+        v -Difference "`$Actual does not have the same size ($($Actual.Length)) as `$Expected ($($Expected.Length)) so they are not equivalent."
         return Get-CollectionSizeNotTheSameMessage -Expected $Expected -Actual $Actual -Property $Property
     }
 
     $eEnd = if ($Expected.Length -is [int]) {$Expected.Length} else {$Expected.Count}
     $aEnd = if ($Actual.Length -is [int]) {$Actual.Length} else {$Actual.Count}
-    C:\Program Files (x86)\vim\vim80\vim.exe "Comparing items in collection, `$Expected has lenght $eEnd, `$Actual has length $aEnd."
+    v "Comparing items in collection, `$Expected has lenght $eEnd, `$Actual has length $aEnd."
     $taken = @()
     $notFound = @()
     $anyDifferent = $false
     for ($e=0; $e -lt $eEnd; $e++) {
         # todo: retest strict order
-        C:\Program Files (x86)\vim\vim80\vim.exe "`nSearching for `$Expected[$e]:"
+        v "`nSearching for `$Expected[$e]:"
         $currentExpected = $Expected[$e]
         $found = $false
         if ($StrictOrder) {
@@ -87,7 +87,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
             {
                 $taken += $e
                 $found = $true
-                C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "`Found `$Expected[$e]."
+                v -Equivalence "`Found `$Expected[$e]."
             }
         }
         else {
@@ -95,11 +95,11 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
                 # we already took this item as equivalent to an item
                 # in the expected collection, skip it
                 if ($taken -contains $a) {
-                    C:\Program Files (x86)\vim\vim80\vim.exe "Skipping `$Actual[$a] because it is already taken."
+                    v "Skipping `$Actual[$a] because it is already taken."
                     continue }
                 $currentActual = $Actual[$a]
                 # -not, because $null means no differences, and some strings means there are differences
-                C:\Program Files (x86)\vim\vim80\vim.exe "Comparing `$Actual[$a] to `$Expected[$e] to see if they are equivalent."
+                v "Comparing `$Actual[$a] to `$Expected[$e] to see if they are equivalent."
                 if (-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property -Options $Options))
                 {
                     # add the index to the list of taken items so we can skip it
@@ -107,7 +107,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
                     # arrays multiple same items
                     $taken += $a
                     $found = $true
-                    C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "`Found equivalent item for `$Expected[$e] at `$Actual[$a]."
+                    v -Equivalence "`Found equivalent item for `$Expected[$e] at `$Actual[$a]."
                     # we already found the item we
                     # can move on to the next item in Exected array
                     break
@@ -116,7 +116,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
         }
         if (-not $found)
         {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual does not contain `$Expected[$e]."
+            v -Difference "`$Actual does not contain `$Expected[$e]."
             $anyDifferent = $true
             $notFound += $currentExpected
         }
@@ -127,7 +127,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
     # @($null) which evaluates to false, even though
     # there was a single item that we did not find
     if ($anyDifferent) {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual and `$Expected arrays are not equivalent."
+        v -Difference "`$Actual and `$Expected arrays are not equivalent."
         $Expected = Format-Nicely -Value $Expected
         $Actual = Format-Nicely -Value $Actual
         $notFoundFormatted = Format-Nicely -Value ( $notFound | ForEach-Object { Format-Nicely -Value $_ } )
@@ -135,7 +135,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
         $propertyMessage = if ($Property) {" in property $Property which is"}
         return "Expected collection$propertyMessage '$Expected' to be equivalent to '$Actual' but some values were missing: '$notFoundFormatted'."
     }
-    C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "`$Actual and `$Expected arrays are equivalent."
+    v -Equivalence "`$Actual and `$Expected arrays are equivalent."
 }
 
 function Compare-DataTableEquivalent ($Expected, $Actual, $Property, $Options) {
@@ -204,31 +204,31 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property, $Options) {
     if (($null -eq $Options) -or
         ($null -eq $Options.Comparator) -or
         ("Equivalency" -eq $Options.Comparator)) {
-        C:\Program Files (x86)\vim\vim80\vim.exe "Equivalency comparator is used, values will be compared for equivalency."
+        v "Equivalency comparator is used, values will be compared for equivalency."
         # fix that string 'false' becomes $true boolean
         if ($Actual -is [Bool] -and $Expected -is [string] -and "$Expected" -eq 'False')
         {
-            C:\Program Files (x86)\vim\vim80\vim.exe "`$Actual is a boolean, and `$Expected is a 'False' string, which we consider equivalent to boolean `$false. Setting `$Expected to `$false."
+            v "`$Actual is a boolean, and `$Expected is a 'False' string, which we consider equivalent to boolean `$false. Setting `$Expected to `$false."
             $Expected = $false
             if ($Expected -ne $Actual)
             {
-                C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
+                v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
                 return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property -Options $Options
             }
-            C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
+            v -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
             return
         }
 
         if ($Expected -is [Bool] -and $Actual -is [string] -and "$Actual" -eq 'False')
         {
-            C:\Program Files (x86)\vim\vim80\vim.exe "`$Actual is a 'False' string, which we consider equivalent to boolean `$false. `$Expected is a boolean. Setting `$Actual to `$false."
+            v "`$Actual is a 'False' string, which we consider equivalent to boolean `$false. `$Expected is a boolean. Setting `$Actual to `$false."
             $Actual = $false
             if ($Expected -ne $Actual)
             {
-                C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
+                v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
                 return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property -Options $Options
             }
-            C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
+            v -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual)."
             return
         }
 
@@ -236,33 +236,33 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property, $Options) {
         if (Is-ScriptBlock -Value $Expected)
         {
             # todo: compare by equivalency like strings?
-            C:\Program Files (x86)\vim\vim80\vim.exe "`$Expected is a ScriptBlock, scriptblocks are considered equivalent when their content is equal. Converting `$Expected to string."
+            v "`$Expected is a ScriptBlock, scriptblocks are considered equivalent when their content is equal. Converting `$Expected to string."
             #forcing scriptblock to serialize to string and then comparing that
             if ("$Expected" -ne $Actual)
             {
                 # todo: difference on index?
-                C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is not equivalent to `$Expected because their contents differ."
+                v -Difference "`$Actual is not equivalent to `$Expected because their contents differ."
                 return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path -Options $Options
             }
-            C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "`$Actual is equivalent to `$Expected because their contents are equal."
+            v -Equivalence "`$Actual is equivalent to `$Expected because their contents are equal."
             return
         }
     }
     else
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe "Equality comparator is used, values will be compared for equality."
+        v "Equality comparator is used, values will be compared for equality."
     }
 
-    C:\Program Files (x86)\vim\vim80\vim.exe "Comparing values as $(Format-Nicely (Get-Type $Expected)) because `$Expected has that type."
+    v "Comparing values as $(Format-Nicely (Get-Type $Expected)) because `$Expected has that type."
     # todo: shorter messages when both sides have the same type (do not compare by using -is, instead query the type and compare it) because -is is true even for parent types
     $type = Get-Type $Expected
     $coalescedActual = $Actual -as $type
     if ($Expected -ne $Actual)
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual), and $(Format-Nicely $Actual) coalesced to $(Format-Nicely $type) is $(Format-Nicely $coalescedActual)."
+        v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual), and $(Format-Nicely $Actual) coalesced to $(Format-Nicely $type) is $(Format-Nicely $coalescedActual)."
         return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property -Options $Options
     }
-    C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual), and $(Format-Nicely $Actual) coalesced to $(Format-Nicely $type) is $(Format-Nicely $coalescedActual)."
+    v -Equivalence "`$Actual is equivalent to $(Format-Nicely $Expected) because it is $(Format-Nicely $Actual), and $(Format-Nicely $Actual) coalesced to $(Format-Nicely $type) is $(Format-Nicely $coalescedActual)."
 }
 
 function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
@@ -273,7 +273,7 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
 
     if (-not (Is-Hashtable -Value $Actual))
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is not a hashtable it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
+        v -Difference "`$Actual is not a hashtable it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'."
@@ -284,7 +284,7 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
     $actualKeys = $Actual.Keys
     $expectedKeys = $Expected.Keys
 
-    C:\Program Files (x86)\vim\vim80\vim.exe "`Comparing all ($($expectedKeys.Count)) keys from `$Expected to keys in `$Actual."
+    v "`Comparing all ($($expectedKeys.Count)) keys from `$Expected to keys in `$Actual."
     $result = @()
     foreach ($k in $expectedKeys)
     {
@@ -295,14 +295,14 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
         $actualHasKey = $actualKeys -contains $k
         if (-not $actualHasKey)
         {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is missing key '$k'."
+            v -Difference "`$Actual is missing key '$k'."
             $result += "Expected has key '$k' that the other object does not have."
             continue
         }
 
         $expectedValue = $Expected[$k]
         $actualValue = $Actual[$k]
-        C:\Program Files (x86)\vim\vim80\vim.exe "Both `$Actual and `$Expected have key '$k', comparing thier contents."
+        v "Both `$Actual and `$Expected have key '$k', comparing thier contents."
         $result += Compare-Equivalent -Expected $expectedValue -Actual $actualValue -Path "$Property.$k" -Options $Options
     }
 
@@ -314,10 +314,10 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
 
         # fix for powershell v2 where foreach goes once over null
         if ($filteredKeysNotInExpected | Where-Object { $_ }) {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
+            v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
         }
         else {
-            C:\Program Files (x86)\vim\vim80\vim.exe "`$Actual has no keys that we did not find on `$Expected."
+            v "`$Actual has no keys that we did not find on `$Expected."
         }
 
         foreach ($k in $filteredKeysNotInExpected | Where-Object { $_ })
@@ -328,13 +328,13 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
 
     if ($result | Where-Object { $_ })
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Difference "Hashtables `$Actual and `$Expected are not equivalent."
+        v -Difference "Hashtables `$Actual and `$Expected are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
     }
 
-    C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "Hastables `$Actual and `$Expected are equivalent."
+    v -Equivalence "Hastables `$Actual and `$Expected are equivalent."
 }
 
 function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) {
@@ -345,7 +345,7 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
 
     if (-not (Is-Dictionary -Value $Actual))
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is not a dictionary it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
+        v -Difference "`$Actual is not a dictionary it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected dictionary '$expectedFormatted', but got '$actualFormatted'."
@@ -356,7 +356,7 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
     $actualKeys = $Actual.Keys
     $expectedKeys = $Expected.Keys
 
-    C:\Program Files (x86)\vim\vim80\vim.exe "`Comparing all ($($expectedKeys.Count)) keys from `$Expected to keys in `$Actual."
+    v "`Comparing all ($($expectedKeys.Count)) keys from `$Expected to keys in `$Actual."
     $result = @()
     foreach ($k in $expectedKeys)
     {
@@ -367,14 +367,14 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
         $actualHasKey = $actualKeys -contains $k
         if (-not $actualHasKey)
         {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is missing key '$k'."
+            v -Difference "`$Actual is missing key '$k'."
             $result += "Expected has key '$k' that the other object does not have."
             continue
         }
 
         $expectedValue = $Expected[$k]
         $actualValue = $Actual[$k]
-        C:\Program Files (x86)\vim\vim80\vim.exe "Both `$Actual and `$Expected have key '$k', comparing thier contents."
+        v "Both `$Actual and `$Expected have key '$k', comparing thier contents."
         $result += Compare-Equivalent -Expected $expectedValue -Actual $actualValue -Path "$Property.$k" -Options $Options
     }
     if (!$Options.ExcludePathsNotOnExpected) {
@@ -384,10 +384,10 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
 
         # fix for powershell v2 where foreach goes once over null
         if ($filteredKeysNotInExpected | Where-Object { $_ }) {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
+            v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
         }
         else {
-            C:\Program Files (x86)\vim\vim80\vim.exe "`$Actual has no keys that we did not find on `$Expected."
+            v "`$Actual has no keys that we did not find on `$Expected."
         }
 
         foreach ($k in $filteredKeysNotInExpected | Where-Object { $_ })
@@ -398,12 +398,12 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
 
     if ($result)
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Difference "Dictionaries `$Actual and `$Expected are not equivalent."
+        v -Difference "Dictionaries `$Actual and `$Expected are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected dictionary '$expectedFormatted', but got '$actualFormatted'.`n$($result -join "`n")"
     }
-    C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "Dictionaries `$Actual and `$Expected are equivalent."
+    v -Equivalence "Dictionaries `$Actual and `$Expected are equivalent."
 }
 
 function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
@@ -414,7 +414,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
     }
 
     if (-not (Is-Object -Value $Actual)) {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is not an object it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
+        v -Difference "`$Actual is not an object it is a $(Format-Nicely (Get-Type $Actual)), so they are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected object '$expectedFormatted', but got '$actualFormatted'."
@@ -423,7 +423,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
     $actualProperties = $Actual.PsObject.Properties
     $expectedProperties = $Expected.PsObject.Properties
 
-    C:\Program Files (x86)\vim\vim80\vim.exe "Comparing ($(@($expectedProperties).Count)) properties of `$Expected to `$Actual."
+    v "Comparing ($(@($expectedProperties).Count)) properties of `$Expected to `$Actual."
     foreach ($p in $expectedProperties)
     {
         if (-not (Test-IncludedPath -PathSelector Property -InputObject $p -Options $Options -Path $Property))
@@ -435,17 +435,17 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
         $actualProperty = $actualProperties | Where-Object { $_.Name -eq $propertyName}
         if (-not $actualProperty)
         {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Difference "Property '$propertyName' was not found on `$Actual."
+            v -Difference "Property '$propertyName' was not found on `$Actual."
             "Expected has property '$PropertyName' that the other object does not have."
             continue
         }
-        C:\Program Files (x86)\vim\vim80\vim.exe "Property '$propertyName` was found on `$Actual, comparing them for equivalence."
+        v "Property '$propertyName` was found on `$Actual, comparing them for equivalence."
         $differences = Compare-Equivalent -Expected $p.Value -Actual $actualProperty.Value -Path "$Property.$propertyName" -Options $Options
         if (-not $differences) {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "Property '$propertyName` is equivalent."
+            v -Equivalence "Property '$propertyName` is equivalent."
         }
         else {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Difference "Property '$propertyName` is not equivalent."
+            v -Difference "Property '$propertyName` is not equivalent."
         }
         $differences
     }
@@ -461,10 +461,10 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
             Test-IncludedPath -PathSelector Property -Options $Options -Path $Property
 
         if ($filteredPropertiesNotInExpected) {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual has ($(@($filteredPropertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($filteredPropertiesNotInExpected))."
+            v -Difference "`$Actual has ($(@($filteredPropertiesNotInExpected).Count)) properties that `$Expected does not have: $(Format-Nicely @($filteredPropertiesNotInExpected))."
         }
         else {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "`$Actual has no extra properties that `$Expected does not have."
+            v -Equivalence "`$Actual has no extra properties that `$Expected does not have."
         }
 
         # fix for powershell v2 where foreach goes once over null
@@ -569,7 +569,7 @@ function Compare-Equivalent {
     )
 
     if ($null -ne $Options.ExludedPaths -and $Options.ExcludedPaths -contains $Path) {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Skip "Current path '$Path' is excluded from the comparison."
+        v -Skip "Current path '$Path' is excluded from the comparison."
         return
     }
 
@@ -577,31 +577,31 @@ function Compare-Equivalent {
     #logic in the functions that follow
     if ($null -eq $Expected)
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe "`$Expected is `$null, so we are expecting `$null."
+        v "`$Expected is `$null, so we are expecting `$null."
         if ($Expected -ne $Actual)
         {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely $Actual.GetType())."
+            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely $Actual.GetType())."
             return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path -Options $Options
         }
         # we terminate here, either we passed the test and return nothing, or we did not
         # and the previous statement returned message
-        C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "`$Actual is equivalent to `$null, because it is `$null."
+        v -Equivalence "`$Actual is equivalent to `$null, because it is `$null."
         return
     }
 
     if ($null -eq $Actual)
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Difference "`$Actual is $(Format-Nicely), but `$Expected has value of type $(Format-Nicely Get-Type $Expected), so they are not equivalent."
+        v -Difference "`$Actual is $(Format-Nicely), but `$Expected has value of type $(Format-Nicely Get-Type $Expected), so they are not equivalent."
         return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
     }
 
-    C:\Program Files (x86)\vim\vim80\vim.exe "`$Expected has type $(Get-Type $Expected), `$Actual has type $(Get-Type $Actual), they are both non-null."
+    v "`$Expected has type $(Get-Type $Expected), `$Actual has type $(Get-Type $Actual), they are both non-null."
 
     #test value types, strings, and single item arrays with values in them as values
     #expand the single item array to get to the value in it
     if (Is-Value -Value $Expected)
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe "`$Expected is a value (value type, string, single value array, or a scriptblock), we will be comparing `$Actual to value types."
+        v "`$Expected is a value (value type, string, single value array, or a scriptblock), we will be comparing `$Actual to value types."
         Compare-ValueEquivalent -Actual $Actual -Expected $Expected -Property $Path -Options $Options
         return
     }
@@ -609,13 +609,13 @@ function Compare-Equivalent {
     #are the same instance
     if (Test-Same -Expected $Expected -Actual $Actual)
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "`$Expected and `$Actual are equivalent because they are the same object (by reference)."
+        v -Equivalence "`$Expected and `$Actual are equivalent because they are the same object (by reference)."
         return
     }
 
     if (Is-Hashtable -Value $Expected)
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe "`$Expected is a hashtable, we will be comparing `$Actual to hashtables."
+        v "`$Expected is a hashtable, we will be comparing `$Actual to hashtables."
         Compare-HashtableEquivalent -Expected $Expected -Actual $Actual -Property $Path -Options $Options
         return
     }
@@ -623,7 +623,7 @@ function Compare-Equivalent {
     # dictionaries? (they are IEnumerable so they must go before collections)
     if (Is-Dictionary -Value $Expected)
     {
-        C:\Program Files (x86)\vim\vim80\vim.exe "`$Expected is a dictionary, we will be comparing `$Actual to dictionaries."
+        v "`$Expected is a dictionary, we will be comparing `$Actual to dictionaries."
         Compare-DictionaryEquivalent -Expected $Expected -Actual $Actual -Property $Path -Options $Options
         return
     }
@@ -631,14 +631,14 @@ function Compare-Equivalent {
     #compare DataTable
     if (Is-DataTable -Value $Expected) {
         # todo add verbose output to data table
-        C:\Program Files (x86)\vim\vim80\vim.exe "`$Expected is a datatable, we will be comparing `$Actual to datatables."
+        v "`$Expected is a datatable, we will be comparing `$Actual to datatables."
         Compare-DataTableEquivalent -Expected $Expected -Actual $Actual -Property $Path -Options $Options
         return
     }
 
     #compare collection
     if (Is-Collection -Value $Expected) {
-        C:\Program Files (x86)\vim\vim80\vim.exe "`$Expected is a collection, we will be comparing `$Actual to collections."
+        v "`$Expected is a collection, we will be comparing `$Actual to collections."
         Compare-CollectionEquivalent -Expected $Expected -Actual $Actual -Property $Path -Options $Options
         return
     }
@@ -646,12 +646,12 @@ function Compare-Equivalent {
     #compare DataRow
     if (Is-DataRow -Value $Expected) {
         # todo add verbose output to data row
-        C:\Program Files (x86)\vim\vim80\vim.exe "`$Expected is a datarow, we will be comparing `$Actual to datarows."
+        v "`$Expected is a datarow, we will be comparing `$Actual to datarows."
         Compare-DataRowEquivalent -Expected $Expected -Actual $Actual -Property $Path -Options $Options
         return
     }
 
-    C:\Program Files (x86)\vim\vim80\vim.exe "`$Expected is an object of type $(Get-Type $Expected), we will be comparing `$Actual to objects."
+    v "`$Expected is an object of type $(Get-Type $Expected), we will be comparing `$Actual to objects."
     Compare-ObjectEquivalent -Expected $Expected -Actual $Actual -Property $Path -Options $Options
 }
 
@@ -674,7 +674,7 @@ function Assert-Equivalent {
         throw [Assertions.AssertionException]$message
     }
 
-    C:\Program Files (x86)\vim\vim80\vim.exe -Equivalence "`$Actual and `$Expected are equivalent."
+    v -Equivalence "`$Actual and `$Expected are equivalent."
 }
 
 function Get-EquivalencyOption {
@@ -724,7 +724,7 @@ function Test-IncludedPath {
 
         if ($fullPath | Like-Any $Options.ExcludedPaths)
         {
-            C:\Program Files (x86)\vim\vim80\vim.exe -Skip "Current path $fullPath is excluded from the comparison."
+            v -Skip "Current path $fullPath is excluded from the comparison."
         }
         else
         {
@@ -748,7 +748,7 @@ function Like-Any {
         foreach ($pathFilter in $PathFilters | Where-Object { $_ }) {
             $r = $Path -like $pathFilter
             if ($r) {
-                C:\Program Files (x86)\vim\vim80\vim.exe -Skip "Path '$Path' matches filter '$pathFilter'."
+                v -Skip "Path '$Path' matches filter '$pathFilter'."
                 return $true
             }
         }
