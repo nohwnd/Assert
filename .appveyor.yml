@@ -7,7 +7,7 @@ environment:
   - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
     PowerShellEdition: PowerShellCore
 
-build_script:
+test_script:
   - ps:   if ( $env:PowerShellEdition -eq 'WindowsPowerShell' ) { ./tst/test.ps1 -CIBuild }
   - pwsh: if ( $env:PowerShellEdition -eq 'PowerShellCore'    ) { ./tst/test.ps1 -CIBuild }
   
