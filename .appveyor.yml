@@ -8,4 +8,5 @@ environment:
     PowerShellEdition: PowerShellCore
 
 build_script:
-  - pwsh: ./tst/test.ps1 -CIBuild
+  - ps:   if ( $env:PowerShellEdition -eq 'WindowsPowerShell' ) { ./tst/test.ps1 -CIBuild }
+  - pwsh: if ( $env:PowerShellEdition -eq 'PowerShellCore'    ) { ./tst/test.ps1 -CIBuild }
