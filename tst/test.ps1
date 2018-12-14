@@ -1,4 +1,4 @@
-param ($Path, [switch]$CIBuild)
+﻿param ($Path, [switch]$CIBuild)
 $ErrorActionPreference = 'Stop'
 $WarningPreference = 'SilentlyContinue'
 $here = $MyInvocation.MyCommand.Path | Split-Path
@@ -19,10 +19,10 @@ try {
             Install-PackageProvider -Name NuGet -MinimumVersion $minimumNugetProviderVersion -Force
         }
 
-        $minimumPesterVersion = "4.4.0"
+        $minimumPesterVersion = "4.4.3"
         if (-not (Get-Module -ListAvailable | Where-Object { $_.Name -eq"Pester" -and $_.Version -ge $minimumPesterVersion })) {
             "Installing Pester."
-            Install-Module -Name Pester -Force -SkipPublisherCheck -MinimumVersion $minimumPesterVersion -Scope CurrentUser
+            Install-Module -Name Pester -Force -MinimumVersion $minimumPesterVersion -Scope CurrentUser
         }
     }
 
