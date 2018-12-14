@@ -1,4 +1,4 @@
-InModuleScope -ModuleName Assert {
+﻿InModuleScope -ModuleName Assert {
     Describe "Get-AssertionMessage" {
         It "returns correct message when no tokens are provided" {
             $expected = "Static failure message."
@@ -36,11 +36,11 @@ InModuleScope -ModuleName Assert {
             Get-AssertionMessage -CustomMessage $customMessage -Expected 'a' -Actual 'b' -Option "CaseSensitive","IgnoreWhitespace" | Verify-Equal $expected
         }
 
-        It "returns correct message when additional data are provided" { 
+        It "returns correct message when additional data are provided" {
             $expected = "but 3 of them '1, 2, 3' did not pass the filter."
 
             $customMessage = "but <actualFilteredCount> of them '<actualFiltered>' did not pass the filter."
-            $data = @{ 
+            $data = @{
                 actualFilteredCount = 3
                 actualFiltered = 1, 2, 3
             }

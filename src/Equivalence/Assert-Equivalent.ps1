@@ -1,4 +1,4 @@
-function Test-Same ($Expected, $Actual) {
+﻿function Test-Same ($Expected, $Actual) {
     [object]::ReferenceEquals($Expected, $Actual)
 }
 
@@ -94,7 +94,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
             for ($a=0; $a -lt $aEnd; $a++) {
                 # we already took this item as equivalent to an item
                 # in the expected collection, skip it
-                if ($taken -contains $a) { 
+                if ($taken -contains $a) {
                     v "Skipping `$Actual[$a] because it is already taken."
                     continue }
                 $currentActual = $Actual[$a]
@@ -103,12 +103,12 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
                 if (-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property -Options $Options))
                 {
                     # add the index to the list of taken items so we can skip it
-                    # in the search, this way we can compare collections with 
+                    # in the search, this way we can compare collections with
                     # arrays multiple same items
                     $taken += $a
                     $found = $true
                     v -Equivalence "`Found equivalent item for `$Expected[$e] at `$Actual[$a]."
-                    # we already found the item we 
+                    # we already found the item we
                     # can move on to the next item in Exected array
                     break
                 }
@@ -123,14 +123,14 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
     }
 
     # do not depend on $notFound collection here
-    # failing to find a single $null, will return 
+    # failing to find a single $null, will return
     # @($null) which evaluates to false, even though
     # there was a single item that we did not find
     if ($anyDifferent) {
         v -Difference "`$Actual and `$Expected arrays are not equivalent."
         $Expected = Format-Nicely -Value $Expected
         $Actual = Format-Nicely -Value $Actual
-        $notFoundFormatted = Format-Nicely -Value ( $notFound | % { Format-Nicely -Value $_ } )
+        $notFoundFormatted = Format-Nicely -Value ( $notFound | ForEach-Object { Format-Nicely -Value $_ } )
 
         $propertyMessage = if ($Property) {" in property $Property which is"}
         return "Expected collection$propertyMessage '$Expected' to be equivalent to '$Actual' but some values were missing: '$notFoundFormatted'."
@@ -183,7 +183,7 @@ function Compare-DataTableEquivalent ($Expected, $Actual, $Property, $Options) {
     }
     $Expected = Format-Nicely -Value $Expected
     $Actual = Format-Nicely -Value $Actual
-    $notFoundFormatted = Format-Nicely -Value ( $notFound | % { Format-Nicely -Value $_ } )
+    $notFoundFormatted = Format-Nicely -Value ( $notFound | ForEach-Object { Format-Nicely -Value $_ } )
 
     if ($notFound) {
         $propertyMessage = if ($Property) {" in property $Property which is"}
@@ -198,11 +198,11 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property, $Options) {
         throw [ArgumentException]"Expected must be a Value."
     }
 
-    # we don't specify the options in some tests so here we make 
+    # we don't specify the options in some tests so here we make
     # sure that equivalency is used as the default
     # not ideal but better than rewriting 100 tests
-    if (($null -eq $Options) -or 
-        ($null -eq $Options.Comparator) -or 
+    if (($null -eq $Options) -or
+        ($null -eq $Options.Comparator) -or
         ("Equivalency" -eq $Options.Comparator)) {
         v "Equivalency comparator is used, values will be compared for equivalency."
         # fix that string 'false' becomes $true boolean
@@ -248,7 +248,7 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property, $Options) {
             return
         }
     }
-    else 
+    else
     {
         v "Equality comparator is used, values will be compared for equality."
     }
@@ -278,7 +278,7 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
         $actualFormatted = Format-Nicely -Value $Actual
         return "Expected hashtable '$expectedFormatted', but got '$actualFormatted'."
     }
-    
+
     # todo: if either side or both sides are empty hashtable make the verbose output shorter and nicer
 
     $actualKeys = $Actual.Keys
@@ -294,7 +294,7 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
 
         $actualHasKey = $actualKeys -contains $k
         if (-not $actualHasKey)
-        {   
+        {
             v -Difference "`$Actual is missing key '$k'."
             $result += "Expected has key '$k' that the other object does not have."
             continue
@@ -308,25 +308,25 @@ function Compare-HashtableEquivalent ($Actual, $Expected, $Property, $Options) {
 
     if (!$Options.ExcludePathsNotOnExpected) {
         # fix for powershell 2 where the array needs to be explicit
-        $keysNotInExpected = @( $actualKeys | where { $expectedKeys -notcontains $_ })
+        $keysNotInExpected = @( $actualKeys | Where-Object { $expectedKeys -notcontains $_ })
 
         $filteredKeysNotInExpected = @( $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options)
 
         # fix for powershell v2 where foreach goes once over null
-        if ($filteredKeysNotInExpected | where { $_ }) {
+        if ($filteredKeysNotInExpected | Where-Object { $_ }) {
             v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
         }
         else {
             v "`$Actual has no keys that we did not find on `$Expected."
         }
-        
-        foreach ($k in $filteredKeysNotInExpected | where { $_ })
+
+        foreach ($k in $filteredKeysNotInExpected | Where-Object { $_ })
         {
             $result += "Expected is missing key '$k' that the other object has."
         }
     }
 
-    if ($result | where { $_ })
+    if ($result | Where-Object { $_ })
     {
         v -Difference "Hashtables `$Actual and `$Expected are not equivalent."
         $expectedFormatted = Format-Nicely -Value $Expected
@@ -379,18 +379,18 @@ function Compare-DictionaryEquivalent ($Actual, $Expected, $Property, $Options) 
     }
     if (!$Options.ExcludePathsNotOnExpected) {
         # fix for powershell 2 where the array needs to be explicit
-        $keysNotInExpected = @( $actualKeys | where { $expectedKeys -notcontains $_ } )
+        $keysNotInExpected = @( $actualKeys | Where-Object { $expectedKeys -notcontains $_ } )
         $filteredKeysNotInExpected = @( $keysNotInExpected | Test-IncludedPath -PathSelector Hashtable -Path $Property -Options $Options )
-        
+
         # fix for powershell v2 where foreach goes once over null
-        if ($filteredKeysNotInExpected | where { $_ }) {
+        if ($filteredKeysNotInExpected | Where-Object { $_ }) {
             v -Difference "`$Actual has $($filteredKeysNotInExpected.Count) keys that were not found on `$Expected: $(Format-Nicely @($filteredKeysNotInExpected))."
         }
         else {
             v "`$Actual has no keys that we did not find on `$Expected."
         }
-        
-        foreach ($k in $filteredKeysNotInExpected | where { $_ })
+
+        foreach ($k in $filteredKeysNotInExpected | Where-Object { $_ })
         {
             $result += "Expected is missing key '$k' that the other object has."
         }
@@ -432,7 +432,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
         }
 
         $propertyName = $p.Name
-        $actualProperty = $actualProperties | Where { $_.Name -eq $propertyName}
+        $actualProperty = $actualProperties | Where-Object { $_.Name -eq $propertyName}
         if (-not $actualProperty)
         {
             v -Difference "Property '$propertyName' was not found on `$Actual."
@@ -452,12 +452,12 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
 
     if (!$Options.ExcludePathsNotOnExpected) {
         #check if there are any extra actual object props
-        $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name 
+        $expectedPropertyNames = $expectedProperties | Select-Object -ExpandProperty Name
 
-        $propertiesNotInExpected =  @( $actualProperties | where { $expectedPropertyNames -notcontains $_.name })
+        $propertiesNotInExpected =  @( $actualProperties | Where-Object { $expectedPropertyNames -notcontains $_.name })
 
-        # fix for powershell v2 we need to make the array explicit    
-        $filteredPropertiesNotInExpected = $propertiesNotInExpected | 
+        # fix for powershell v2 we need to make the array explicit
+        $filteredPropertiesNotInExpected = $propertiesNotInExpected |
             Test-IncludedPath -PathSelector Property -Options $Options -Path $Property
 
         if ($filteredPropertiesNotInExpected) {
@@ -468,7 +468,7 @@ function Compare-ObjectEquivalent ($Actual, $Expected, $Property, $Options) {
         }
 
         # fix for powershell v2 where foreach goes once over null
-        foreach ($p in $filteredPropertiesNotInExpected | where { $_ })
+        foreach ($p in $filteredPropertiesNotInExpected | Where-Object { $_ })
         {
             "Expected is missing property '$($p.Name)' that the other object has."
         }
@@ -494,7 +494,7 @@ function Compare-DataRowEquivalent ($Actual, $Expected, $Property, $Options) {
     foreach ($p in $expectedProperties)
     {
         $propertyName = $p.Name
-        $actualProperty = $actualProperties | Where { $_.Name -eq $propertyName}
+        $actualProperty = $actualProperties | Where-Object { $_.Name -eq $propertyName}
         if (-not $actualProperty)
         {
             "Expected has property '$PropertyName' that the other object does not have."
@@ -505,12 +505,12 @@ function Compare-DataRowEquivalent ($Actual, $Expected, $Property, $Options) {
     }
 
     #check if there are any extra actual object props
-    $expectedPropertyNames = $expectedProperties | select -ExpandProperty Name
+    $expectedPropertyNames = $expectedProperties | Select-Object -ExpandProperty Name
 
-    $propertiesNotInExpected =  @($actualProperties | where {$expectedPropertyNames -notcontains $_.name })
+    $propertiesNotInExpected =  @($actualProperties | Where-Object {$expectedPropertyNames -notcontains $_.name })
 
     # fix for powershell v2 where foreach goes once over null
-    foreach ($p in $propertiesNotInExpected | where { $_ })
+    foreach ($p in $propertiesNotInExpected | Where-Object { $_ })
     {
         "Expected is missing property '$($p.Name)' that the other object has."
     }
@@ -524,7 +524,7 @@ function v {
         [Switch] $Equivalence,
         [Switch] $Skip
     )
-    
+
     # we are using implict variable $Path
     # from the parent scope, this is ugly
     # and bad practice, but saves us ton of
@@ -559,9 +559,9 @@ function v {
 function Compare-Equivalent {
     [CmdletBinding()]
     param(
-        $Actual, 
-        $Expected, 
-        $Path, 
+        $Actual,
+        $Expected,
+        $Path,
         $Options = (&{
             Write-Warning "Getting default equivalency options, this should never be seen. If you see this and you are not developing Assert, please file issue at https://github.com/nohwnd/Assert/issues"
             Get-EquivalencyOption
@@ -572,7 +572,7 @@ function Compare-Equivalent {
         v -Skip "Current path '$Path' is excluded from the comparison."
         return
     }
-    
+
     #start by null checks to avoid implementing null handling
     #logic in the functions that follow
     if ($null -eq $Expected)
@@ -583,7 +583,7 @@ function Compare-Equivalent {
             v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely $Actual.GetType())."
             return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path -Options $Options
         }
-        # we terminate here, either we passed the test and return nothing, or we did not 
+        # we terminate here, either we passed the test and return nothing, or we did not
         # and the previous statement returned message
         v -Equivalence "`$Actual is equivalent to `$null, because it is `$null."
         return
@@ -658,14 +658,14 @@ function Compare-Equivalent {
 function Assert-Equivalent {
     [CmdletBinding()]
     param(
-        $Actual, 
+        $Actual,
         $Expected,
         $Options = (Get-EquivalencyOption),
         [Switch] $StrictOrder
     )
 
     $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected -Options $Options | Out-String
-    
+
     if ($areDifferent)
     {
         $optionsFormatted = Format-EquivalencyOptions -Options $Options
@@ -673,14 +673,14 @@ function Assert-Equivalent {
         $message = Get-AssertionMessage -Actual $actual -Expected $Expected -Option $optionsFormatted -Pretty -CustomMessage "Expected and actual are not equivalent!`nExpected:`n<expected>`n`nActual:`n<actual>`n`nSummary:`n$areDifferent`n<options>"
         throw [Assertions.AssertionException]$message
     }
-    
+
     v -Equivalence "`$Actual and `$Expected are equivalent."
 }
 
 function Get-EquivalencyOption {
     param(
         [string[]] $ExcludePath = @(),
-        [switch] $ExcludePathsNotOnExpected, 
+        [switch] $ExcludePathsNotOnExpected,
         [ValidateSet('Equivalency', 'Equality')]
         [string] $Comparator = 'Equivalency'
     )
@@ -702,7 +702,7 @@ function Test-IncludedPath {
         [Parameter(Mandatory=$true)]
         [ValidateSet("Property", "Hashtable")]
         $PathSelector
-    ) 
+    )
 
     begin {
         $selector = switch ($PathSelector) {
@@ -712,7 +712,7 @@ function Test-IncludedPath {
         }
     }
 
-    process { 
+    process {
         if ($null -eq $Options.ExcludedPaths)
         {
             return $InputObject
@@ -726,15 +726,15 @@ function Test-IncludedPath {
         {
             v -Skip "Current path $fullPath is excluded from the comparison."
         }
-        else 
+        else
         {
             $InputObject
         }
     }
-} 
+}
 
 function Format-EquivalencyOptions ($Options) {
-    $Options.ExcludedPaths | foreach { "Exclude path '$_'" }
+    $Options.ExcludedPaths | ForEach-Object { "Exclude path '$_'" }
     if ($Options.ExcludePathsNotOnExpected) { "Excluding all paths not found on Expected" }
 }
 
@@ -745,9 +745,9 @@ function Like-Any {
         [String] $Path
     )
     process {
-        foreach ($pathFilter in $PathFilters | where { $_ }) {
+        foreach ($pathFilter in $PathFilters | Where-Object { $_ }) {
             $r = $Path -like $pathFilter
-            if ($r) { 
+            if ($r) {
                 v -Skip "Path '$Path' matches filter '$pathFilter'."
                 return $true
             }

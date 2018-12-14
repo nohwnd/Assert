@@ -1,4 +1,4 @@
-function Collect-Input ($ParameterInput, $PipelineInput) 
+﻿function Collect-Input ($ParameterInput, $PipelineInput)
 {
     #source: http://www.powertheshell.com/input_psv3/
     $collectedInput = @($PipelineInput)
@@ -7,7 +7,7 @@ function Collect-Input ($ParameterInput, $PipelineInput)
     if ($isInPipeline) {
         $collectedInput
     }
-    else 
+    else
     {
         $ParameterInput
     }

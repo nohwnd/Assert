@@ -1,9 +1,9 @@
-Add-Type -TypeDefinition 'namespace Assertions.TestType { 
-    public class Person2 { 
+﻿Add-Type -TypeDefinition 'namespace Assertions.TestType {
+    public class Person2 {
         // powershell v2 mandates fully implemented properties
         string _name;
         int _age;
-        public string Name { get { return _name; } set { _name = value; } } 
+        public string Name { get { return _name; } set { _name = value; } }
         public int Age { get { return _age; } set { _age = value; } }
     }
 }'
@@ -204,7 +204,7 @@ InModuleScope -ModuleName Assert {
             @{ Actual = (1, 1, 1, 1); Expected = (1, 1, 1, 1) }
             @{ Actual = (1, 2, 2, 1); Expected = (2, 1, 2, 1) }
             ##
-            
+
         ) {
             param ($Actual, $Expected)
             Compare-CollectionEquivalent -Actual $Actual -Expected $Expected | Verify-Null
@@ -442,22 +442,22 @@ InModuleScope -ModuleName Assert {
             function SerializeDeserialize ($InputObject) {
                 # psv2 compatibility
                 # $ExpectedDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Expected))
-                # Alternatively this could be done in memory via https://github.com/Jaykul/Reflection/blob/master/CliXml.psm1, but I don't want to fiddle with more 
+                # Alternatively this could be done in memory via https://github.com/Jaykul/Reflection/blob/master/CliXml.psm1, but I don't want to fiddle with more
                 # relfection right now
                 try {
                     $path = [IO.Path]::GetTempFileName()
-                
-                    Export-Clixml -Path $path -InputObject $InputObject -Force | Out-Null 
-                    Import-Clixml -Path $path 
+
+                    Export-Clixml -Path $path -InputObject $InputObject -Force | Out-Null
+                    Import-Clixml -Path $path
                 }
                 finally {
                     if ($null -ne $path -and (Test-Path $path)) {
                         Remove-Item -Path $path -Force
                     }
                 }
-            } 
-           
-            
+            }
+
+
             $ExpectedDeserialized = SerializeDeserialize $Expected
             $ActualDeserialized = SerializeDeserialize $Actual
             Assert-Equivalent -Actual $ActualDeserialized -Expected $ExpectedDeserialized

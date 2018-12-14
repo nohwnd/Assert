@@ -1,4 +1,4 @@
-InModuleScope -ModuleName Assert {
+﻿InModuleScope -ModuleName Assert {
     Describe "Assert-Same" {
         It "Passes when two objects are the same instance" {
             $object = New-Object Diagnostics.Process
@@ -24,7 +24,7 @@ InModuleScope -ModuleName Assert {
 
         It "Given two values that are not the same instance '<expected>' and '<actual>' it returns expected message '<message>'" -TestCases @(
             @{ Expected = New-Object -TypeName PSObject ; Actual = New-Object -TypeName PSObject ; Message = "Expected PSObject '', to be the same instance but it was not."}
-        ) { 
+        ) {
             param($Expected, $Actual, $Message)
             $error = { Assert-Same -Actual $Actual -Expected $Expected } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal $Message

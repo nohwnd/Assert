@@ -1,4 +1,4 @@
-InModuleScope -ModuleName Assert {
+﻿InModuleScope -ModuleName Assert {
     Describe "Assert-GreaterThanOrEqual" {
         Context "Comparing strings" {
             It "Passes when actual is greater than expected" {
@@ -71,7 +71,7 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Fails for array input even if the last item is greater than then expected value" {
-             $err = {  1,2,3,4 | Assert-GreaterThanOrEqual 3 } | Verify-Throw 
+             $err = {  1,2,3,4 | Assert-GreaterThanOrEqual 3 } | Verify-Throw
              $err.Exception | Verify-Type ([System.Management.Automation.RuntimeException])
         }
 
@@ -85,7 +85,7 @@ InModuleScope -ModuleName Assert {
                 @{ Expected = "z" ; Actual = "a" ; Message = "Expected string 'a' to be greater than or equal to string 'z', but it was not."},
                 @{ Expected = 10.1 ; Actual = 1.1 ; Message = "Expected double '1.1' to be greater than or equal to double '10.1', but it was not."},
                 @{ Expected = 10.1D ; Actual = 1.1D ; Message = "Expected decimal '1.1' to be greater than or equal to decimal '10.1', but it was not."}
-            ) { 
+            ) {
                 param($Expected, $Actual, $Message)
                 $error = { Assert-GreaterThanOrEqual -Actual $Actual -Expected $Expected } | Verify-AssertionFailed
                 $error.Exception.Message | Verify-Equal $Message
@@ -102,7 +102,7 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Given collection to Expected it throws" {
-            $error = { "dummy" | Assert-GreaterThanOrEqual @() } | Verify-Throw 
+            $error = { "dummy" | Assert-GreaterThanOrEqual @() } | Verify-Throw
             $error.Exception | Verify-Type ([ArgumentException])
         }
     }

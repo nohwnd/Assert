@@ -1,4 +1,4 @@
-function Verify-Null {
+﻿function Verify-Null {
     param (
         [Parameter(ValueFromPipeline=$true)]
         $Actual
@@ -7,6 +7,6 @@ function Verify-Null {
     if ($null -ne $Actual) {
         throw [Exception]"Expected `$null but got '$Actual'."
     }
-    
+
     $Actual
 }

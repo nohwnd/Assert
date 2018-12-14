@@ -1,17 +1,17 @@
-Import-Module $PSScriptRoot/TypeClass/src/TypeClass.psm1 -DisableNameChecking
+﻿Import-Module $PSScriptRoot/TypeClass/src/TypeClass.psm1 -DisableNameChecking
 Import-Module $PSScriptRoot/Format/src/Format.psm1 -DisableNameChecking
 
 . $PSScriptRoot/Compatibility/src/Compatibility.ps1
 
-Get-ChildItem -Path $PSScriptRoot/src/ -Recurse -Filter *.ps1 | 
-    foreach { . $_.FullName }
+Get-ChildItem -Path $PSScriptRoot/src/ -Recurse -Filter *.ps1 |
+    ForEach-Object { . $_.FullName }
 
 Export-ModuleMember -Function @(
     'Get-EquivalencyOption'
-    'Assert-Equivalent' 
+    'Assert-Equivalent'
     'Assert-Equal' # ?= ' ?eq
     'Assert-NotEqual' # ?!= ?ne
-    'Assert-Same' # ?=== ?ref ?same 
+    'Assert-Same' # ?=== ?ref ?same
     'Assert-NotSame' # ?!=== ?notref ?notsame
     'Assert-Null' # ?0  ?null
     'Assert-NotNull' # ?!0  ?notnull

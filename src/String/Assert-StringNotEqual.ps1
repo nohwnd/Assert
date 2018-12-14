@@ -1,13 +1,13 @@
-function Get-StringNotEqualDefaultFailureMessage ([String]$Expected, $Actual) 
+﻿function Get-StringNotEqualDefaultFailureMessage ([String]$Expected, $Actual)
 {
     "Expected the strings to be different but they were the same '$Expected'."
 }
 
-function Assert-StringNotEqual 
+function Assert-StringNotEqual
 {
     param (
         [Parameter(Position=1, ValueFromPipeline=$true)]
-        $Actual, 
+        $Actual,
         [Parameter(Position=0)]
         [String]$Expected,
         [String]$CustomMessage,
@@ -15,13 +15,13 @@ function Assert-StringNotEqual
         [switch]$IgnoreWhitespace
     )
 
-    if (Test-StringEqual -Expected $Expected -Actual $Actual -CaseSensitive:$CaseSensitive -IgnoreWhitespace:$IgnoreWhiteSpace) 
+    if (Test-StringEqual -Expected $Expected -Actual $Actual -CaseSensitive:$CaseSensitive -IgnoreWhitespace:$IgnoreWhiteSpace)
     {
         if (-not $CustomMessage)
         {
             $formattedMessage = Get-StringNotEqualDefaultFailureMessage -Expected $Expected -Actual $Actual
         }
-        else 
+        else
         {
             $formattedMessage = Get-CustomFailureMessage -Expected $Expected -Actual $Actual -CustomMessage $CustomMessage
         }

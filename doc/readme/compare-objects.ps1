@@ -1,13 +1,13 @@
-Import-Module ./assert.psd1  -Force
+﻿Import-Module ./assert.psd1  -Force
 
-$expected = [PSCustomObject]@{ 
-    Name = 'Jakub' 
+$expected = [PSCustomObject]@{
+    Name = 'Jakub'
     Age = 28
-    Languages = 'Czech', 'English' 
+    Languages = 'Czech', 'English'
 }
 
-$actual = [PSCustomObject]@{ 
-    Name = 'Jkb' 
+$actual = [PSCustomObject]@{
+    Name = 'Jkb'
     Languages = 'Czech', 'English', 'German'
 }
 

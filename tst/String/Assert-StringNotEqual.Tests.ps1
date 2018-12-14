@@ -1,4 +1,4 @@
-InModuleScope -ModuleName Assert {
+﻿InModuleScope -ModuleName Assert {
     Describe "Get-StringNotEqualDefaultFailureMessage" {
         It "returns correct default message" {
             $expected = "Expected the strings to be different but they were the same 'abc'."
@@ -8,12 +8,12 @@ InModuleScope -ModuleName Assert {
     }
 
     Describe "Assert-StringNotEqual" {
-        It "Does nothing when string are different" { 
+        It "Does nothing when string are different" {
             Assert-StringNotEqual -Expected "abc" -Actual "bde"
         }
 
         It "Throws when strings are the same" {
-            { Assert-StringNotEqual -Expected "abc" -Actual "abc" } | Verify-AssertionFailed 
+            { Assert-StringNotEqual -Expected "abc" -Actual "abc" } | Verify-AssertionFailed
         }
 
         It "Throws with default message when test fails" {

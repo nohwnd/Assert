@@ -1,4 +1,4 @@
-InModuleScope -ModuleName Assert {
+﻿InModuleScope -ModuleName Assert {
     Describe "Assert-NotSame" {
         It "Fails when two objects are the same instance" {
             $object = New-Object Diagnostics.Process
@@ -24,21 +24,21 @@ InModuleScope -ModuleName Assert {
 
         It "Given two values that are the same instance it returns expected message '<message>'" -TestCases @(
             @{ Value = "a"; Message = "Expected string 'a', to not be the same instance."}
-        ) { 
+        ) {
             param($Value, $Message)
             $error = { Assert-NotSame -Actual $Value -Expected $Value } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal $Message
         }
-        
+
         It "Returns the value on output" {
             $expected = 1
             $expected | Assert-NotSame 7 | Verify-Equal $expected
         }
 
         It "Can be called with positional parameters" {
-            {   
+            {
                 $obj = New-Object -TypeName PSObject
-                Assert-NotSame $obj $obj 
+                Assert-NotSame $obj $obj
             } | Verify-AssertionFailed
         }
     }

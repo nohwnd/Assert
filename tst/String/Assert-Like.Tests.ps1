@@ -1,4 +1,4 @@
-Describe "Assert-Like" {
+﻿Describe "Assert-Like" {
     Context "Case insensitive matching" {
         It "Passes give strings that have the same value" {
             Assert-Like -Expected "abc" -Actual "abc"
@@ -13,7 +13,7 @@ Describe "Assert-Like" {
             Assert-Like -Actual $Actual -Expected $Expected
         }
 
-        It "Fails given strings with different values" { 
+        It "Fails given strings with different values" {
             { Assert-Like -Expected "abc" -Actual "def" } | Verify-AssertionFailed
         }
 
@@ -21,7 +21,7 @@ Describe "Assert-Like" {
             @{ Actual = "ABc";  Expected = "def" },
             @{ Actual = "aBc";  Expected = "def" },
             @{ Actual = "ABC";  Expected = "def" }
-        ) { 
+        ) {
             param ($Actual, $Expected)
             { Assert-Like -Actual $Actual -Expected $Expected } | Verify-AssertionFailed
         }
@@ -30,11 +30,11 @@ Describe "Assert-Like" {
             @{ Actual = "abc ";  Expected = "abc" },
             @{ Actual = "abc ";  Expected = "abc" },
             @{ Actual = "ab c";  Expected = "abc" }
-        ) { 
+        ) {
             param ($Actual, $Expected)
             { Assert-Like -Actual $Actual -Expected $Expected } | Verify-AssertionFailed
         }
-        
+
         It "Passes given strings with different case that start with a given pattern. comparing '<actual>':'<expected>'" -TestCases @(
             @{ Actual = "ABcdef";  Expected = "abc*" },
             @{ Actual = "aBcdef";  Expected = "abc*" },
@@ -105,7 +105,7 @@ Describe "Assert-Like" {
     }
 
     It "Throws when given a collection to avoid confusing matches of the last item only" {
-        $err = { "bde", "abc" | Assert-Like -Expected "abc" } | Verify-Throw 
+        $err = { "bde", "abc" | Assert-Like -Expected "abc" } | Verify-Throw
         $err.Exception.Message | Verify-Equal "Actual is expected to be string, to avoid confusing behavior that -like operator exhibits with collections. To assert on collections use Assert-Any, Assert-All or some other collection assertion."
     }
 
@@ -118,7 +118,7 @@ Describe "Assert-Like" {
             @{ Actual = 'a'; Expected = 'b'; Message = "Expected the string 'a' to match 'b' but it did not." }
             @{ Actual = 'ab'; Expected = 'd*'; Message = "Expected the string 'ab' to match 'd*' but it did not." }
             @{ Actual = 'something'; Expected = '*abc*'; Message = "Expected the string 'something' to match '*abc*' but it did not." }
-        ) { 
+        ) {
             param ($Actual, $Expected, $Message)
             $err =  { Assert-Like -Actual $Actual -Expected $Expected } | Verify-AssertionFailed
             $err.Exception.Message | Verify-Equal $Message
@@ -128,7 +128,7 @@ Describe "Assert-Like" {
             @{ Actual = 'a'; Expected = 'B'; Message = "Expected the string 'a' to case sensitively match 'B' but it did not." }
             @{ Actual = 'ab'; Expected = 'B*'; Message = "Expected the string 'ab' to case sensitively match 'B*' but it did not." }
             @{ Actual = 'something'; Expected = '*SOME*'; Message = "Expected the string 'something' to case sensitively match '*SOME*' but it did not." }
-        ) { 
+        ) {
             param ($Actual, $Expected, $Message)
             $err =  { Assert-Like -Actual $Actual -Expected $Expected -CaseSensitive } | Verify-AssertionFailed
             $err.Exception.Message | Verify-Equal $Message

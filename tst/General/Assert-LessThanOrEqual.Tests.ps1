@@ -1,4 +1,4 @@
-Describe "Assert-LessThanOrEqual" {
+﻿Describe "Assert-LessThanOrEqual" {
     Context "Comparing strings" {
         It "Passes when actual is less than expected" {
             "a" | Assert-LessThanOrEqual "z"
@@ -70,7 +70,7 @@ Describe "Assert-LessThanOrEqual" {
     }
 
     It "Fails for array input even if the last item is less than then expected value" {
-            $err = { 4,3,2,1 | Assert-LessThanOrEqual 3 } | Verify-Throw 
+            $err = { 4,3,2,1 | Assert-LessThanOrEqual 3 } | Verify-Throw
             $err.Exception | Verify-Type ([System.Management.Automation.RuntimeException])
     }
 
@@ -84,7 +84,7 @@ Describe "Assert-LessThanOrEqual" {
             @{ Expected = "a" ; Actual = "z" ; Message = "Expected string 'z' to be less than or equal to string 'a', but it was not."},
             @{ Expected = 1.1 ; Actual = 10.1 ; Message = "Expected double '10.1' to be less than or equal to double '1.1', but it was not."},
             @{ Expected = 1.1D ; Actual = 10.1D ; Message = "Expected decimal '10.1' to be less than or equal to decimal '1.1', but it was not."}
-        ) { 
+        ) {
             param($Expected, $Actual, $Message)
             $error = { Assert-LessThanOrEqual -Actual $Actual -Expected $Expected } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal $Message
@@ -101,7 +101,7 @@ Describe "Assert-LessThanOrEqual" {
     }
 
     It "Given collection to Expected it throws" {
-        $error = { "dummy" | Assert-LessThanOrEqual @() } | Verify-Throw 
+        $error = { "dummy" | Assert-LessThanOrEqual @() } | Verify-Throw
         $error.Exception | Verify-Type ([ArgumentException])
     }
 }

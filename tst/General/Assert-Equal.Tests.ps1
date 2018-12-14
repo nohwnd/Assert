@@ -1,4 +1,4 @@
-InModuleScope -ModuleName Assert {
+﻿InModuleScope -ModuleName Assert {
     Describe "Assert-Equal" {
         Context "Comparing strings" {
             It "Passes when two strings are equal" {
@@ -67,7 +67,7 @@ InModuleScope -ModuleName Assert {
                 @{ Expected = "a" ; Actual = 10 ; Message = "Expected string 'a', but got int '10'."},
                 @{ Expected = "a" ; Actual = 10.1 ; Message = "Expected string 'a', but got double '10.1'."},
                 @{ Expected = "a" ; Actual = 10.1D ; Message = "Expected string 'a', but got decimal '10.1'."}
-            ) { 
+            ) {
                 param($Expected, $Actual, $Message)
                 $error = { Assert-Equal -Actual $Actual -Expected $Expected } | Verify-AssertionFailed
                 $error.Exception.Message | Verify-Equal $Message
@@ -84,7 +84,7 @@ InModuleScope -ModuleName Assert {
         }
 
         It "Given collection to Expected it throws" {
-            $error = { "dummy" | Assert-Equal @() } | Verify-Throw 
+            $error = { "dummy" | Assert-Equal @() } | Verify-Throw
             $error.Exception | Verify-Type ([ArgumentException])
         }
     }
