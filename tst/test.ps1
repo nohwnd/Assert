@@ -43,7 +43,7 @@ try {
 
     "Running all tests from: $path"
     if ($CIBuild) {
-        Invoke-Pester $path -EnableExit
+        Invoke-Pester $path -EnableExit -OutputFormat NUnitXml -OutputFile '..\TestResults.xml'
     }
     else {
         Invoke-Pester $path -Show Summary, Failed
