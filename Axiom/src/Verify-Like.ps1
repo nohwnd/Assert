@@ -1,4 +1,4 @@
-function Verify-Like {
+﻿function Verify-Like {
     param (
         [Parameter(ValueFromPipeline=$true)]
         $Actual,
@@ -9,10 +9,10 @@ function Verify-Like {
     if ($Actual -notlike $Expected) {
         $message = "Expected is not present in Actual!`n"+
         "Expected: '$Expected'`n"+
-        "Actual  : '$Actual'" 
+        "Actual  : '$Actual'"
 
         throw [Exception]$message
     }
-    
+
     $Actual
 }

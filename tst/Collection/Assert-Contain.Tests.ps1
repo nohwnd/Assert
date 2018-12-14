@@ -1,11 +1,11 @@
-InModuleScope -ModuleName Assert {
+﻿InModuleScope -ModuleName Assert {
     Describe "Assert-Contain" {
         It "Passes when collection of single item contains the expected item" {
             @(1) | Assert-Contain 1
         }
 
         It "Fails when collection of single item does not contain the expected item" {
-            $error = { @(5) | Assert-Contain 1 } | Verify-AssertionFailed 
+            $error = { @(5) | Assert-Contain 1 } | Verify-AssertionFailed
             $error.Exception.Message | Verify-Equal "Expected int '1' to be present in collection '5', but it was not there."
         }
 

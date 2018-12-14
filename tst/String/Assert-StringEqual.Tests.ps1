@@ -1,4 +1,4 @@
-InModuleScope -ModuleName Assert {
+﻿InModuleScope -ModuleName Assert {
     Describe "Test-StringEqual" {
         Context "Case insensitive matching" {
             It "strings with the same values are equal" {
@@ -14,7 +14,7 @@ InModuleScope -ModuleName Assert {
                 Test-StringEqual -Expected $l -Actual $r | Verify-True
             }
 
-            It "strings with different values are not equal" { 
+            It "strings with different values are not equal" {
                 Test-StringEqual -Expected "abc" -Actual "def" | Verify-False
             }
 
@@ -22,7 +22,7 @@ InModuleScope -ModuleName Assert {
                 @{l = "ABc"; r = "def" },
                 @{l = "aBc"; r = "def" },
                 @{l = "ABC"; r = "def" }
-            ) { 
+            ) {
                 param ($l, $r)
                 Test-StringEqual -Expected $l -Actual $r | Verify-False
             }
@@ -31,7 +31,7 @@ InModuleScope -ModuleName Assert {
                 @{l = "abc "; r = "abc" },
                 @{l = "abc "; r = "abc" },
                 @{l = "ab c"; r = "abc" }
-            ) { 
+            ) {
                 param ($l, $r)
                 Test-StringEqual -Expected $l -Actual $r | Verify-False
             }
@@ -54,7 +54,7 @@ InModuleScope -ModuleName Assert {
                 @{l = "abc "; r = "abc" },
                 @{l = "ab c"; r = "abc" },
                 @{l = "ab c"; r = "a b c" }
-            ) { 
+            ) {
                 param ($l, $r)
                 Test-StringEqual -Expected $l -Actual $r -IgnoreWhiteSpace | Verify-True
             }
@@ -70,17 +70,17 @@ InModuleScope -ModuleName Assert {
     }
 
     Describe "Assert-StringEqual" {
-        It "Does nothing when string are the same" { 
+        It "Does nothing when string are the same" {
             Assert-StringEqual -Expected "abc" -Actual "abc"
         }
 
         It "Throws when strings are different" {
-            { Assert-StringEqual -Expected "abc" -Actual "bde" } | Verify-AssertionFailed 
+            { Assert-StringEqual -Expected "abc" -Actual "bde" } | Verify-AssertionFailed
         }
 
         It "Throws with default message when test fails" {
             $expected = Get-StringEqualDefaultFailureMessage -Expected "abc" -Actual "bde"
-            $exception = { Assert-StringEqual -Expected "abc" -Actual "bde" } | Verify-AssertionFailed 
+            $exception = { Assert-StringEqual -Expected "abc" -Actual "bde" } | Verify-AssertionFailed
             "$exception" | Verify-Equal $expected
         }
 

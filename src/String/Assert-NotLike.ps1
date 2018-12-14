@@ -1,22 +1,22 @@
-function Test-NotLike
+﻿function Test-NotLike
 {
     param (
-        [String]$Expected, 
-        $Actual, 
+        [String]$Expected,
+        $Actual,
         [switch]$CaseSensitive
     )
 
-    if (-not $CaseSensitive) 
+    if (-not $CaseSensitive)
     {
         $Actual -NotLike $Expected
-    } 
-    else 
+    }
+    else
     {
         $actual -cNotLike $Expected
     }
 }
 
-function Get-NotLikeDefaultFailureMessage ([String]$Expected, $Actual, [switch]$CaseSensitive) 
+function Get-NotLikeDefaultFailureMessage ([String]$Expected, $Actual, [switch]$CaseSensitive)
 {
     $caseSensitiveMessage = ""
     if ($CaseSensitive)
@@ -30,13 +30,13 @@ function Assert-NotLike
 {
     param (
         [Parameter(Position=1, ValueFromPipeline=$true)]
-        $Actual, 
+        $Actual,
         [Parameter(Position=0, Mandatory=$true)]
         [String]$Expected,
         [Switch]$CaseSensitive,
         [String]$CustomMessage
     )
-    
+
     $Actual = Collect-Input -ParameterInput $Actual -PipelineInput $local:Input
 
     if ($Actual -isnot [string])
@@ -45,13 +45,13 @@ function Assert-NotLike
     }
 
     $stringsAreANotLike = Test-NotLike -Expected $Expected -Actual $Actual -CaseSensitive:$CaseSensitive -IgnoreWhitespace:$IgnoreWhiteSpace
-    if (-not ($stringsAreANotLike)) 
+    if (-not ($stringsAreANotLike))
     {
         if (-not $CustomMessage)
         {
             $formattedMessage = Get-NotLikeDefaultFailureMessage -Expected $Expected -Actual $Actual -CaseSensitive:$CaseSensitive
         }
-        else 
+        else
         {
             $formattedMessage = Get-CustomFailureMessage -Expected $Expected -Actual $Actual -CustomMessage $CustomMessage -CaseSensitive:$CaseSensitive
         }

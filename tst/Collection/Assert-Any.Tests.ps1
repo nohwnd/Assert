@@ -1,4 +1,4 @@
-Describe "Assert-Any" {
+﻿Describe "Assert-Any" {
     It "Passes when at least one item in the given collection passes the predicate" -TestCases @(
         @{ Actual = @(1,2,3) }
         @{ Actual = @(1) }
@@ -29,7 +29,7 @@ Describe "Assert-Any" {
 
     It "Returns the value on output" {
         $expected = "a","b"
-        $v = $expected | Assert-Any { $true } 
+        $v = $expected | Assert-Any { $true }
         $v[0] | Verify-Equal $expected[0]
         $v[1] | Verify-Equal $expected[1]
     }

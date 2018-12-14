@@ -1,4 +1,4 @@
-function Verify-NotSame {
+﻿function Verify-NotSame {
     param (
         [Parameter(ValueFromPipeline=$true)]
         $Actual,
@@ -9,6 +9,6 @@ function Verify-NotSame {
     if ([object]::ReferenceEquals($Expected, $Actual)) {
         throw [Exception]"Expected the objects to be different instance but they were the same instance."
     }
-    
+
     $Actual
 }

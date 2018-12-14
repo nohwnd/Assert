@@ -1,8 +1,8 @@
-Import-Module ./Assert.psd1
+﻿Import-Module ./Assert.psd1
 
-function Get-Word ([string]$Filter) 
+function Get-Word ([string]$Filter)
 {
-    $words = @( 
+    $words = @(
         'apple'
         'alphabet'
         'armadillo'
@@ -16,6 +16,6 @@ function Get-Word ([string]$Filter)
 
 Describe "Get-Word" {
     It "Only returns words starting with 'a'" {
-        Get-Word -Filter 'a*' | Assert-All { $_ -like 'a*' }   
+        Get-Word -Filter 'a*' | Assert-All { $_ -like 'a*' }
     }
 }
