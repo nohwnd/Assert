@@ -12,17 +12,23 @@ try {
     # makes every test run slow because Get-PackagerProvider
     # takes 10 seconds
     if ($CIBuild) {
-        $minimumNugetProviderVersion = '2.8.5.201'
-        # not using the -Name parameter because it throws when Nuget is not installed
-        if (-not (Get-PackageProvider -ListAvailable | Where-Object { $_.Name -eq "Nuget" -and $_.Version -ge $minimumNugetProviderVersion })) {
-            "Installing Nuget package provider."
-            Install-PackageProvider -Name NuGet -MinimumVersion $minimumNugetProviderVersion -Force
-        }
-
         $minimumPesterVersion = "4.4.3"
-        if (-not (Get-Module -ListAvailable | Where-Object { $_.Name -eq"Pester" -and $_.Version -ge $minimumPesterVersion })) {
-            "Installing Pester."
-            Install-Module -Name Pester -Force -MinimumVersion $minimumPesterVersion -Scope CurrentUser
+        if ($env:AppVeyor -and $null -eq (Get-Module -ListAvailable PowershellGet)) {
+            # WMF 4 image build
+            Write-Verbose -Verbose "Installing Pester via nuget"
+            nuget install Pester -Version $minimumPesterVersion -source https://www.powershellgallery.com/api/v2 -outputDirectory "$env:ProgramFiles\WindowsPowerShell\Modules\." -ExcludeVersion
+        }
+        else {
+            $minimumNugetProviderVersion = '2.8.5.201'
+            # not using the -Name parameter because it throws when Nuget is not installed
+            if (-not (Get-PackageProvider -ListAvailable | Where-Object { $_.Name -eq "Nuget" -and $_.Version -ge $minimumNugetProviderVersion })) {
+                "Installing Nuget package provider."
+                Install-PackageProvider -Name NuGet -MinimumVersion $minimumNugetProviderVersion -Force
+            }
+            if (-not (Get-Module -ListAvailable | Where-Object { $_.Name -eq"Pester" -and $_.Version -ge $minimumPesterVersion })) {
+                "Installing Pester."
+                Install-Module -Name Pester -Force -MinimumVersion $minimumPesterVersion -Scope CurrentUser
+            }
         }
     }
 
