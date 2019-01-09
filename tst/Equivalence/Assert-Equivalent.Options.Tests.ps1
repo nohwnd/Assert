@@ -361,7 +361,7 @@
 
     Describe "Printing Options into difference report" {
 
-        It "Given options that exclude property it shows up in the difference report correctly" {
+        It "Given options that exclude multiple properties it shows up in the difference report correctly" {
                 $options = Get-EquivalencyOption -ExcludePath "Age", "Name", "Person.Age", "Person.Created*"
                 Clear-WhiteSpace (Format-EquivalencyOptions -Options $options) | Verify-Equal (Clear-WhiteSpace "
                     Exclude path 'Age'

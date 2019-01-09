@@ -21,13 +21,6 @@ Describe "Format-Collection" {
         param ($Value, $Expected)
         Format-Collection -Value $Value | Verify-Equal $Expected
     }
-
-    It "Formats collection of values '<value>' to '<expected>' using the default separator" -TestCases @(
-        @{ Value = (1, 2, 3); Expected = "1, 2, 3" }
-    ) {
-        param ($Value, $Expected)
-        Format-Collection -Value $Value | Verify-Equal $Expected
-    }
 }
 
 Describe "Format-Number" {

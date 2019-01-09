@@ -1,5 +1,7 @@
 ﻿$here = $MyInvocation.MyCommand.Path | Split-Path
-Import-Module $here/../src/TypeClass.psm1 -Force
+Add-Dependency { 
+    Import-Module $here/../src/TypeClass.psm1 -Force
+}
 
 Describe "Is-Value" {
     It "Given '<value>', which is a value, string, enum, scriptblock or array with a single item of those types it returns `$true" -TestCases @(

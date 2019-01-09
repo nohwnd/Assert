@@ -32,7 +32,7 @@ try {
     Import-Module ./../Assert.psd1
 
     # import modules and utilities for testing
-    Import-Module Pester
+    Import-Module ../pester_nohwnd/Pester.psm1
     Import-Module ./TestHelpers.psm1
     Import-Module ./../Axiom/src/Axiom.psm1 -WarningAction SilentlyContinue
 

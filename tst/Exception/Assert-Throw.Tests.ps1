@@ -177,7 +177,7 @@ Describe "General try catch behavior" {
         $err | Verify-Type ([Management.Automation.ErrorRecord])
     }
 
-    It 'Gets error record when non-terminating error is translated to terminating error' {
+    It 'Gets error record when non-terminating error is translated to terminating error by -ErrorAction Stop' {
         try
         {
             &{ Get-Item "non-existing" -ErrorAction 'stop' }
@@ -192,7 +192,7 @@ Describe "General try catch behavior" {
     }
 
 
-    It 'Gets error record when non-terminating error is translated to terminating error' {
+    It 'Gets error record when non-terminating error is translated to terminating error be `$ErrorActionPreference' {
         try
         {
             $ErrorActionPreference = 'stop'
