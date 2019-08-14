@@ -81,7 +81,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
         v "`nSearching for `$Expected[$e]:"
         $currentExpected = $Expected[$e]
         $found = $false
-        if ($StrictOrder) {
+        if ($Options.StrictOrder) {
             $currentActual = $Actual[$e]
             if ($taken -notcontains $e -and (-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property -Options $Options)))
             {
@@ -161,7 +161,7 @@ function Compare-DataTableEquivalent ($Expected, $Actual, $Property, $Options) {
     for ($e = 0; $e -lt $eEnd; $e++) {
         $currentExpected = $Expected.Rows[$e]
         $found = $false
-        if ($StrictOrder) {
+        if ($Options.StrictOrder) {
             $currentActual = $Actual.Rows[$e]
             if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property -Options $Options)) -and $taken -notcontains $e) {
                 $taken += $e
@@ -660,8 +660,7 @@ function Assert-Equivalent {
     param(
         $Actual,
         $Expected,
-        $Options = (Get-EquivalencyOption),
-        [Switch] $StrictOrder
+        $Options = (Get-EquivalencyOption)
     )
 
     $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected -Options $Options | Out-String
@@ -682,13 +681,15 @@ function Get-EquivalencyOption {
         [string[]] $ExcludePath = @(),
         [switch] $ExcludePathsNotOnExpected,
         [ValidateSet('Equivalency', 'Equality')]
-        [string] $Comparator = 'Equivalency'
+        [string] $Comparator = 'Equivalency',
+        [switch] $StrictOrder
     )
 
     [PSCustomObject]@{
-        ExcludedPaths = [string[]] $ExcludePath
+        ExcludedPaths             = [string[]] $ExcludePath
         ExcludePathsNotOnExpected = [bool] $ExcludePathsNotOnExpected
-        Comparator = [string] $Comparator
+        Comparator                = [string] $Comparator
+        StrictOrder               = [bool] $StrictOrder
     }
 }
 
