@@ -355,6 +355,12 @@
 
             $options = Get-EquivalencyOption -Comparator Equality
             { Assert-Equivalent -Actual $actual -Expected $expected -Options $options } | Verify-AssertionFailed
+
+            $DBNull = [DBNull]::Value
+            Assert-Equivalent -Actual $null -Expected $DBNull
+            Assert-Equivalent -Actual $DBNull -Expected $null
+            {Assert-Equivalent -Actual $null -Expected $DBNull -Options $options} | Should -Throw -ExpectedMessage 'Expected and actual are not equivalent!'
+            {Assert-Equivalent -Actual $DBNull -Expected $null -Options $options} | Should -Throw -ExpectedMessage 'Expected and actual are not equivalent!'
         }
     }
 

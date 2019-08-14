@@ -191,6 +191,37 @@ function Compare-DataTableEquivalent ($Expected, $Actual, $Property, $Options) {
     }
 }
 
+function Compare-NullEquivalent ($Actual, $Expected, $Property, $Options) {
+    if ("Equivalency" -eq $Options.Comparator) {
+        v "Equivalency comparator is used, values will be compared for equivalency."
+        if (Is-Null -Value $Actual)
+        {
+            v -Equivalence "`$Actual is equivalent to `$null."
+            return
+        }
+    }
+    else
+    {
+        v "Equality comparator is used, values will be compared for equality."
+        if ($Expected -isnot [Object] -and $Actual -isnot [Object])
+        {
+            v -Equivalence "`$Actual is equal to `$null, because it is `$null."
+            return
+        }
+        if ($Expected -is [Object] -and $Actual -is [Object] -and
+            $Expected.Psobject.TypeNames[0] -like '*System.DBNull' -and
+            $Actual.Psobject.TypeNames[0] -like '*System.DBNull')
+        {
+            v -Equivalence "`$Actual is equal to DBNull, because it is DBNull."
+            return
+        }
+    }
+    # we terminate here, either we passed the test and return nothing, or we did not
+    # and return message here
+    v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected)."
+    return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property -Options $Options
+}
+
 function Compare-ValueEquivalent ($Actual, $Expected, $Property, $Options) {
     $Expected = $($Expected)
     if (-not (Is-Value -Value $Expected))
@@ -575,21 +606,13 @@ function Compare-Equivalent {
 
     #start by null checks to avoid implementing null handling
     #logic in the functions that follow
-    if ($null -eq $Expected)
-    {
+    if (Is-Null -Value $Expected) {
         v "`$Expected is `$null, so we are expecting `$null."
-        if ($Expected -ne $Actual)
-        {
-            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely $Actual.GetType())."
-            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path -Options $Options
-        }
-        # we terminate here, either we passed the test and return nothing, or we did not
-        # and the previous statement returned message
-        v -Equivalence "`$Actual is equivalent to `$null, because it is `$null."
+        Compare-NullEquivalent -Expected $Expected -Actual $Actual -Property $Path -Options $Options
         return
     }
 
-    if ($null -eq $Actual)
+    if (Is-Null -Value $Actual)
     {
         v -Difference "`$Actual is $(Format-Nicely), but `$Expected has value of type $(Format-Nicely Get-Type $Expected), so they are not equivalent."
         return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path

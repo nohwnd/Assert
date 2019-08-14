@@ -1,3 +1,8 @@
+function Is-Null ($Value) {
+    # Since PowerShell 7.0 [DBNull] -eq $null.
+    $null -eq $Value -or $Value -is [DBNull] -or $Value.Psobject.TypeNames[0] -like '*System.DBNull'
+}
+
 function Is-Value ($Value) {
     $Value = $($Value)
     $Value -is [ValueType] -or $Value -is [string] -or $value -is [scriptblock]
@@ -50,6 +55,7 @@ function Is-DataRow ($Value) {
 }
 
 Export-ModuleMember -Function @(
+    'Is-Null'
     'Is-Value'
     'Is-Collection'
     'Is-DataTable'
