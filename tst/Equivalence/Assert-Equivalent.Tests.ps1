@@ -440,23 +440,8 @@ InModuleScope -ModuleName Assert {
             Assert-Equivalent -Actual $Actual -Expected $Expected
 
             function SerializeDeserialize ($InputObject) {
-                # psv2 compatibility
-                # $ExpectedDeserialized = [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($Expected))
-                # Alternatively this could be done in memory via https://github.com/Jaykul/Reflection/blob/master/CliXml.psm1, but I don't want to fiddle with more
-                # relfection right now
-                try {
-                    $path = [IO.Path]::GetTempFileName()
-
-                    Export-Clixml -Path $path -InputObject $InputObject -Force | Out-Null
-                    Import-Clixml -Path $path
-                }
-                finally {
-                    if ($null -ne $path -and (Test-Path $path)) {
-                        Remove-Item -Path $path -Force
-                    }
-                }
+                , [System.Management.Automation.PSSerializer]::Deserialize([System.Management.Automation.PSSerializer]::Serialize($InputObject, 3))
             }
-
 
             $ExpectedDeserialized = SerializeDeserialize $Expected
             $ActualDeserialized = SerializeDeserialize $Actual
