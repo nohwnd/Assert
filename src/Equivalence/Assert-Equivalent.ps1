@@ -19,7 +19,8 @@ function Get-ValueNotEquivalentMessage ($Expected, $Actual, $Property, $Options)
     $Expected = Format-Nicely -Value $Expected
     $Actual = Format-Nicely -Value $Actual
     $propertyInfo = if ($Property) { " property $Property with value" }
-    $comparison = if ("Equality" -eq $Options.Comparator) { 'equal' } else { 'equivalent' }
+    $comparison = if ("Equality" -eq $Options.Comparator) { 'equal' }
+        elseif ("StrictEquality" -eq $Options.Comparator) { 'strictly equal' } else { 'equivalent' }
     "Expected$propertyInfo '$Expected' to be $comparison to the actual value, but got '$Actual'."
 }
 
@@ -81,7 +82,7 @@ function Compare-CollectionEquivalent ($Expected, $Actual, $Property, $Options) 
         v "`nSearching for `$Expected[$e]:"
         $currentExpected = $Expected[$e]
         $found = $false
-        if ($StrictOrder) {
+        if ($Options.StrictOrder) {
             $currentActual = $Actual[$e]
             if ($taken -notcontains $e -and (-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property -Options $Options)))
             {
@@ -161,7 +162,7 @@ function Compare-DataTableEquivalent ($Expected, $Actual, $Property, $Options) {
     for ($e = 0; $e -lt $eEnd; $e++) {
         $currentExpected = $Expected.Rows[$e]
         $found = $false
-        if ($StrictOrder) {
+        if ($Options.StrictOrder) {
             $currentActual = $Actual.Rows[$e]
             if ((-not (Compare-Equivalent -Expected $currentExpected -Actual $currentActual -Path $Property -Options $Options)) -and $taken -notcontains $e) {
                 $taken += $e
@@ -189,6 +190,48 @@ function Compare-DataTableEquivalent ($Expected, $Actual, $Property, $Options) {
         $propertyMessage = if ($Property) {" in property $Property which is"}
         return "Expected DataTable$propertyMessage '$Expected' to be equivalent to '$Actual' but some values were missing: '$notFoundFormatted'."
     }
+}
+
+function Compare-NullEquivalent ($Actual, $Expected, $Property, $Options) {
+    if ("Equivalency" -eq $Options.Comparator) {
+        v "Equivalency comparator is used, values will be compared for equivalency."
+        if (Is-Null -Value $Actual)
+        {
+            v -Equivalence "`$Actual is equivalent to `$null."
+            return
+        }
+    }
+    elseif ("StrictEquality" -eq $Options.Comparator)
+    {
+        v "StrictEquality comparator is used, values will be compared for equality."
+        if ($Expected -isnot [Object] -and $Actual -isnot [Object])
+        {
+            v -Equivalence "`$Actual is equal to `$null, because it is `$null."
+            return
+        }
+        if ($Expected -is [Object] -and $Actual -is [Object] -and
+            $Expected.Psobject.TypeNames[0] -like '*System.DBNull' -and
+            $Actual.Psobject.TypeNames[0] -like '*System.DBNull')
+        {
+            v -Equivalence "`$Actual is equal to DBNull, because it is DBNull."
+            return
+        }
+    }
+    else
+    {
+        v "Equality comparator is used, values will be compared for equality."
+        if ($Expected -is [Object] -and $Expected.Psobject.TypeNames[0] -like '*System.DBNull') {$Expected = [DBNull]::Value}
+        if ($Actual -is [Object] -and $Actual.Psobject.TypeNames[0] -like '*System.DBNull') {$Actual = [DBNull]::Value}
+        if ($Expected -eq $Actual)
+        {
+            v -Equivalence "`$Actual is equal to DBNull, because it is DBNull."
+            return
+        }
+    }
+    # we terminate here, either we passed the test and return nothing, or we did not
+    # and return message here
+    v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected)."
+    return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Property -Options $Options
 }
 
 function Compare-ValueEquivalent ($Actual, $Expected, $Property, $Options) {
@@ -247,6 +290,16 @@ function Compare-ValueEquivalent ($Actual, $Expected, $Property, $Options) {
             v -Equivalence "`$Actual is equivalent to `$Expected because their contents are equal."
             return
         }
+    }
+    elseif ("StrictEquality" -eq $Options.Comparator)
+    {
+        v "StrictEquality comparator is used, values will be compared for strict equality."
+        if ($Expected.GetType() -ne $Actual.GetType())
+        {
+            v -Difference "`$Actual is not equivalent to `$Expected because their type differ."
+            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path -Options $Options
+        }
+        v "types are matching, will be tested for values."
     }
     else
     {
@@ -575,21 +628,13 @@ function Compare-Equivalent {
 
     #start by null checks to avoid implementing null handling
     #logic in the functions that follow
-    if ($null -eq $Expected)
-    {
+    if (Is-Null -Value $Expected) {
         v "`$Expected is `$null, so we are expecting `$null."
-        if ($Expected -ne $Actual)
-        {
-            v -Difference "`$Actual is not equivalent to $(Format-Nicely $Expected), because it has a value of type $(Format-Nicely $Actual.GetType())."
-            return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path -Options $Options
-        }
-        # we terminate here, either we passed the test and return nothing, or we did not
-        # and the previous statement returned message
-        v -Equivalence "`$Actual is equivalent to `$null, because it is `$null."
+        Compare-NullEquivalent -Expected $Expected -Actual $Actual -Property $Path -Options $Options
         return
     }
 
-    if ($null -eq $Actual)
+    if (Is-Null -Value $Actual)
     {
         v -Difference "`$Actual is $(Format-Nicely), but `$Expected has value of type $(Format-Nicely Get-Type $Expected), so they are not equivalent."
         return Get-ValueNotEquivalentMessage -Expected $Expected -Actual $Actual -Property $Path
@@ -660,8 +705,7 @@ function Assert-Equivalent {
     param(
         $Actual,
         $Expected,
-        $Options = (Get-EquivalencyOption),
-        [Switch] $StrictOrder
+        $Options = (Get-EquivalencyOption)
     )
 
     $areDifferent = Compare-Equivalent -Actual $Actual -Expected $Expected -Options $Options | Out-String
@@ -681,14 +725,16 @@ function Get-EquivalencyOption {
     param(
         [string[]] $ExcludePath = @(),
         [switch] $ExcludePathsNotOnExpected,
-        [ValidateSet('Equivalency', 'Equality')]
-        [string] $Comparator = 'Equivalency'
+        [ValidateSet('Equivalency', 'Equality', 'StrictEquality')]
+        [string] $Comparator = 'Equivalency',
+        [switch] $StrictOrder
     )
 
     [PSCustomObject]@{
-        ExcludedPaths = [string[]] $ExcludePath
+        ExcludedPaths             = [string[]] $ExcludePath
         ExcludePathsNotOnExpected = [bool] $ExcludePathsNotOnExpected
-        Comparator = [string] $Comparator
+        Comparator                = [string] $Comparator
+        StrictOrder               = [bool] $StrictOrder
     }
 }
 

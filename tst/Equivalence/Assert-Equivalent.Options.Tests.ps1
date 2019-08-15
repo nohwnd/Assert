@@ -356,8 +356,30 @@
             $options = Get-EquivalencyOption -Comparator Equality
             { Assert-Equivalent -Actual $actual -Expected $expected -Options $options } | Verify-AssertionFailed
         }
-    }
 
+        $OptionsEquality = Get-EquivalencyOption -Comparator Equality
+        $OptionsStrictEquality = Get-EquivalencyOption -Comparator StrictEquality
+        $DBNull = [DBNull]::Value
+        It "Test <Actual> vs <Expected> with -Comparator 'Equivalency', 'Equality', 'StrictEquality'" -TestCases @(
+            @{ Actual = 'False' ; Expected = $false }
+            @{ Actual = $null; Expected = $DBNull }
+            @{ Actual = 5; Expected = '5' }
+            @{ Actual = { 'String' }; Expected = { 'String' } }
+        ) {
+            param($Expected, $Actual)
+            # Equivalent
+            Assert-Equivalent -Actual $Actual -Expected $Expected
+            Assert-Equivalent -Actual $Expected -Expected $Actual
+            # StrictEquality
+            { Assert-Equivalent -Actual $Actual -Expected $Expected -Options $OptionsStrictEquality } | Verify-AssertionFailed
+            { Assert-Equivalent -Actual $Expected -Expected $Actual -Options $OptionsStrictEquality } | Verify-AssertionFailed
+            # Equality
+            $AssertResult = try { Assert-Equivalent -Actual $Actual -Expected $Expected -Options $OptionsEquality ; $true} catch {$false}
+            $AssertResult -eq ($Expected -eq $Actual) | Verify-True
+            $AssertResult = try { Assert-Equivalent -Actual $Expected -Expected $Actual -Options $OptionsEquality ; $true} catch {$false}
+            $AssertResult -eq ($Actual -eq $Expected) | Verify-True
+        }
+    }
 
     Describe "Printing Options into difference report" {
 

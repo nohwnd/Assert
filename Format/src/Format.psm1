@@ -72,7 +72,7 @@ function Format-Dictionary ($Value) {
 }
 
 function Format-Nicely ($Value, [switch]$Pretty) {
-    if ($null -eq $Value)
+    if (Is-Null -Value $Value)
     {
         return Format-Null -Value $Value
     }
