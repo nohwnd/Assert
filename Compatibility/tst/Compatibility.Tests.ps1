@@ -1,6 +1,8 @@
-﻿$here = $MyInvocation.MyCommand.Path | Split-Path
-Import-Module -Force $here/../../Axiom/src/Axiom.psm1 -DisableNameChecking
-. $here/../src/Compatibility.ps1
+﻿BeforeAll {
+    $here = $PSScriptRoot
+    Import-Module -Force $here/../../Axiom/src/Axiom.psm1 -DisableNameChecking
+    . $here/../src/Compatibility.ps1
+}
 
 Describe "New-PSObject" {
     It "Creates a new object of type PSCustomObject" {

@@ -1,0 +1,1275 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE report PUBLIC "-//JACOCO//DTD Report 1.1//EN" "report.dtd"[]>
+<report name="Pester (06/01/2021 23:14:31)">
+  <sessioninfo id="this" start="1622589259334" dump="1622589271355" />
+  <package name="src/Boolean">
+    <class name="src/Boolean/Assert-False" sourcefilename="Assert-False.ps1">
+      <method name="Assert-False" desc="()" line="8">
+        <counter type="INSTRUCTION" missed="0" covered="5" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="5" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/Boolean/Assert-True" sourcefilename="Assert-True.ps1">
+      <method name="Assert-True" desc="()" line="8">
+        <counter type="INSTRUCTION" missed="0" covered="5" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="5" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <sourcefile name="Assert-False.ps1">
+      <line nr="8" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="9" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="12" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="5" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-True.ps1">
+      <line nr="8" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="9" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="12" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="5" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <counter type="INSTRUCTION" missed="0" covered="10" />
+    <counter type="LINE" missed="0" covered="10" />
+    <counter type="METHOD" missed="0" covered="2" />
+    <counter type="CLASS" missed="0" covered="2" />
+  </package>
+  <package name="src/Collection">
+    <class name="src/Collection/Assert-All" sourcefilename="Assert-All.ps1">
+      <method name="Assert-All" desc="()" line="12">
+        <counter type="INSTRUCTION" missed="0" covered="16" />
+        <counter type="LINE" missed="0" covered="13" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="16" />
+      <counter type="LINE" missed="0" covered="13" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/Collection/Assert-Any" sourcefilename="Assert-Any.ps1">
+      <method name="Assert-Any" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="8" />
+        <counter type="LINE" missed="0" covered="6" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="8" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/Collection/Assert-Contain" sourcefilename="Assert-Contain.ps1">
+      <method name="Assert-Contain" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="6" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/Collection/Assert-NotContain" sourcefilename="Assert-NotContain.ps1">
+      <method name="Assert-NotContain" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="6" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <sourcefile name="Assert-All.ps1">
+      <line nr="12" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="17" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="23" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="24" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="27" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="30" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="32" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="33" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="34" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="36" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="37" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="40" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="16" />
+      <counter type="LINE" missed="0" covered="13" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-Any.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="12" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="18" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="8" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-Contain.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="18" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-NotContain.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="18" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <counter type="INSTRUCTION" missed="0" covered="36" />
+    <counter type="LINE" missed="0" covered="31" />
+    <counter type="METHOD" missed="0" covered="4" />
+    <counter type="CLASS" missed="0" covered="4" />
+  </package>
+  <package name="src/Common">
+    <class name="src/Common/Add-AssertionException" sourcefilename="Add-AssertionException.ps1">
+      <method name="&lt;script&gt;" desc="()" line="1">
+        <counter type="INSTRUCTION" missed="3" covered="0" />
+        <counter type="LINE" missed="2" covered="0" />
+        <counter type="METHOD" missed="1" covered="0" />
+      </method>
+      <counter type="INSTRUCTION" missed="3" covered="0" />
+      <counter type="LINE" missed="2" covered="0" />
+      <counter type="METHOD" missed="1" covered="0" />
+      <counter type="CLASS" missed="1" covered="0" />
+    </class>
+    <class name="src/Common/Collect-Input" sourcefilename="Collect-Input.ps1">
+      <method name="Collect-Input" desc="()" line="4">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/Common/Ensure-ExpectedIsNotCollection" sourcefilename="Ensure-ExpectedIsNotCollection.ps1">
+      <method name="Ensure-ExpectedIsNotCollection" desc="()" line="6">
+        <counter type="INSTRUCTION" missed="0" covered="3" />
+        <counter type="LINE" missed="0" covered="3" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="3" />
+      <counter type="LINE" missed="0" covered="3" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/Common/Get-AssertionMessage" sourcefilename="Get-AssertionMessage.ps1">
+      <method name="Get-AssertionMessage" desc="()" line="3">
+        <counter type="INSTRUCTION" missed="0" covered="28" />
+        <counter type="LINE" missed="0" covered="20" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="28" />
+      <counter type="LINE" missed="0" covered="20" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/Common/Get-CustomFailureMessage" sourcefilename="Get-CustomFailureMessage.ps1">
+      <method name="Get-CustomFailureMessage" desc="()" line="3">
+        <counter type="INSTRUCTION" missed="0" covered="3" />
+        <counter type="LINE" missed="0" covered="3" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="3" />
+      <counter type="LINE" missed="0" covered="3" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <sourcefile name="Add-AssertionException.ps1">
+      <line nr="1" mi="2" ci="0" mb="0" cb="0" />
+      <line nr="2" mi="1" ci="0" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="3" covered="0" />
+      <counter type="LINE" missed="2" covered="0" />
+      <counter type="METHOD" missed="1" covered="0" />
+      <counter type="CLASS" missed="1" covered="0" />
+    </sourcefile>
+    <sourcefile name="Collect-Input.ps1">
+      <line nr="4" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="6" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="7" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="8" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="12" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Ensure-ExpectedIsNotCollection.ps1">
+      <line nr="6" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="8" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="3" />
+      <counter type="LINE" missed="0" covered="3" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Get-AssertionMessage.ps1">
+      <line nr="3" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="5" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="8" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="9" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="12" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="18" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="19" mi="0" ci="4" mb="0" cb="0" />
+      <line nr="25" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="26" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="27" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="28" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="29" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="31" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="33" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="36" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="37" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="41" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="28" />
+      <counter type="LINE" missed="0" covered="20" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Get-CustomFailureMessage.ps1">
+      <line nr="3" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="4" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="5" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="3" />
+      <counter type="LINE" missed="0" covered="3" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <counter type="INSTRUCTION" missed="3" covered="40" />
+    <counter type="LINE" missed="2" covered="31" />
+    <counter type="METHOD" missed="1" covered="4" />
+    <counter type="CLASS" missed="1" covered="4" />
+  </package>
+  <package name="src/Equivalence">
+    <class name="src/Equivalence/Assert-Equivalent" sourcefilename="Assert-Equivalent.ps1">
+      <method name="Test-Same" desc="()" line="2">
+        <counter type="INSTRUCTION" missed="0" covered="1" />
+        <counter type="LINE" missed="0" covered="1" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Is-CollectionSize" desc="()" line="6">
+        <counter type="INSTRUCTION" missed="1" covered="2" />
+        <counter type="LINE" missed="1" covered="2" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Is-DataTableSize" desc="()" line="15">
+        <counter type="INSTRUCTION" missed="0" covered="1" />
+        <counter type="LINE" missed="0" covered="1" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Get-ValueNotEquivalentMessage" desc="()" line="19">
+        <counter type="INSTRUCTION" missed="0" covered="8" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Get-CollectionSizeNotTheSameMessage" desc="()" line="28">
+        <counter type="INSTRUCTION" missed="3" covered="9" />
+        <counter type="LINE" missed="1" covered="7" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Get-DataTableSizeNotTheSameMessage" desc="()" line="41">
+        <counter type="INSTRUCTION" missed="8" covered="0" />
+        <counter type="LINE" missed="8" covered="0" />
+        <counter type="METHOD" missed="1" covered="0" />
+      </method>
+      <method name="Compare-CollectionEquivalent" desc="()" line="54">
+        <counter type="INSTRUCTION" missed="9" covered="61" />
+        <counter type="LINE" missed="5" covered="43" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Compare-DataTableEquivalent" desc="()" line="142">
+        <counter type="INSTRUCTION" missed="9" covered="40" />
+        <counter type="LINE" missed="8" covered="26" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Compare-ValueEquivalent" desc="()" line="195">
+        <counter type="INSTRUCTION" missed="4" covered="54" />
+        <counter type="LINE" missed="2" covered="33" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Compare-HashtableEquivalent" desc="()" line="269">
+        <counter type="INSTRUCTION" missed="0" covered="56" />
+        <counter type="LINE" missed="0" covered="35" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Compare-DictionaryEquivalent" desc="()" line="341">
+        <counter type="INSTRUCTION" missed="0" covered="54" />
+        <counter type="LINE" missed="0" covered="35" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Compare-ObjectEquivalent" desc="()" line="411">
+        <counter type="INSTRUCTION" missed="0" covered="53" />
+        <counter type="LINE" missed="0" covered="33" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Compare-DataRowEquivalent" desc="()" line="480">
+        <counter type="INSTRUCTION" missed="8" covered="25" />
+        <counter type="LINE" missed="6" covered="12" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="v" desc="()" line="533">
+        <counter type="INSTRUCTION" missed="0" covered="13" />
+        <counter type="LINE" missed="0" covered="12" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Compare-Equivalent" desc="()" line="565">
+        <counter type="INSTRUCTION" missed="5" covered="39" />
+        <counter type="LINE" missed="3" covered="34" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Assert-Equivalent" desc="()" line="663">
+        <counter type="INSTRUCTION" missed="0" covered="8" />
+        <counter type="LINE" missed="0" covered="7" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Get-EquivalencyOption" desc="()" line="688">
+        <counter type="INSTRUCTION" missed="0" covered="4" />
+        <counter type="LINE" missed="0" covered="4" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Test-IncludedPath" desc="()" line="708">
+        <counter type="INSTRUCTION" missed="1" covered="13" />
+        <counter type="LINE" missed="1" covered="10" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Format-EquivalencyOptions" desc="()" line="737">
+        <counter type="INSTRUCTION" missed="0" covered="5" />
+        <counter type="LINE" missed="0" covered="2" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Like-Any" desc="()" line="748">
+        <counter type="INSTRUCTION" missed="0" covered="8" />
+        <counter type="LINE" missed="0" covered="6" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="48" covered="454" />
+      <counter type="LINE" missed="35" covered="308" />
+      <counter type="METHOD" missed="1" covered="19" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <sourcefile name="Assert-Equivalent.ps1">
+      <line nr="2" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="6" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="7" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="10" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="19" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="20" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="21" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="22" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="23" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="28" mi="1" ci="2" mb="0" cb="0" />
+      <line nr="29" mi="1" ci="2" mb="0" cb="0" />
+      <line nr="30" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="31" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="33" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="34" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="35" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="37" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="41" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="42" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="43" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="44" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="46" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="47" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="48" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="50" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="54" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="56" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="59" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="61" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="62" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="63" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="64" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="65" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="68" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="69" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="70" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="73" mi="1" ci="2" mb="0" cb="0" />
+      <line nr="74" mi="1" ci="2" mb="0" cb="0" />
+      <line nr="75" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="76" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="77" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="78" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="79" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="81" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="82" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="83" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="84" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="85" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="86" mi="3" ci="0" mb="0" cb="0" />
+      <line nr="88" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="89" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="90" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="94" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="97" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="98" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="100" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="102" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="103" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="108" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="109" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="110" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="117" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="119" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="120" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="121" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="129" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="130" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="131" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="132" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="133" mi="0" ci="4" mb="0" cb="0" />
+      <line nr="135" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="136" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="138" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="142" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="143" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="146" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="147" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="148" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="149" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="150" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="153" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="154" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="157" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="158" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="159" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="160" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="161" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="162" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="163" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="164" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="165" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="166" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="167" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="168" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="172" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="173" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="174" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="175" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="176" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="180" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="181" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="184" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="185" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="186" mi="0" ci="4" mb="0" cb="0" />
+      <line nr="188" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="189" mi="1" ci="1" mb="0" cb="0" />
+      <line nr="190" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="195" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="196" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="198" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="204" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="205" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="206" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="207" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="209" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="211" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="212" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="213" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="215" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="216" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="218" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="222" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="224" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="225" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="226" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="228" mi="3" ci="0" mb="0" cb="0" />
+      <line nr="229" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="231" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="236" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="239" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="241" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="244" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="245" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="247" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="253" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="256" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="258" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="259" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="260" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="262" mi="0" ci="6" mb="0" cb="0" />
+      <line nr="263" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="265" mi="0" ci="6" mb="0" cb="0" />
+      <line nr="269" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="271" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="274" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="276" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="277" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="278" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="279" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="284" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="285" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="287" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="288" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="289" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="291" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="295" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="296" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="298" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="299" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="303" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="304" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="305" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="306" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="309" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="311" mi="0" ci="4" mb="0" cb="0" />
+      <line nr="313" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="316" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="317" mi="0" ci="4" mb="0" cb="0" />
+      <line nr="320" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="323" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="325" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="329" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="331" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="332" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="333" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="334" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="337" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="341" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="343" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="346" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="348" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="349" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="350" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="351" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="356" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="357" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="359" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="360" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="361" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="363" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="367" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="368" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="370" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="371" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="375" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="376" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="377" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="378" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="380" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="382" mi="0" ci="4" mb="0" cb="0" />
+      <line nr="383" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="386" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="387" mi="0" ci="4" mb="0" cb="0" />
+      <line nr="390" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="393" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="395" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="399" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="401" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="402" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="403" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="404" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="406" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="411" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="413" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="416" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="417" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="418" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="419" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="420" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="423" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="424" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="426" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="427" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="429" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="434" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="435" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="436" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="438" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="439" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="442" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="443" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="444" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="445" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="448" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="450" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="453" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="455" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="457" mi="0" ci="4" mb="0" cb="0" />
+      <line nr="460" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="461" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="463" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="464" mi="0" ci="5" mb="0" cb="0" />
+      <line nr="467" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="471" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="473" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="480" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="482" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="485" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="486" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="487" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="488" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="491" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="492" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="494" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="496" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="497" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="498" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="500" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="504" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="508" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="510" mi="0" ci="4" mb="0" cb="0" />
+      <line nr="513" mi="1" ci="2" mb="0" cb="0" />
+      <line nr="515" mi="2" ci="0" mb="0" cb="0" />
+      <line nr="533" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="534" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="535" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="538" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="539" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="542" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="543" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="546" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="547" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="550" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="551" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="554" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="565" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="566" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="567" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="571" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="572" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="578" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="580" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="581" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="583" mi="3" ci="0" mb="0" cb="0" />
+      <line nr="584" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="588" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="592" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="594" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="595" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="598" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="602" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="604" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="605" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="610" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="612" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="616" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="618" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="619" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="624" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="626" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="627" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="632" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="634" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="635" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="640" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="641" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="642" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="647" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="649" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="650" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="654" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="655" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="663" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="667" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="669" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="671" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="673" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="674" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="677" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="688" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="689" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="690" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="691" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="708" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="709" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="710" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="711" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="716" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="718" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="721" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="722" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="725" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="727" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="731" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="737" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="738" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="748" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="749" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="750" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="751" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="752" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="756" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="48" covered="454" />
+      <counter type="LINE" missed="35" covered="308" />
+      <counter type="METHOD" missed="1" covered="19" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <counter type="INSTRUCTION" missed="48" covered="454" />
+    <counter type="LINE" missed="35" covered="308" />
+    <counter type="METHOD" missed="1" covered="19" />
+    <counter type="CLASS" missed="0" covered="1" />
+  </package>
+  <package name="src/Exception">
+    <class name="src/Exception/Assert-Throw" sourcefilename="Assert-Throw.ps1">
+      <method name="Assert-Throw" desc="()" line="12">
+        <counter type="INSTRUCTION" missed="0" covered="45" />
+        <counter type="LINE" missed="0" covered="38" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Get-Error" desc="()" line="86">
+        <counter type="INSTRUCTION" missed="1" covered="8" />
+        <counter type="LINE" missed="1" covered="8" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Join-And" desc="()" line="105">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="4" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Add-SpaceToNonEmptyString" desc="()" line="117">
+        <counter type="INSTRUCTION" missed="0" covered="2" />
+        <counter type="LINE" missed="0" covered="2" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="1" covered="61" />
+      <counter type="LINE" missed="1" covered="52" />
+      <counter type="METHOD" missed="0" covered="4" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <sourcefile name="Assert-Throw.ps1">
+      <line nr="12" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="17" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="18" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="20" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="26" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="30" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="31" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="34" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="35" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="37" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="38" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="39" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="41" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="43" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="44" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="45" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="46" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="50" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="51" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="52" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="53" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="54" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="58" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="59" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="60" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="61" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="62" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="66" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="68" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="71" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="72" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="73" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="74" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="76" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="78" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="81" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="86" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="88" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="92" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="94" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="95" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="96" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="97" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="98" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="99" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="105" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="107" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="111" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="112" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="117" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="119" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="1" covered="61" />
+      <counter type="LINE" missed="1" covered="52" />
+      <counter type="METHOD" missed="0" covered="4" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <counter type="INSTRUCTION" missed="1" covered="61" />
+    <counter type="LINE" missed="1" covered="52" />
+    <counter type="METHOD" missed="0" covered="4" />
+    <counter type="CLASS" missed="0" covered="1" />
+  </package>
+  <package name="src/General">
+    <class name="src/General/Assert-Equal" sourcefilename="Assert-Equal.ps1">
+      <method name="Assert-Equal" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/General/Assert-GreaterThan" sourcefilename="Assert-GreaterThan.ps1">
+      <method name="Assert-GreaterThan" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/General/Assert-GreaterThanOrEqual" sourcefilename="Assert-GreaterThanOrEqual.ps1">
+      <method name="Assert-GreaterThanOrEqual" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/General/Assert-LessThan" sourcefilename="Assert-LessThan.ps1">
+      <method name="Assert-LessThan" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/General/Assert-LessThanOrEqual" sourcefilename="Assert-LessThanOrEqual.ps1">
+      <method name="Assert-LessThanOrEqual" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/General/Assert-NotEqual" sourcefilename="Assert-NotEqual.ps1">
+      <method name="Assert-NotEqual" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/General/Assert-NotNull" sourcefilename="Assert-NotNull.ps1">
+      <method name="Assert-NotNull" desc="()" line="8">
+        <counter type="INSTRUCTION" missed="0" covered="5" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="5" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/General/Assert-NotSame" sourcefilename="Assert-NotSame.ps1">
+      <method name="Assert-NotSame" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="5" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="5" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/General/Assert-NotType" sourcefilename="Assert-NotType.ps1">
+      <method name="Assert-NotType" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="6" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/General/Assert-Null" sourcefilename="Assert-Null.ps1">
+      <method name="Assert-Null" desc="()" line="8">
+        <counter type="INSTRUCTION" missed="0" covered="5" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="5" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/General/Assert-Same" sourcefilename="Assert-Same.ps1">
+      <method name="Assert-Same" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="8" />
+        <counter type="LINE" missed="0" covered="7" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="8" />
+      <counter type="LINE" missed="0" covered="7" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/General/Assert-Type" sourcefilename="Assert-Type.ps1">
+      <method name="Assert-Type" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="6" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <sourcefile name="Assert-Equal.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="12" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="18" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-GreaterThan.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="17" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-GreaterThanOrEqual.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="17" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-LessThan.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="17" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-LessThanOrEqual.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="17" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-NotEqual.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="17" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-NotNull.ps1">
+      <line nr="8" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="9" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="12" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="5" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-NotSame.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="17" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="5" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-NotType.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="18" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-Null.ps1">
+      <line nr="8" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="9" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="12" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="5" />
+      <counter type="LINE" missed="0" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-Same.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="12" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="16" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="18" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="19" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="22" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="8" />
+      <counter type="LINE" missed="0" covered="7" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-Type.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="14" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="18" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <counter type="INSTRUCTION" missed="0" covered="71" />
+    <counter type="LINE" missed="0" covered="64" />
+    <counter type="METHOD" missed="0" covered="12" />
+    <counter type="CLASS" missed="0" covered="12" />
+  </package>
+  <package name="src/String">
+    <class name="src/String/Assert-Like" sourcefilename="Assert-Like.ps1">
+      <method name="Test-Like" desc="()" line="9">
+        <counter type="INSTRUCTION" missed="0" covered="3" />
+        <counter type="LINE" missed="0" covered="3" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Get-LikeDefaultFailureMessage" desc="()" line="21">
+        <counter type="INSTRUCTION" missed="0" covered="4" />
+        <counter type="LINE" missed="0" covered="4" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Assert-Like" desc="()" line="40">
+        <counter type="INSTRUCTION" missed="1" covered="9" />
+        <counter type="LINE" missed="1" covered="8" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="1" covered="16" />
+      <counter type="LINE" missed="1" covered="15" />
+      <counter type="METHOD" missed="0" covered="3" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/String/Assert-NotLike" sourcefilename="Assert-NotLike.ps1">
+      <method name="Test-NotLike" desc="()" line="9">
+        <counter type="INSTRUCTION" missed="0" covered="3" />
+        <counter type="LINE" missed="0" covered="3" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Get-NotLikeDefaultFailureMessage" desc="()" line="21">
+        <counter type="INSTRUCTION" missed="0" covered="4" />
+        <counter type="LINE" missed="0" covered="4" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Assert-NotLike" desc="()" line="40">
+        <counter type="INSTRUCTION" missed="1" covered="9" />
+        <counter type="LINE" missed="1" covered="8" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="1" covered="16" />
+      <counter type="LINE" missed="1" covered="15" />
+      <counter type="METHOD" missed="0" covered="3" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/String/Assert-StringEqual" sourcefilename="Assert-StringEqual.ps1">
+      <method name="Test-StringEqual" desc="()" line="10">
+        <counter type="INSTRUCTION" missed="0" covered="6" />
+        <counter type="LINE" missed="0" covered="6" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Get-StringEqualDefaultFailureMessage" desc="()" line="28">
+        <counter type="INSTRUCTION" missed="0" covered="1" />
+        <counter type="LINE" missed="0" covered="1" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Assert-StringEqual" desc="()" line="43">
+        <counter type="INSTRUCTION" missed="0" covered="8" />
+        <counter type="LINE" missed="0" covered="7" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="15" />
+      <counter type="LINE" missed="0" covered="14" />
+      <counter type="METHOD" missed="0" covered="3" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="src/String/Assert-StringNotEqual" sourcefilename="Assert-StringNotEqual.ps1">
+      <method name="Get-StringNotEqualDefaultFailureMessage" desc="()" line="3">
+        <counter type="INSTRUCTION" missed="0" covered="1" />
+        <counter type="LINE" missed="0" covered="1" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <method name="Assert-StringNotEqual" desc="()" line="18">
+        <counter type="INSTRUCTION" missed="0" covered="5" />
+        <counter type="LINE" missed="0" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="2" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <sourcefile name="Assert-Like.ps1">
+      <line nr="9" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="21" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="22" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="24" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="26" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="40" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="42" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="44" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="47" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="48" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="50" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="52" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="56" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="58" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="1" covered="16" />
+      <counter type="LINE" missed="1" covered="15" />
+      <counter type="METHOD" missed="0" covered="3" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-NotLike.ps1">
+      <line nr="9" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="11" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="15" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="21" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="22" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="24" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="26" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="40" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="42" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="44" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="47" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="48" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="50" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="52" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="56" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="59" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="1" covered="16" />
+      <counter type="LINE" missed="1" covered="15" />
+      <counter type="METHOD" missed="0" covered="3" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-StringEqual.ps1">
+      <line nr="10" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="12" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="13" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="16" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="18" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="22" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="28" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="43" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="45" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="47" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="51" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="54" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="55" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="57" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="15" />
+      <counter type="LINE" missed="0" covered="14" />
+      <counter type="METHOD" missed="0" covered="3" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Assert-StringNotEqual.ps1">
+      <line nr="3" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="18" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="20" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="22" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="26" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="29" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="0" covered="6" />
+      <counter type="LINE" missed="0" covered="6" />
+      <counter type="METHOD" missed="0" covered="2" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <counter type="INSTRUCTION" missed="2" covered="53" />
+    <counter type="LINE" missed="2" covered="50" />
+    <counter type="METHOD" missed="0" covered="11" />
+    <counter type="CLASS" missed="0" covered="4" />
+  </package>
+  <counter type="INSTRUCTION" missed="54" covered="725" />
+  <counter type="LINE" missed="40" covered="546" />
+  <counter type="METHOD" missed="2" covered="56" />
+  <counter type="CLASS" missed="1" covered="28" />
+</report>

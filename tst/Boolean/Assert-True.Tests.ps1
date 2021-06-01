@@ -19,7 +19,7 @@
     }
 
     Context "Validate messages" {
-        It "Given value '<expected>' that is not `$true it returns expected message '<message>'" -TestCases @(
+        It "Given value that is not `$true it returns expected message '<message>'" -TestCases @(
             @{ Actual = $false ; Message = "Expected bool '`$false' to be bool '`$true' or truthy value."},
             @{ Actual = 0 ; Message = "Expected int '0' to be bool '`$true' or truthy value."}
         ) {
