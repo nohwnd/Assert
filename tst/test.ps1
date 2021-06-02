@@ -27,8 +27,6 @@ try {
         # }
     }
 
-     
-
     # import the tested module
     Import-Module ./../Assert.psd1
 
@@ -49,7 +47,7 @@ try {
         $configuration.Run.Exit = $true
         $configuration.Output.Verbosity = "Detailed"
         $configuration.TestResult.Enabled = $true
-        $configuration.TestResult.OutputPath = '..\TestResults.xml'
+        $configuration.TestResult.OutputPath = "$PSScriptRoot/../TestResults.xml"
         $configuration.CodeCoverage.Enabled = $true
         $configuration.CodeCoverage.OutputFormat = 'CoverageGutters'
         if ($UseBreakpointCodeCoverage) {
