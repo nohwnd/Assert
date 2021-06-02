@@ -26,6 +26,7 @@ try {
             Install-Module -Name Pester -Force -MinimumVersion $minimumPesterVersion -Scope CurrentUser -AllowPreRelease
         # }
     }
+    
 
     # import the tested module
     Import-Module ./../Assert.psd1
