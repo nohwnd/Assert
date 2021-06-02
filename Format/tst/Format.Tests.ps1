@@ -1,10 +1,5 @@
 ﻿BeforeDiscovery { 
     . $PSScriptRoot/../../Compatibility/src/Compatibility.ps1
-}
-
-BeforeAll {
-    Get-Module Format | Remove-Module
-    Import-Module $PSScriptRoot/../src/Format.psm1 -Force
 
     Add-Type -TypeDefinition '
     namespace Assertions.TestType {
@@ -16,6 +11,11 @@ BeforeAll {
             public int Age { get { return _age; } set { _age = value; } }
         }
     }'
+}
+
+BeforeAll {
+    Get-Module Format | Remove-Module
+    Import-Module $PSScriptRoot/../src/Format.psm1 -Force
 }
 
 Describe "Format-Collection" {
