@@ -8,5 +8,5 @@ environment:
 build_script:
   - ps:   if ( $env:PSEdition -eq 'Desktop' ) { ./tst/test.ps1 -CIBuild }
   - pwsh: if ( $env:PSEdition -eq 'Core'    ) { ./tst/test.ps1 -CIBuild }
-  - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Join-Path $PWD 'TestResults.xml'))
+  # - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Join-Path $PWD 'TestResults.xml'))
   
