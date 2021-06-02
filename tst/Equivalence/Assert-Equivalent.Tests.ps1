@@ -1,14 +1,37 @@
-﻿Add-Type -TypeDefinition 'namespace Assertions.TestType {
-    public class Person2 {
-        // powershell v2 mandates fully implemented properties
-        string _name;
-        int _age;
-        public string Name { get { return _name; } set { _name = value; } }
-        public int Age { get { return _age; } set { _age = value; } }
-    }
-}'
+﻿BeforeDiscovery {
+    Add-Type -TypeDefinition 'namespace Assertions.TestType {
+        public class Person2 {
+            // powershell v2 mandates fully implemented properties
+            string _name;
+            int _age;
+            public string Name { get { return _name; } set { _name = value; } }
+            public int Age { get { return _age; } set { _age = value; } }
+        }
+    }'
+}
 
 InModuleScope -ModuleName Assert {
+    BeforeAll { 
+        function Get-TestCase ($Value) {
+            #let's see if this is useful, it's nice for values, but sucks for
+            #types that serialize to just the type name (most of them)
+            if ($null -ne $Value)
+            {
+                @{
+                    Value = $Value
+                    Type = $Value.GetType()
+                }
+            }
+            else
+            {
+                @{
+                    Value = $null
+                    Type = '<none>'
+                }
+            }
+        }
+    }
+
     Describe "Test-Same" {
         It "Given the same instance of a reference type it returns `$true" -TestCases @(
             @{ Value = $null },
@@ -18,7 +41,6 @@ InModuleScope -ModuleName Assert {
         ) {
             param($Value)
             Test-Same -Expected $Value -Actual $Value | Verify-True
-
         }
 
         It "Given different instances of a reference type it returns `$false" -TestCases @(
@@ -27,26 +49,6 @@ InModuleScope -ModuleName Assert {
         ) {
             param($Expected, $Actual)
             Test-Same -Expected $Expected -Actual $Actual | Verify-False
-        }
-    }
-
-
-    function Get-TestCase ($Value) {
-        #let's see if this is useful, it's nice for values, but sucks for
-        #types that serialize to just the type name (most of them)
-        if ($null -ne $Value)
-        {
-            @{
-                Value = $Value
-                Type = $Value.GetType()
-            }
-        }
-        else
-        {
-            @{
-                Value = $null
-                Type = '<none>'
-            }
         }
     }
 

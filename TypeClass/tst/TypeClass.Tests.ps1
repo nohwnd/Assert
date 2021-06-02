@@ -1,5 +1,6 @@
-﻿$here = $MyInvocation.MyCommand.Path | Split-Path
-Import-Module $here/../src/TypeClass.psm1 -Force
+﻿BeforeAll {
+    Import-Module $PSScriptRoot/../src/TypeClass.psm1 -Force
+}
 
 Describe "Is-Value" {
     It "Given '<value>', which is a value, string, enum, scriptblock or array with a single item of those types it returns `$true" -TestCases @(
@@ -117,7 +118,7 @@ Describe "Is-Dictionary" {
 
 # -- collection
 Describe "Is-Collection" {
-    It "Given a collection '<value>' of type '<type>' it returns `$true" -TestCases @(
+    It "Given a collection '<value>' of type '<value.GetType()>' it returns `$true" -TestCases @(
         @{ Value = @() }
         @{ Value = 1,2,3 }
         # powershell v2 requires the coma before the number to make it
@@ -134,9 +135,7 @@ Describe "Is-Collection" {
         Is-Collection -Value $Value | Verify-True
     }
 
-    It "Given an object '<value>' of type '<type>' that is not a collection it returns `$false" -TestCases @(
-        @{ Value = $null }
-
+    It "Given an object '<value>' of type '<value.GetType()>' that is not a collection it returns `$false" -TestCases @(
         @{ Value = [char] 'a' }
         @{ Value = "a" }
 
@@ -160,6 +159,13 @@ Describe "Is-Collection" {
 
         @{ Value = Get-Process -Id $PID }
         @{ Value = New-Object -TypeName Diagnostics.Process }
+    ) {
+        param($Value)
+        Is-Collection -Value $Value | Verify-False
+    }
+
+    It "Given '`$null' it returns `$false" -TestCases @(
+        @{ Value = $null }
     ) {
         param($Value)
         Is-Collection -Value $Value | Verify-False
